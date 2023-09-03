@@ -8,7 +8,7 @@ Plan Sync is designed to simplify your college life by providing an easy way to 
 
 ## Getting Started
 
-To download Plan Sync, follow these simple steps:
+To start using Plan Sync, follow these simple steps:
 
 #### GitHub Releases
 
