@@ -37,7 +37,7 @@ To report an error, follow our [Error Reporting Guidelines](ERROR_REPORTING.md).
 ## Pricing
 
 We're excited to let you know that Plan Sync is ***100% free of cost!***  
-Every student should have access to an efficient timetable management tool without any form of financial burden.
+Every student should have access to an efficient timetable review tool without any form of financial burden.
 
 ## Contact Us
 
