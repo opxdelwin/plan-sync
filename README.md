@@ -1,5 +1,6 @@
 # Plan Sync - Your College Timetable Companion
 
+***"This is an user-contributed project, if your section is not included, see `contribution` section below"***
 Welcome to **Plan Sync** - the ultimate app for managing your college timetable! 
 
 ## Introduction
