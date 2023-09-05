@@ -1,6 +1,6 @@
 # Plan Sync - Your College Timetable Companion
 
-***" This is an user-contributed project, if your section is not included, see `contributing` section below "***
+***" This is an user-contributed project, if your section is not included, see [contributing](https://github.com/opxdelwin/plan-sync#contributing) section below "***
 
 Welcome to **Plan Sync** - the ultimate app for managing your college timetable! 
 
