@@ -30,6 +30,7 @@ Copy and modify this template for your contribution
     "type": "norm-class",
     "revision": "Revision 1.0",
     "effective-date": "Aug 31, 2023",
+    "contributor": "Your name here",
     "room": {
       "monday": 201,
       "tuesday": 405,
