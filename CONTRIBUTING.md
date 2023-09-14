@@ -23,7 +23,7 @@ Copy and modify this template for your contribution
 <details>
   <summary>Template</summary>
 
-```json
+```
 {
     "meta": {
       "section": "b17",  //add your section here
