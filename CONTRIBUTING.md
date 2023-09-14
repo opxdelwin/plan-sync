@@ -25,63 +25,65 @@ Copy and modify this template for your contribution
 
 ```json
 {
-  "meta": {
-    "section": "b1",
-    "type": "norm-class",
-    "revision": "Revision 1.0",
-    "effective-date": "Aug 31, 2023",
-    "contributor": "Your name here",
-    "room": {
-      "monday": 201,
-      "tuesday": 405,
-      "wednesday": 506,
-      "thursday": 405,
-      "friday": 504
-    }
-  },
-  "data": {
-    "monday": {
-      "8.00 AM - 9.00 AM": "Engg. Lab",
-      "9.00 AM - 10.00 AM": "Engg. Lab.",
-      "10.00 AM - 11.00 AM": "***",
-      "11.00 AM - 12.00 PM": "BEE",
-      "12.00 PM - 13.00 PM": "DE&LA",
-      "13.00 PM - 14.00 PM": "B. Etc"
+    "meta": {
+      "section": "b17",  //add your section here
+      "type": "norm-class",  // default value, need not to change
+      "revision": "Revision 1.0", // default value, need not to change
+      "effective-date": "Aug 31, 2023",
+      "contributor": "Legendary Contributor", //your name here
+      
+      // add day-wise classroom here
+      "room": {
+        "monday": 306,
+        "tuesday": 306,
+        "wednesday": 307,
+        "thursday": 303,
+        "friday": 304
+      }
     },
-    "tuesday": {
-      "8.00 AM - 9.00 AM": "Comm. Lab.",
-      "9.00 AM - 10.00 AM": "Comm. Lab.",
-      "10.00 AM - 11.00 AM": "Chem.",
-      "11.00 AM - 12.00 PM": "DE&LA",
-      "12.00 PM - 13.00 PM": "***",
-      "13.20 PM - 14.20 PM": "Electives"
-    },
-    "wednesday": {
-      "8.00 AM - 9.00 AM": "Workshop Pr.",
-      "9.00 AM - 10.00 AM": "Workshop Pr.",
-      "10.00 AM - 10.45 AM": "***",
-      "10.45 AM - 11.45 AM": "DE&LA",
-      "11.45 AM - 12.45 PM": "Chem.",
-      "13.00 PM - 14.00 PM": "***"
-    },
-    "thursday": {
-      "08:00 - 09:00": "DE&LA",
-      "09:00 - 10:00": "Eng.",
-      "10:00 - 11:00": "Chem.",
-      "11:00 - 12:00": "B. Etc.",
-      "12:00 - 13:20": "***",
-      "13:20 - 14:20": "Electives"
-    },
-    "friday": {
-      "08:00 - 09:00": "Chem. Lab.",
-      "09:00 - 10:00": "Chem. Lab",
-      "10:00 - 11:00": "***",
-      "11:00 - 12:00": "BEE",
-      "12:00 - 13:00": "Eng.",
-      "13:00 - 14:00": "YHC"
+    "data": {
+      "monday": {
+        "08:20 - 09:20": "BEE",
+        "09:20 - 10:20": "Chem.",
+        "10:20 - 11:20": "YHC",
+        "11:20 - 12:00": "***",
+        "12:00 - 13:00": "Workshop Practical",
+        "13:00 - 14:00": "Workshop Practical"
+      },
+      "tuesday": {
+        "08:00 - 09:00": "Electives",
+        "09:20 - 10:20": "DE & LA.",
+        "10:20 - 11:20": "B.Etc",
+        "11:20 - 12:00": "***",
+        "12:00 - 13:00": "Engg. Lab",
+        "13:00 - 14:00": "Engg. Lab"
+      },
+      "wednesday": {
+        "08:20 - 09:20": "***",
+        "09:20 - 10:20": "Eng.",
+        "10:20 - 11:20": "DE & LA",
+        "11:20 - 12:00": "***",
+        "12:00 - 13:00": "Chem. Lab",
+        "13:00 - 14:00": "Chem. Lab"
+      },
+      "thursday": {
+        "08:00 - 09:00": "Electives",
+        "09:20 - 10:20": "Eng.",
+        "10:20 - 11:20": "B.Etc",
+        "11:20 - 12:20": "DE & LA",
+        "12:20 - 13:20": "Chem",
+        "13:20 - 14:20": "***"
+      },
+      "friday": {
+        "08:20 - 09:20": "BEE",
+        "09:20 - 10:20": "Comm. Lab",
+        "10:20 - 11:20": "Comm. Lab",
+        "11:20 - 12:20": "Chem",
+        "12:20 - 13:20": "DE & LA",
+        "13:20 - 14:20": "***"
+      }
     }
   }
-}
 ```
   
 </details>
