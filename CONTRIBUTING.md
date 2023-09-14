@@ -26,11 +26,11 @@ Copy and modify this template for your contribution
 ```
 {
     "meta": {
-      "section": "b17",  //add your section here
+      "section": "b17",  //replace with your section here
       "type": "norm-class",  // default value, need not to change
       "revision": "Revision 1.0", // default value, need not to change
       "effective-date": "Aug 31, 2023",
-      "contributor": "Legendary Contributor", //your name here
+      "contributor": "Legendary Contributor", //replace with your name here
       
       // add day-wise classroom here
       "room": {
