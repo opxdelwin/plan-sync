@@ -93,6 +93,7 @@ Copy and modify this template for your contribution
 - Please use the provided JSON template to input your class schedule details.
 - Ensure that you provide accurate and up-to-date information.
 - Include all relevant information for each class, such as the course name, professor, room number, and timing.
+- Create a new Github Issue (If doesn't exist) and attach json there, or
 - Use below mentioned mail template to send over your class details.
 
 <details>
