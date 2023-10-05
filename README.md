@@ -4,6 +4,8 @@
 
 Welcome to **Plan Sync** - the ultimate app for managing your college timetable! 
 
+<img alt="Plan Sync Banner" src="https://github.com/opxdelwin/plan-sync/assets/84124091/54778b58-e9db-45e2-8e39-f7d976ebfba4">
+
 ## Introduction
 
 Plan Sync is designed to simplify your college life by providing an easy way to access and manage your class schedules. With user-contributed timetables and real-time updates, staying organized has never been this effortless.
