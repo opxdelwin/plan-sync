@@ -1,0 +1,28 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.example.plan_sync.app-mergeDebugResources-22:/values-night-v8/values-night-v8.xml",
+            "map": [
+                {
+                    "source": "C:\\code\\plan-sync\\client-app\\android\\app\\src\\main\\res\\values-night\\styles.xml",
+                    "from": {
+                        "startLines": "3,16",
+                        "startColumns": "4,4",
+                        "startOffsets": "175,966",
+                        "endLines": "9,18",
+                        "endColumns": "12,12",
+                        "endOffsets": "617,1132"
+                    },
+                    "to": {
+                        "startLines": "2,8",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,369",
+                        "endLines": "7,10",
+                        "endColumns": "12,12",
+                        "endOffsets": "364,533"
+                    }
+                }
+            ]
+        }
+    ]
+}
