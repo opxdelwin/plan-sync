@@ -3,3 +3,4 @@ client-app/android/app/google-services.json
 client-app/ios/firebase_app_id_file.json
 client-app/ios/Runner/GoogleService-Info.plist
 client-app/lib/firebase_options.dart
+client-app/build
