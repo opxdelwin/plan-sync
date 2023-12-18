@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
+import 'package:plan_sync/util/snackbar.dart';
 
 class GitService extends GetxController {
-  final branch = "pre-mvp";
-  final year = 2023;
+  late String branch;
+  late int year;
   final dio = Dio(BaseOptions(connectTimeout: const Duration(seconds: 15)));
 
   RxMap? _sections;
@@ -32,11 +34,31 @@ class GitService extends GetxController {
   void onInit() async {
     super.onInit();
     filterController = Get.find();
+    setYear();
+    setRepositoryBranch();
     await getSemesters();
     await getElectiveSemesters();
   }
 
-  // by deault year is 2023
+  /// Dynamically sets current year.
+  void setYear() {
+    year = DateTime.now().year;
+    return;
+  }
+
+  /// From v1.0.0, app will use main branch for release client app,
+  /// and pre-mvp for debug/development.
+  void setRepositoryBranch() {
+    if (kReleaseMode) {
+      branch = 'main';
+    } else {
+      branch = 'pre-mvp';
+    }
+    return;
+  }
+
+  /// Gets all the available semesters for a selected year.
+  /// While startup, year is same as current year. May be changed later.
   Future<void> getSemesters() async {
     try {
       isWorking.value ? null : isWorking.toggle();
@@ -45,7 +67,15 @@ class GitService extends GetxController {
 
       final response = await dio.get(url);
       final data = jsonDecode(response.data) as Map<String, dynamic>;
-      semesters = RxList.from(data["$year"].keys);
+
+      semesters = RxList.from(data["$year"]?.keys);
+
+      // stop execution if there are no semesters for selected year
+      if (semesters!.isEmpty) {
+        CustomSnackbar.error('Error', 'No Semesters found for year: $year');
+        return;
+      }
+
       update();
       print("Fetched semesters: $_semesters");
 
@@ -69,6 +99,7 @@ class GitService extends GetxController {
     }
   }
 
+  /// Gets all the available sections for a selected semester.
   Future<void> getSections() async {
     try {
       isWorking.value ? null : isWorking.toggle();
@@ -84,7 +115,7 @@ class GitService extends GetxController {
       _sections = RxMap.from(data["$year"][activeSemester]);
       update();
       filterController.setPrimarySection();
-      print("Fetched semesters: $sections");
+      print("Fetched sections: $sections");
       !isWorking.value ? null : isWorking.toggle();
     } on DioException catch (e) {
       errorDetails = {
@@ -103,6 +134,7 @@ class GitService extends GetxController {
     }
   }
 
+  /// Gets concurrent timetable for unique semester and section.
   Future<Map<String, dynamic>?> getTimeTable() async {
     FilterController filterController = Get.find();
     final section = filterController.activeSectionCode;
@@ -153,6 +185,7 @@ class GitService extends GetxController {
     }
   }
 
+  /// Gets concurrent elective timetable for unique semester and section.
   Future<Map<String, dynamic>?> getElectives() async {
     isWorking.value ? null : isWorking.toggle();
 
@@ -205,6 +238,7 @@ class GitService extends GetxController {
     }
   }
 
+  /// Gets available semesters for elective.
   Future<void> getElectiveSemesters() async {
     try {
       isWorking.value ? null : isWorking.toggle();
@@ -236,6 +270,7 @@ class GitService extends GetxController {
     }
   }
 
+  /// Gets available schemes (usually A or B) for elective.
   Future<void> getElectiveSchemes() async {
     try {
       isWorking.value ? null : isWorking.toggle();
