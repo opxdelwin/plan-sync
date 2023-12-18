@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/colors.dart';
 import 'package:plan_sync/widgets/electives_scheme_bar.dart';
@@ -15,13 +17,6 @@ class ElectiveScreen extends StatefulWidget {
 }
 
 class _ElectiveScreenState extends State<ElectiveScreen> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   GitService service = Get.find();
-  //   service.getElectives();
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,107 +54,111 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                     ],
                   ),
                 ),
-                GetBuilder<GitService>(
-                  builder: (serviceController) {
-                    if (serviceController.isWorking.value) {
-                      return const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(height: 32),
-                          Center(child: CircularProgressIndicator()),
-                        ],
-                      );
-                    } else if (serviceController.isElectivesError.value) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(height: 32),
-                          const Icon(
-                            Icons.error,
-                            color: Colors.red,
-                            size: 40,
-                          ),
-                          const SizedBox(height: 16),
-                          Flexible(
-                              child: MarkdownBody(
-                                  data:
-                                      "```${serviceController.errorDetails}```")),
-                          const SizedBox(height: 16),
-                          const Text(
-                              "A status report has been sent, this issue will be looked into.")
-                        ],
-                      );
-                    } else if (serviceController.latestElectives == null &&
-                        serviceController.isWorking.isFalse) {
-                      return const Center(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                GetBuilder<FilterController>(builder: (filterController) {
+                  GitService service = Get.find();
+                  return FutureBuilder(
+                    future: service.getElectives(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState != ConnectionState.done) {
+                        return const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
                           children: [
                             SizedBox(height: 32),
-                            Icon(
-                              Icons.info,
-                              color: border,
+                            Center(child: CircularProgressIndicator()),
+                          ],
+                        );
+                      } else if (snapshot.hasError) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(height: 32),
+                            const Icon(
+                              Icons.error,
+                              color: Colors.red,
                               size: 40,
                             ),
-                            SizedBox(height: 16),
-                            Text("No Data Available")
+                            const SizedBox(height: 16),
+                            Flexible(
+                                child: MarkdownBody(
+                                    data: "```${snapshot.error}```")),
+                            const SizedBox(height: 16),
+                            const Text(
+                                "A status report has been sent, this issue will be looked into.")
                           ],
-                        ),
-                      );
-                    } else {
-                      final days = [
-                        "monday",
-                        "tuesday",
-                        "wednesday",
-                        "thursday",
-                        "friday"
-                      ];
-
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(height: 16),
-                          Row(
+                        );
+                      } else if (!snapshot.hasData &&
+                          snapshot.connectionState == ConnectionState.done) {
+                        return const Center(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.info_outline_rounded,
-                                  color: secondary),
-                              const SizedBox(width: 8),
-                              Text(
-                                "Effective from ${serviceController.latestElectives!["meta"]["effective-date"]}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: black,
-                                ),
+                              SizedBox(height: 32),
+                              Icon(
+                                Icons.info,
+                                color: border,
+                                size: 40,
                               ),
+                              SizedBox(height: 16),
+                              Text("No Data Available")
                             ],
                           ),
-                          const SizedBox(height: 16),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ListView.separated(
-                              scrollDirection: Axis.vertical,
-                              itemCount: 5,
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) => TimeTableForDay(
-                                day: days[index],
-                                data: serviceController.latestElectives!,
-                              ),
-                              separatorBuilder: (context, index) =>
-                                  const SizedBox(
-                                height: 16,
+                        );
+                      } else {
+                        final days = [
+                          "monday",
+                          "tuesday",
+                          "wednesday",
+                          "thursday",
+                          "friday"
+                        ];
+
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(height: 16),
+                            Row(
+                              children: [
+                                const Icon(Icons.info_outline_rounded,
+                                    color: secondary),
+                                const SizedBox(width: 8),
+                                Text(
+                                  "Effective from ${snapshot.data!["meta"]["effective-date"]}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ListView.separated(
+                                scrollDirection: Axis.vertical,
+                                itemCount: 5,
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) =>
+                                    TimeTableForDay(
+                                  day: days[index],
+                                  data: snapshot.data!,
+                                ),
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(
+                                  height: 16,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 32),
-                        ],
-                      );
-                    }
-                  },
-                ),
+                            const SizedBox(height: 32),
+                          ],
+                        );
+                      }
+                    },
+                  );
+                }),
               ],
             ),
           )),
