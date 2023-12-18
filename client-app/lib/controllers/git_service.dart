@@ -20,11 +20,6 @@ class GitService extends GetxController {
     update();
   }
 
-  Map? latestTimeTable;
-  RxBool isError = false.obs;
-  RxBool isElectivesError = false.obs;
-
-  RxMap? latestElectives;
   RxList? electivesSemesters;
   RxMap? electiveSchemes;
 
@@ -44,7 +39,6 @@ class GitService extends GetxController {
   // by deault year is 2023
   Future<void> getSemesters() async {
     try {
-      isError.value ? isError.toggle() : null;
       isWorking.value ? null : isWorking.toggle();
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/sections.json";
@@ -64,21 +58,18 @@ class GitService extends GetxController {
         "data": e.message,
         "code": e.response?.statusCode,
       };
-      isError = true.obs;
-      update();
+
       !isWorking.value ? null : isWorking.toggle();
       return;
     } catch (e) {
       errorDetails = {"error": "CatchException"};
-      isError = true.obs;
-      update();
+
       !isWorking.value ? null : isWorking.toggle();
       return;
     }
   }
 
   Future<void> getSections() async {
-    isError.value ? isError.toggle() : null;
     try {
       isWorking.value ? null : isWorking.toggle();
 
@@ -101,27 +92,24 @@ class GitService extends GetxController {
         "data": e.message,
         "code": e.response?.statusCode,
       };
-      isError = true.obs;
-      update();
+
       !isWorking.value ? null : isWorking.toggle();
       throw Exception(e.toString());
     } catch (e) {
       errorDetails = {"error": "CatchException"};
-      isError = true.obs;
-      update();
+
       !isWorking.value ? null : isWorking.toggle();
       throw Exception(e.toString());
     }
   }
 
-  Future<void> getTimeTable() async {
-    isError.value ? isError.toggle() : null;
+  Future<Map<String, dynamic>?> getTimeTable() async {
     FilterController filterController = Get.find();
     final section = filterController.activeSectionCode;
     final semester = filterController.activeSemester;
 
     if (section == null) {
-      return;
+      return null;
     }
 
     isWorking.value ? null : isWorking.toggle();
@@ -139,35 +127,39 @@ class GitService extends GetxController {
       if (response.statusCode != 200) {
         throw DioException(requestOptions: response.requestOptions);
       }
-      latestTimeTable = jsonDecode(response.data);
-      isError = false.obs;
 
-      update();
       !isWorking.value ? null : isWorking.toggle();
-      return;
+      return jsonDecode(response.data) as Map<String, dynamic>;
     } on DioException catch (e) {
       errorDetails = {
-        "error": "DioException",
-        "data": e.message,
-        "code": e.response?.statusCode,
+        'error': 'DioException',
+        'type': e.type.toString(),
+        'code': e.response?.statusCode.toString(),
+        'message':
+            'We couldn\'t fetch requested timetable. Please try again later.',
       };
-      isError = true.obs;
-      update();
+
       !isWorking.value ? null : isWorking.toggle();
-      throw Exception(e.toString());
+
+      return Future.error(Exception(errorDetails));
     } catch (e) {
-      errorDetails = {"error": "CatchException"};
-      isError = true.obs;
-      update();
+      errorDetails = {
+        "type": "CatchException",
+        "message": "Some unknown error occoured.",
+      };
+
       !isWorking.value ? null : isWorking.toggle();
-      throw Exception(e.toString());
+      return Future.error(Exception(errorDetails));
     }
   }
 
-  Future<void> getElectives() async {
-    isElectivesError.value ? isElectivesError.toggle() : null;
+  Future<Map<String, dynamic>?> getElectives() async {
     isWorking.value ? null : isWorking.toggle();
-    update();
+
+    if (filterController.activeElectiveSchemeCode == null) {
+      return null;
+    }
+
     final url =
         "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$year/SEM1/electives-scheme-${filterController.activeElectiveSchemeCode}.json";
     try {
@@ -183,40 +175,40 @@ class GitService extends GetxController {
         throw DioException(requestOptions: response.requestOptions);
       }
       if (response.data == "") {
-        latestElectives = null;
-        update();
-        return;
+        return null;
       }
-      latestElectives = RxMap.from(jsonDecode(response.data));
-      isElectivesError = false.obs;
 
       !isWorking.value ? null : isWorking.toggle();
-      update();
-      return;
+
+      return jsonDecode(response.data);
     } on DioException catch (e) {
       errorDetails = {
-        "error": "DioException",
-        "data": e.message,
-        "code": e.response?.statusCode,
+        'error': 'DioException',
+        'type': e.type.toString(),
+        'code': e.response?.statusCode.toString(),
+        'message':
+            'We couldn\'t fetch requested timetable. Please try again later.',
       };
-      isElectivesError = true.obs;
+
       !isWorking.value ? null : isWorking.toggle();
-      update();
-      throw Exception(e.toString());
+
+      return Future.error(Exception(errorDetails));
     } catch (e) {
-      errorDetails = {"error": "CatchException"};
-      isElectivesError = true.obs;
+      errorDetails = {
+        "type": "CatchException",
+        "message": "Some unknown error occoured.",
+      };
+
       !isWorking.value ? null : isWorking.toggle();
-      update();
-      throw Exception(e.toString());
+
+      return Future.error(Exception(errorDetails));
     }
   }
 
   Future<void> getElectiveSemesters() async {
     try {
-      isElectivesError.value ? isElectivesError.toggle() : null;
       isWorking.value ? null : isWorking.toggle();
-      update();
+
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/electives.json";
 
@@ -233,21 +225,18 @@ class GitService extends GetxController {
         "data": e.message,
         "code": e.response?.statusCode,
       };
-      isElectivesError = true.obs;
       !isWorking.value ? null : isWorking.toggle();
-      update();
       return;
     } catch (e) {
       errorDetails = {"error": "CatchException"};
-      isElectivesError = true.obs;
+
       !isWorking.value ? null : isWorking.toggle();
-      update();
+
       return;
     }
   }
 
   Future<void> getElectiveSchemes() async {
-    isElectivesError.value ? isElectivesError.toggle() : null;
     try {
       isWorking.value ? null : isWorking.toggle();
       update();
@@ -269,15 +258,15 @@ class GitService extends GetxController {
         "data": e.message,
         "code": e.response?.statusCode,
       };
-      isElectivesError = true.obs;
+
       !isWorking.value ? null : isWorking.toggle();
       update();
       throw Exception(e.toString());
     } catch (e) {
       errorDetails = {"error": "CatchException"};
-      isElectivesError = true.obs;
+
       !isWorking.value ? null : isWorking.toggle();
-      update();
+
       throw Exception(e.toString());
     }
   }
