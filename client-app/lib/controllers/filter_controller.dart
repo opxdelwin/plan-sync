@@ -62,16 +62,33 @@ class FilterController extends GetxController {
   late SharedPreferences preferences;
 
   @override
-  onReady() async {
-    super.onReady();
+  onInit() async {
+    super.onInit();
     preferences = await SharedPreferences.getInstance();
     service = Get.find();
   }
 
+  Future<String> getShortCode() async {
+    String? section = activeSectionCode;
+    String? semester = activeSemester;
+
+    if (section == null && semester == null) {
+      return 'Select Sections';
+    } else if (section == null && semester != null) {
+      return semester;
+    } else if (semester == null && section != null) {
+      return section;
+    }
+
+    return '$section | $semester'.toUpperCase();
+  }
+
+  /// returns primary section from shared-preferences
   String? get primarySection {
     return preferences.getString('primary-section');
   }
 
+  /// saves the section code into shared-preferences
   Future<void> storePrimarySection() async {
     if (activeSectionCode == null) {
       //TODO:popup
@@ -83,6 +100,7 @@ class FilterController extends GetxController {
     update();
   }
 
+  /// sets the section code while runtime
   Future<void> setPrimarySection() async {
     final String? primarySection = preferences.getString('primary-section');
     print("primary section: $primarySection");
@@ -94,10 +112,12 @@ class FilterController extends GetxController {
     }
   }
 
+  /// returns primary semester from shared-preferences
   String? get primarySemester {
     return preferences.getString('primary-semester');
   }
 
+  /// saves the semester code into shared-preferences
   Future<void> storePrimarySemester() async {
     if (activeSemester == null) {
       //TODO:popup
@@ -109,6 +129,7 @@ class FilterController extends GetxController {
     update();
   }
 
+  /// sets the semester code while runtime
   Future<void> setPrimarySemester() async {
     final String? primarySection = preferences.getString('primary-semester');
     print("primary semester: $primarySection");
