@@ -3,6 +3,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/widgets/bottom_sheets.dart';
 import 'package:plan_sync/widgets/time_table_for_day.dart';
 
 class TimeTableWidget extends StatefulWidget {
@@ -21,7 +22,6 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
   List<DataColumn> columnsList = [];
 
   void showMoreInfo(Map<String, dynamic> data, ColorScheme colorScheme) {
-    print(data);
     Widget dialog = Dialog(
       backgroundColor: colorScheme.background,
       elevation: 0.0,
@@ -155,6 +155,10 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
     );
   }
 
+  void reportError() {
+    BottomSheets.reportError(context: context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -238,20 +242,38 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                InkWell(
-                  onTap: () => showMoreInfo(snapshot.data!, colorScheme),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.info_rounded, color: colorScheme.tertiary),
-                      const SizedBox(width: 8),
-                      Text(
-                        'More Info',
-                        style: TextStyle(color: colorScheme.tertiary),
-                      )
-                    ],
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    InkWell(
+                      onTap: () => showMoreInfo(snapshot.data!, colorScheme),
+                      child: Row(
+                        children: [
+                          Icon(Icons.info_rounded, color: colorScheme.tertiary),
+                          const SizedBox(width: 8),
+                          Text(
+                            'More Info',
+                            style: TextStyle(color: colorScheme.tertiary),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    InkWell(
+                      onTap: () => reportError(),
+                      child: Row(
+                        children: [
+                          Icon(Icons.flag_rounded, color: colorScheme.error),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Report Error',
+                            style: TextStyle(color: colorScheme.error),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
