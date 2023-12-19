@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
-import 'package:plan_sync/util/colors.dart';
 import 'package:plan_sync/util/external_links.dart';
 
 class VersionCheckWidget extends StatefulWidget {
@@ -38,6 +37,8 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return GetBuilder<VersionController>(
       builder: (controller) {
         if (controller.isError) {
@@ -45,20 +46,20 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24)),
-                color: secondary,
+                color: colorScheme.primary,
               ),
               padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Text(
                     "Server error occoured, try again later.",
-                    style: TextStyle(color: black),
+                    style: TextStyle(color: colorScheme.onPrimary),
                   ),
                   SizedBox(width: 16),
                   Icon(
                     Icons.error_outline_rounded,
-                    color: Colors.red,
+                    color: colorScheme.error,
                   )
                 ],
               ));
@@ -67,7 +68,7 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
           decoration: ShapeDecoration(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-            color: secondary,
+            color: colorScheme.primary,
           ),
           padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
           child: isLatest
@@ -75,33 +76,38 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     isWorking
-                        ? const Text(
+                        ? Text(
                             "Checking for updates",
-                            style: TextStyle(color: black),
+                            style: TextStyle(color: colorScheme.onPrimary),
                           )
-                        : const Text(
+                        : Text(
                             "You're on the latest verison!",
-                            style: TextStyle(color: black),
+                            style: TextStyle(color: colorScheme.onPrimary),
                           ),
                     const SizedBox(width: 16),
                     isWorking
                         ? LoadingAnimationWidget.prograssiveDots(
-                            color: black, size: 24)
+                            color: colorScheme.onPrimary,
+                            size: 24,
+                          )
                         : const Icon(Icons.check_circle_outline_rounded)
                   ],
                 )
               : Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    const Text(
+                    Text(
                       "Update Available",
-                      style: TextStyle(color: black),
+                      style: TextStyle(color: colorScheme.onPrimary),
                     ),
                     const SizedBox(width: 16),
                     ElevatedButton.icon(
-                      style: const ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll(black),
-                          foregroundColor: MaterialStatePropertyAll(white),
+                      style: ButtonStyle(
+                          elevation: MaterialStatePropertyAll(0.0),
+                          backgroundColor:
+                              MaterialStatePropertyAll(colorScheme.secondary),
+                          foregroundColor:
+                              MaterialStatePropertyAll(colorScheme.onSecondary),
                           shape: MaterialStatePropertyAll(StadiumBorder())),
                       onPressed: () => ExternalLinks.updateApp(),
                       icon: const Icon(Icons.download_rounded),
