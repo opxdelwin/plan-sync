@@ -8,6 +8,7 @@ import 'package:plan_sync/controllers/analytics_controller.dart';
 import 'package:plan_sync/controllers/auth.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/controllers/theme_controller.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
 import 'package:plan_sync/router_refresh_stream.dart';
 import 'package:plan_sync/views/electives_screen.dart';
@@ -45,7 +46,8 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // callfn();
     return GetMaterialApp.router(
-      theme: ThemeData(useMaterial3: true),
+      theme: AppThemeController.lightTheme,
+      darkTheme: AppThemeController.darkTheme,
       routerDelegate: _router.routerDelegate,
       routeInformationParser: _router.routeInformationParser,
       routeInformationProvider: _router.routeInformationProvider,
