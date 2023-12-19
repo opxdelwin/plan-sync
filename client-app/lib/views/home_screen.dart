@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
-import 'package:plan_sync/widgets/section_preferences_bottom_sheet.dart';
+import 'package:plan_sync/widgets/bottom_sheets.dart';
 import 'package:plan_sync/widgets/semester_bar.dart';
 import '../widgets/filters_bar.dart';
 import '../widgets/time_table.dart';
