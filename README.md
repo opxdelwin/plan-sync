@@ -45,7 +45,7 @@ Every student should have access to an efficient timetable review tool without a
 
 ## Contact Us
 
-If you have any questions, suggestions, or need assistance, feel free to reach out to us. You can contact our team at [delwinmathew2004@gmail.com](mailto:delwinmathew2004@gmail.com).
+If you have any questions, suggestions, or need assistance, feel free to reach out to us. You can contact our team at [connect.plansync@gmail.com](mailto:connect.plansync@gmail.com).
 
 Thank you for choosing Plan Sync as your college timetable companion! We look forward to helping you stay organized and make the most of your college experience.
 
