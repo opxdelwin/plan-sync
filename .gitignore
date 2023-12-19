@@ -7,3 +7,6 @@ client-app/build
 client-app/.dart_tool
 client-app/.flutter-plugins-dependencies
 /.vscode
+client-app/.flutter-plugins
+client-app/pubspec.lock
+/client-app/macos
