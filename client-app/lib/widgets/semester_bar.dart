@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/util/logger.dart';
 
 class SemesterBar extends StatefulWidget {
   const SemesterBar({super.key});
@@ -56,7 +57,7 @@ class _SemesterBarState extends State<SemesterBar> {
                     ?.map((e) => _buildMenuItem(e, colorScheme.background))
                     .toList(),
                 onChanged: (String? newSelection) {
-                  print("new semester: $newSelection");
+                  Logger.i("new semester: $newSelection");
                   filterController.activeSemester = newSelection;
                 },
               );

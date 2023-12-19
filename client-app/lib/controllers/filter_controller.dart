@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/util/logger.dart';
+import 'package:plan_sync/util/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FilterController extends GetxController {
@@ -91,19 +93,23 @@ class FilterController extends GetxController {
   /// saves the section code into shared-preferences
   Future<void> storePrimarySection() async {
     if (activeSectionCode == null) {
-      //TODO:popup
-      print("select a section to set as primary.");
+      Logger.i("select a section to set as primary.");
+      CustomSnackbar.error(
+        'Not Selected',
+        'Please select a section to be saved as default',
+      );
       return;
     }
+
     await preferences.setString('primary-section', activeSectionCode!);
-    print("set ${activeSectionCode!} as primary");
+    Logger.i("set ${activeSectionCode!} as primary");
     update();
   }
 
   /// sets the section code while runtime
   Future<void> setPrimarySection() async {
     final String? primarySection = preferences.getString('primary-section');
-    print("primary section: $primarySection");
+    Logger.i("primary section: $primarySection");
 
     if (primarySection != null &&
         service.sections!.containsKey(primarySection) &&
@@ -120,19 +126,22 @@ class FilterController extends GetxController {
   /// saves the semester code into shared-preferences
   Future<void> storePrimarySemester() async {
     if (activeSemester == null) {
-      //TODO:popup
-      print("select a semester to be set as primary.");
+      CustomSnackbar.error(
+        'Not Selected',
+        'Please select a semester to be saved as default',
+      );
+      Logger.i("select a semester to be set as primary.");
       return;
     }
     await preferences.setString('primary-semester', activeSemester!);
-    print("set ${activeSemester!} as primary semester");
+    Logger.i("set ${activeSemester!} as primary semester");
     update();
   }
 
   /// sets the semester code while runtime
   Future<void> setPrimarySemester() async {
     final String? primarySection = preferences.getString('primary-semester');
-    print("primary semester: $primarySection");
+    Logger.i("primary semester: $primarySection");
 
     activeSemester = primarySemester;
   }

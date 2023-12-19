@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:plan_sync/util/logger.dart';
 
 class VersionController extends GetxController {
   late PackageInfo packageInfo;
@@ -28,7 +29,7 @@ class VersionController extends GetxController {
   }
 
   versionCheck() {
-    print("App version: v${packageInfo.version}");
+    Logger.i("App version: v${packageInfo.version}");
     appVersion = "v${packageInfo.version}";
   }
 

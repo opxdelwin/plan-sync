@@ -56,7 +56,7 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
                     "Server error occoured, try again later.",
                     style: TextStyle(color: colorScheme.onPrimary),
                   ),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Icon(
                     Icons.error_outline_rounded,
                     color: colorScheme.error,
@@ -103,12 +103,13 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
                     const SizedBox(width: 16),
                     ElevatedButton.icon(
                       style: ButtonStyle(
-                          elevation: MaterialStatePropertyAll(0.0),
+                          elevation: const MaterialStatePropertyAll(0.0),
                           backgroundColor:
                               MaterialStatePropertyAll(colorScheme.secondary),
                           foregroundColor:
                               MaterialStatePropertyAll(colorScheme.onSecondary),
-                          shape: MaterialStatePropertyAll(StadiumBorder())),
+                          shape:
+                              const MaterialStatePropertyAll(StadiumBorder())),
                       onPressed: () => ExternalLinks.updateApp(),
                       icon: const Icon(Icons.download_rounded),
                       label: const Text("Download Now"),

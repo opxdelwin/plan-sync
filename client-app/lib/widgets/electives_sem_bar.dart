@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/util/logger.dart';
 
 class ElectiveSemesterBar extends StatefulWidget {
   const ElectiveSemesterBar({super.key});
@@ -57,7 +58,7 @@ class _ElectiveSemesterBarState extends State<ElectiveSemesterBar> {
                         ))
                     .toList(),
                 onChanged: (String? newSelection) {
-                  print("new elective semester: $newSelection");
+                  Logger.i("new elective semester: $newSelection");
                   filterController.activeElectiveSemester = newSelection;
                   serviceController.getElectiveSchemes();
                 },
