@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/widgets/bottom_sheets.dart';
 import 'package:plan_sync/widgets/electives_scheme_bar.dart';
 import 'package:plan_sync/widgets/electives_sem_bar.dart';
 import 'package:plan_sync/widgets/time_table_for_day.dart';
@@ -16,6 +17,10 @@ class ElectiveScreen extends StatefulWidget {
 }
 
 class _ElectiveScreenState extends State<ElectiveScreen> {
+  void reportError() {
+    BottomSheets.reportError(context: context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -140,6 +145,22 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: colorScheme.onBackground,
+                                  ),
+                                ),
+                                Spacer(),
+                                InkWell(
+                                  onTap: () => reportError(),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.flag_rounded,
+                                          color: colorScheme.error),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        'Report Error',
+                                        style:
+                                            TextStyle(color: colorScheme.error),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],

@@ -5,7 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/util/constants.dart';
 import 'package:plan_sync/util/external_links.dart';
-import 'package:plan_sync/widgets/section_preferences_bottom_sheet.dart';
+import 'package:plan_sync/widgets/bottom_sheets.dart';
 import '../controllers/auth.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -113,7 +113,9 @@ class SettingsPage extends StatelessWidget {
                     Icons.keyboard_arrow_right_rounded,
                     color: colorScheme.onPrimary,
                   ),
-                  onTap: () => ExternalLinks.reportError(),
+                  onTap: () => BottomSheets.reportError(
+                    context: context,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 ListTile(
@@ -156,7 +158,9 @@ class SettingsPage extends StatelessWidget {
                     Icons.keyboard_arrow_right_rounded,
                     color: colorScheme.onPrimary,
                   ),
-                  onTap: () => ExternalLinks.contributeTimeTable(),
+                  onTap: () => BottomSheets.contributeTimeTable(
+                    context: context,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 ListTile(
