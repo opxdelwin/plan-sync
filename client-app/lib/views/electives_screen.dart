@@ -4,10 +4,9 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
-import 'package:plan_sync/util/colors.dart';
 import 'package:plan_sync/widgets/electives_scheme_bar.dart';
 import 'package:plan_sync/widgets/electives_sem_bar.dart';
-import 'package:plan_sync/widgets/time_tabel_for_day.dart';
+import 'package:plan_sync/widgets/time_table_for_day.dart';
 
 class ElectiveScreen extends StatefulWidget {
   const ElectiveScreen({super.key});
@@ -19,21 +18,25 @@ class ElectiveScreen extends StatefulWidget {
 class _ElectiveScreenState extends State<ElectiveScreen> {
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: black,
+        backgroundColor: colorScheme.background,
         elevation: 0.0,
         toolbarHeight: 80,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
           bottom: Radius.circular(32),
         )),
-        title: const Text(
+        title: Text(
           "Elective Classes",
           style: TextStyle(
-            color: white,
+            color: colorScheme.onBackground,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.2,
           ),
         ),
       ),
@@ -60,11 +63,14 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                     future: service.getElectives(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState != ConnectionState.done) {
-                        return const Column(
+                        return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SizedBox(height: 32),
-                            Center(child: CircularProgressIndicator()),
+                            const SizedBox(height: 32),
+                            Center(
+                                child: CircularProgressIndicator(
+                              color: colorScheme.secondary,
+                            )),
                           ],
                         );
                       } else if (snapshot.hasError) {
@@ -89,20 +95,25 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                         );
                       } else if (!snapshot.hasData &&
                           snapshot.connectionState == ConnectionState.done) {
-                        return const Center(
+                        return Center(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              SizedBox(height: 32),
+                              const SizedBox(height: 32),
                               Icon(
                                 Icons.info,
-                                color: border,
+                                color: colorScheme.secondary,
                                 size: 40,
                               ),
-                              SizedBox(height: 16),
-                              Text("No Data Available")
+                              const SizedBox(height: 16),
+                              Text(
+                                "No Data Available",
+                                style: TextStyle(
+                                  color: colorScheme.onBackground,
+                                ),
+                              )
                             ],
                           ),
                         );
@@ -121,14 +132,14 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                             const SizedBox(height: 16),
                             Row(
                               children: [
-                                const Icon(Icons.info_outline_rounded,
-                                    color: secondary),
+                                Icon(Icons.info_outline_rounded,
+                                    color: colorScheme.tertiary),
                                 const SizedBox(width: 8),
                                 Text(
                                   "Effective from ${snapshot.data!["meta"]["effective-date"]}",
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: black,
+                                    color: colorScheme.onBackground,
                                   ),
                                 ),
                               ],

@@ -3,34 +3,41 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
+import 'package:plan_sync/util/constants.dart';
 import 'package:plan_sync/util/external_links.dart';
-import 'package:plan_sync/widgets/filters_bar.dart';
-import 'package:plan_sync/widgets/semester_bar.dart';
+import 'package:plan_sync/widgets/section_preferences_bottom_sheet.dart';
 import '../controllers/auth.dart';
-import '../util/colors.dart';
-import '../util/constants.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
+
+  //TODO: implement
+  void setPrimarySections(BuildContext context) {
+    BottomSheets.changeSectionPreference(context: context, save: true);
+  }
 
   @override
   Widget build(BuildContext context) {
     Auth auth = Get.find();
     FilterController filterController = Get.find();
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: black,
+          backgroundColor: colorScheme.background,
           elevation: 0.0,
           toolbarHeight: 80,
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(
             bottom: Radius.circular(32),
           )),
-          title: const Text(
+          title: Text(
             "Account",
             style: TextStyle(
-              color: white,
+              color: colorScheme.onBackground,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.2,
             ),
           ),
         ),
@@ -41,117 +48,175 @@ class SettingsPage extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 48,
-                      backgroundImage: CachedNetworkImageProvider(
-                        auth.activeUser!.photoURL ?? DEFAULT_USER_IMAGE,
-                      ),
+                CircleAvatar(
+                  radius: 64,
+                  backgroundImage: CachedNetworkImageProvider(
+                    auth.activeUser!.photoURL ?? DEFAULT_USER_IMAGE,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  auth.activeUser!.displayName ?? "username",
+                  style: TextStyle(
+                    color: colorScheme.onBackground,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  auth.activeUser!.email ?? "example@gmail.com",
+                  style: TextStyle(
+                    color: colorScheme.onBackground.withOpacity(0.6),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                ListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  enableFeedback: true,
+                  tileColor: colorScheme.primary,
+                  leading: Icon(
+                    Icons.downloading_rounded,
+                    color: colorScheme.onPrimary,
+                  ),
+                  title: Text(
+                    "Set Primary Sections",
+                    style: TextStyle(
+                      color: colorScheme.onPrimary,
                     ),
-                    const SizedBox(width: 24),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          auth.activeUser!.displayName ?? "username",
-                          style: const TextStyle(
-                            color: black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(auth.activeUser!.email ?? "example@gmail.com"),
-                      ],
-                    )
-                  ],
-                ),
-                const SizedBox(height: 16),
-                const Divider(),
-                ListTile(
-                  leading: const Text(
-                    "Primary\nSemester",
-                    style: TextStyle(color: black),
                   ),
-                  title: const SemesterBar(),
-                  trailing: GetBuilder<FilterController>(builder: (controller) {
-                    return IconButton(
-                      icon: controller.primarySemester !=
-                              controller.activeSemester
-                          ? const Icon(Icons.download_rounded)
-                          : const Icon(
-                              Icons.check_circle_outline_rounded,
-                              color: primary,
-                            ),
-                      onPressed: () => filterController.storePrimarySemester(),
-                    );
-                  }),
-                ),
-                ListTile(
-                  leading: const Text(
-                    "Primary\nSection",
-                    style: TextStyle(color: black),
+                  trailing: Icon(
+                    Icons.keyboard_arrow_right_rounded,
+                    color: colorScheme.onPrimary,
                   ),
-                  title: const FiltersBar(),
-                  trailing: GetBuilder<FilterController>(builder: (controller) {
-                    return IconButton(
-                      icon: controller.primarySection !=
-                              controller.activeSectionCode
-                          ? const Icon(Icons.download_rounded)
-                          : const Icon(
-                              Icons.check_circle_outline_rounded,
-                              color: primary,
-                            ),
-                      onPressed: () => filterController.storePrimarySection(),
-                    );
-                  }),
+                  onTap: () => setPrimarySections(context),
                 ),
-                const Divider(),
                 const SizedBox(height: 8),
                 ListTile(
-                  leading: const Icon(Icons.report),
-                  title: const Text("Report an error"),
-                  trailing: const Icon(Icons.keyboard_arrow_right_rounded),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  enableFeedback: true,
+                  tileColor: colorScheme.primary,
+                  leading: Icon(
+                    Icons.report,
+                    color: colorScheme.onPrimary,
+                  ),
+                  title: Text(
+                    "Report an error",
+                    style: TextStyle(
+                      color: colorScheme.onPrimary,
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.keyboard_arrow_right_rounded,
+                    color: colorScheme.onPrimary,
+                  ),
                   onTap: () => ExternalLinks.reportError(),
                 ),
+                const SizedBox(height: 8),
                 ListTile(
-                  leading: const Icon(Icons.share),
-                  title: const Text("Share"),
-                  trailing: const Icon(Icons.keyboard_arrow_right_rounded),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  enableFeedback: true,
+                  tileColor: colorScheme.primary,
+                  leading: Icon(Icons.share, color: colorScheme.onPrimary),
+                  title: Text(
+                    "Share This App",
+                    style: TextStyle(
+                      color: colorScheme.onPrimary,
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.keyboard_arrow_right_rounded,
+                    color: colorScheme.onPrimary,
+                  ),
                   onTap: () => ExternalLinks.shareApp(),
                 ),
+                const SizedBox(height: 8),
                 ListTile(
-                  leading: const Icon(Icons.add_circle_outline_rounded),
-                  title: const Text("Contribute Time Table"),
-                  trailing: const Icon(Icons.keyboard_arrow_right_rounded),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  enableFeedback: true,
+                  tileColor: colorScheme.primary,
+                  leading: Icon(
+                    Icons.add_circle_outline_rounded,
+                    color: colorScheme.onPrimary,
+                  ),
+                  title: Text(
+                    "Contribute Time Table",
+                    style: TextStyle(
+                      color: colorScheme.onPrimary,
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.keyboard_arrow_right_rounded,
+                    color: colorScheme.onPrimary,
+                  ),
                   onTap: () => ExternalLinks.contributeTimeTable(),
                 ),
                 const SizedBox(height: 8),
-                const Divider(),
                 ListTile(
-                  leading: const Icon(FontAwesomeIcons.fileLines),
-                  title: const Text("Terms of Service"),
-                  trailing: const Icon(Icons.keyboard_arrow_right_rounded),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  enableFeedback: true,
+                  tileColor: colorScheme.primary,
+                  leading: Icon(
+                    FontAwesomeIcons.fileLines,
+                    color: colorScheme.onPrimary,
+                  ),
+                  title: Text(
+                    "Terms of Service",
+                    style: TextStyle(
+                      color: colorScheme.onPrimary,
+                    ),
+                  ),
+                  trailing: Icon(Icons.keyboard_arrow_right_rounded,
+                      color: colorScheme.onPrimary),
                   onTap: () => ExternalLinks.termsAndConditions(),
                 ),
+                const SizedBox(height: 8),
                 ListTile(
-                  leading: const Icon(Icons.security_rounded),
-                  title: const Text("Privacy Policy"),
-                  trailing: const Icon(Icons.keyboard_arrow_right_rounded),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  enableFeedback: true,
+                  tileColor: colorScheme.primary,
+                  leading: Icon(
+                    Icons.security_rounded,
+                    color: colorScheme.onPrimary,
+                  ),
+                  title: Text(
+                    "Privacy Policy",
+                    style: TextStyle(
+                      color: colorScheme.onPrimary,
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.keyboard_arrow_right_rounded,
+                    color: colorScheme.onPrimary,
+                  ),
                   onTap: () => ExternalLinks.privacyPolicy(),
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton.icon(
-                  style: const ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(black)),
+                  style: ButtonStyle(
+                    elevation: const MaterialStatePropertyAll(0.0),
+                    backgroundColor:
+                        MaterialStatePropertyAll(colorScheme.error),
+                  ),
                   onPressed: () => auth.logout(),
-                  icon: const Icon(Icons.logout, color: white),
-                  label: const Text(
+                  icon: Icon(Icons.logout, color: colorScheme.onError),
+                  label: Text(
                     "Logout",
-                    style: TextStyle(color: white),
+                    style: TextStyle(color: colorScheme.onError),
                   ),
                 ),
-                const SizedBox(height: 48),
+                const SizedBox(height: 80),
               ],
             ),
           ),

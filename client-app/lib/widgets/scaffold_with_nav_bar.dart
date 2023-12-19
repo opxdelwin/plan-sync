@@ -2,7 +2,6 @@ import 'package:custom_navigation_bar/custom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:plan_sync/util/colors.dart';
 
 class ScaffoldWithNavBar extends StatelessWidget {
   const ScaffoldWithNavBar({
@@ -15,6 +14,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       extendBody: true,
       body: navigationShell,
@@ -28,31 +28,32 @@ class ScaffoldWithNavBar extends StatelessWidget {
           scaleCurve: Curves.easeInOutExpo,
           isFloating: true,
           elevation: 0,
-          backgroundColor: black,
+          backgroundColor: colorScheme.onBackground,
           borderRadius: const Radius.circular(32),
-          selectedColor: primary,
-          unSelectedColor: white,
+          selectedColor: colorScheme.secondary,
+          unSelectedColor: colorScheme.background,
 
           //bubble color
-          strokeColor: secondary.withOpacity(0.32),
+          strokeColor: colorScheme.secondary.withOpacity(0.32),
           items: <CustomNavigationBarItem>[
             CustomNavigationBarItem(
-                icon: const Icon(FontAwesomeIcons.calendar),
-                title: const Text(
-                  'Schedule',
-                  style: TextStyle(color: white),
-                )),
+              icon: const Icon(FontAwesomeIcons.calendar),
+              title: Text(
+                'Schedule',
+                style: TextStyle(color: colorScheme.background),
+              ),
+            ),
             CustomNavigationBarItem(
                 icon: const Icon(FontAwesomeIcons.clipboard),
-                title: const Text(
+                title: Text(
                   'Electives',
-                  style: TextStyle(color: white),
+                  style: TextStyle(color: colorScheme.background),
                 )),
             CustomNavigationBarItem(
                 icon: const Icon(Icons.settings_outlined),
-                title: const Text(
+                title: Text(
                   'Settings',
-                  style: TextStyle(color: white),
+                  style: TextStyle(color: colorScheme.background),
                 )),
           ],
           currentIndex: navigationShell.currentIndex,

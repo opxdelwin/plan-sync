@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../util/colors.dart';
-
 class TimeTableForDay extends StatefulWidget {
   const TimeTableForDay({super.key, required this.data, required this.day});
 
@@ -17,43 +15,65 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
   List<DataColumn> columns = [];
   List<DataRow> rows = [];
 
-  void buildColumn() {
+  void buildColumn(BuildContext context) {
+    columns.clear();
     widget.data["data"][widget.day].keys.forEach((timespace) {
-      columns.add(DataColumn(label: Text(timespace)));
+      columns.add(DataColumn(
+          label: Text(
+        timespace,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onBackground,
+        ),
+      )));
     });
   }
 
-  void buildRow() {
+  void buildRow(BuildContext context) {
     List<DataCell> cells = [];
     widget.data["data"][widget.day].forEach((key, value) {
-      cells.add(DataCell(Text(value)));
+      cells.add(DataCell(Text(
+        value,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onBackground,
+        ),
+      )));
     });
 
     rows = [
       DataRow(
         selected: DateTime.now().weekday == days.indexOf(widget.day) + 1,
         cells: cells,
+
+        // set highlight color for selected (current) day
+        color: MaterialStateProperty.resolveWith<Color?>(
+            (Set<MaterialState> states) {
+          if (states.contains(MaterialState.selected)) {
+            return Theme.of(context).colorScheme.secondary.withOpacity(0.12);
+          }
+          return null;
+        }),
       )
     ];
   }
 
   @override
-  void initState() {
-    buildColumn();
-    buildRow();
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    buildColumn(context);
+    buildRow(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     if (widget.data["meta"]["type"] == "norm-class") {
-      return _buildForTimetable();
+      return _buildForTimetable(colorScheme);
     } else {
-      return _buildForElectives();
+      return _buildForElectives(colorScheme);
     }
   }
 
-  Column _buildForTimetable() {
+  Column _buildForTimetable(ColorScheme colorScheme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -63,11 +83,18 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
             children: [
               Text(
                 widget.day.capitalizeFirst!,
-                style:
-                    const TextStyle(color: black, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: colorScheme.onPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(width: 16),
-              Text("Room ${widget.data["meta"]["room"][widget.day]}")
+              Text(
+                "Room ${widget.data["meta"]["room"][widget.day]}",
+                style: TextStyle(
+                  color: colorScheme.onPrimary,
+                ),
+              )
             ],
           ),
         ),
@@ -75,8 +102,11 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: DataTable(
+            dividerThickness: 0.5,
             border: TableBorder.all(
-                borderRadius: BorderRadius.circular(8), color: border),
+              borderRadius: BorderRadius.circular(8),
+              color: colorScheme.secondary.withOpacity(0.6),
+            ),
             columns: columns,
             rows: rows,
           ),
@@ -85,7 +115,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
     );
   }
 
-  Column _buildForElectives() {
+  Column _buildForElectives(ColorScheme colorScheme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -95,8 +125,10 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
             children: [
               Text(
                 widget.day.capitalizeFirst!,
-                style:
-                    const TextStyle(color: black, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: colorScheme.onPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -105,8 +137,11 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: DataTable(
+            dividerThickness: 0.5,
             border: TableBorder.all(
-                borderRadius: BorderRadius.circular(8), color: border),
+              borderRadius: BorderRadius.circular(8),
+              color: colorScheme.secondary.withOpacity(0.6),
+            ),
             columns: columns,
             rows: rows,
           ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
-import 'package:plan_sync/util/colors.dart';
 
 class FiltersBar extends StatefulWidget {
   const FiltersBar({super.key});
@@ -16,10 +15,12 @@ class _FiltersBarState extends State<FiltersBar> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
-      decoration: const ShapeDecoration(
-        shape: StadiumBorder(side: BorderSide(color: border)),
-        color: primary,
+      decoration: ShapeDecoration(
+        shape: const StadiumBorder(),
+        color: colorScheme.onBackground,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: SizedBox(
@@ -33,24 +34,28 @@ class _FiltersBarState extends State<FiltersBar> {
                 isExpanded: true,
                 elevation: 0,
                 enableFeedback: true,
-                style: const TextStyle(color: black),
-                icon: const Icon(Icons.arrow_drop_down, color: white),
+                style: TextStyle(color: colorScheme.onBackground),
+                icon: Icon(
+                  Icons.arrow_drop_down,
+                  color: colorScheme.background,
+                ),
                 value: filterController.activeSection,
-                dropdownColor: primary,
+                dropdownColor: colorScheme.onBackground,
                 disabledHint: const Text("Select Semester First"),
-                hint:
-                    // serviceController.sections == null
-                    // ? LoadingAnimationWidget.prograssiveDots(
-                    // color: white, size: 18)
-                    // :
-                    const Text(
+                hint: Text(
                   "Section",
-                  style: TextStyle(color: white, fontSize: 16),
+                  style: TextStyle(
+                    color: colorScheme.background,
+                    fontSize: 16,
+                  ),
                 ),
                 menuMaxHeight: 376,
                 items: serviceController.sections?.keys
                     .toList()
-                    .map((e) => buildMenuItem(serviceController.sections?[e]))
+                    .map((e) => buildMenuItem(
+                          serviceController.sections?[e],
+                          colorScheme.background,
+                        ))
                     .toList(),
                 onChanged: filterController.activeSemester == null
                     ? null
@@ -67,12 +72,12 @@ class _FiltersBarState extends State<FiltersBar> {
   }
 }
 
-DropdownMenuItem<String> buildMenuItem(String section) {
+DropdownMenuItem<String> buildMenuItem(String section, Color color) {
   return DropdownMenuItem(
     value: section,
     child: Text(
       section,
-      style: const TextStyle(color: white),
+      style: TextStyle(color: color),
     ),
   );
 }

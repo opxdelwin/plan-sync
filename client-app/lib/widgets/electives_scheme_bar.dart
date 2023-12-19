@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
-import 'package:plan_sync/util/colors.dart';
 
 class ElectiveSchemeBar extends StatefulWidget {
   const ElectiveSchemeBar({super.key});
@@ -16,10 +15,12 @@ class _ElectiveSchemeBarState extends State<ElectiveSchemeBar> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
-      decoration: const ShapeDecoration(
-        shape: StadiumBorder(side: BorderSide(color: border)),
-        color: primary,
+      decoration: ShapeDecoration(
+        shape: const StadiumBorder(),
+        color: colorScheme.onBackground,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: SizedBox(
@@ -33,25 +34,30 @@ class _ElectiveSchemeBarState extends State<ElectiveSchemeBar> {
                 isExpanded: true,
                 elevation: 0,
                 enableFeedback: true,
-                style: const TextStyle(color: black),
-                icon: const Icon(Icons.arrow_drop_down, color: white),
+                style: TextStyle(color: colorScheme.background),
+                icon: Icon(
+                  Icons.arrow_drop_down,
+                  color: colorScheme.background,
+                ),
                 value: filterController.activeElectiveScheme,
-                dropdownColor: primary,
-                disabledHint: const Text("Select Semester First"),
-                hint:
-                    // serviceController.sections == null
-                    // ? LoadingAnimationWidget.prograssiveDots(
-                    // color: white, size: 18)
-                    // :
-                    const Text(
+                dropdownColor: colorScheme.onBackground,
+                disabledHint: Text(
+                  "Select Semester First",
+                  style: TextStyle(
+                    color: colorScheme.background,
+                  ),
+                ),
+                hint: Text(
                   "Scheme",
-                  style: TextStyle(color: white, fontSize: 16),
+                  style: TextStyle(color: colorScheme.background, fontSize: 16),
                 ),
                 menuMaxHeight: 256,
                 items: serviceController.electiveSchemes?.keys
                     .toList()
-                    .map((e) =>
-                        buildMenuItem(serviceController.electiveSchemes?[e]))
+                    .map((e) => buildMenuItem(
+                          serviceController.electiveSchemes?[e],
+                          colorScheme.background,
+                        ))
                     .toList(),
                 onChanged: filterController.activeElectiveSemester == null
                     ? null
@@ -74,12 +80,12 @@ class _ElectiveSchemeBarState extends State<ElectiveSchemeBar> {
   }
 }
 
-DropdownMenuItem<String> buildMenuItem(String scheme) {
+DropdownMenuItem<String> buildMenuItem(String scheme, Color color) {
   return DropdownMenuItem(
     value: scheme,
     child: Text(
       scheme,
-      style: const TextStyle(color: white),
+      style: TextStyle(color: color),
     ),
   );
 }
