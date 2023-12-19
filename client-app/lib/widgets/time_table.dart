@@ -259,7 +259,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                         ],
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     InkWell(
                       onTap: () => reportError(),
                       child: Row(

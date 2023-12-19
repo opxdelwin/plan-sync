@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
+import 'package:plan_sync/util/logger.dart';
 import 'package:plan_sync/util/snackbar.dart';
 
 class GitService extends GetxController {
@@ -16,7 +17,7 @@ class GitService extends GetxController {
   RxList? _semesters;
   List? get semesters => _semesters?.toList();
   set semesters(List? newSemesters) {
-    print("setting sermestes to $newSemesters");
+    Logger.i("setting sermestes to $newSemesters");
     if (newSemesters == null) return;
     _semesters = newSemesters.obs;
     update();
@@ -77,7 +78,7 @@ class GitService extends GetxController {
       }
 
       update();
-      print("Fetched semesters: $_semesters");
+      Logger.i("Fetched semesters: $_semesters");
 
       filterController.setPrimarySemester();
 
@@ -115,7 +116,7 @@ class GitService extends GetxController {
       _sections = RxMap.from(data["$year"][activeSemester]);
       update();
       filterController.setPrimarySection();
-      print("Fetched sections: $sections");
+      Logger.i("Fetched sections: $sections");
       !isWorking.value ? null : isWorking.toggle();
     } on DioException catch (e) {
       errorDetails = {
@@ -249,7 +250,7 @@ class GitService extends GetxController {
       final response = await dio.get(url);
       final data = jsonDecode(response.data) as Map<String, dynamic>;
       electivesSemesters = RxList.from(data["$year"].keys);
-      print("Fetched elective semesters: $electivesSemesters");
+      Logger.i("Fetched elective semesters: $electivesSemesters");
 
       !isWorking.value ? null : isWorking.toggle();
       update();
@@ -284,7 +285,7 @@ class GitService extends GetxController {
       final response = await dio.get(url);
       final data = jsonDecode(response.data) as Map<String, dynamic>;
       electiveSchemes = RxMap.from(data["$year"][activeSemester]);
-      print("Fetched electives schemes: $electiveSchemes");
+      Logger.i("Fetched electives schemes: $electiveSchemes");
       !isWorking.value ? null : isWorking.toggle();
       update();
     } on DioException catch (e) {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/widgets/bottom_sheets.dart';
@@ -147,7 +146,7 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                                     color: colorScheme.onBackground,
                                   ),
                                 ),
-                                Spacer(),
+                                const Spacer(),
                                 InkWell(
                                   onTap: () => reportError(),
                                   child: Row(

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/widgets/bottom_sheets.dart';
-import 'package:plan_sync/widgets/semester_bar.dart';
-import '../widgets/filters_bar.dart';
 import '../widgets/time_table.dart';
 import '../widgets/version_check.dart';
 
@@ -20,7 +18,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     filterController.getShortCode().then(
           (code) => setState(() {
@@ -107,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const TimeTableWidget()
                 ],
               ),
-              SizedBox(height: 60)
+              const SizedBox(height: 60)
             ],
           ),
         ));
