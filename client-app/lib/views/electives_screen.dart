@@ -63,11 +63,14 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                     future: service.getElectives(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState != ConnectionState.done) {
-                        return const Column(
+                        return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SizedBox(height: 32),
-                            Center(child: CircularProgressIndicator()),
+                            const SizedBox(height: 32),
+                            Center(
+                                child: CircularProgressIndicator(
+                              color: colorScheme.secondary,
+                            )),
                           ],
                         );
                       } else if (snapshot.hasError) {
@@ -101,7 +104,7 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                               const SizedBox(height: 32),
                               Icon(
                                 Icons.info,
-                                color: colorScheme.primary,
+                                color: colorScheme.secondary,
                                 size: 40,
                               ),
                               const SizedBox(height: 16),

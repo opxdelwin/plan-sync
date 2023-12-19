@@ -16,6 +16,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
   List<DataRow> rows = [];
 
   void buildColumn(BuildContext context) {
+    columns.clear();
     widget.data["data"][widget.day].keys.forEach((timespace) {
       columns.add(DataColumn(
           label: Text(
@@ -56,9 +57,14 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     buildColumn(context);
     buildRow(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     if (widget.data["meta"]["type"] == "norm-class") {
       return _buildForTimetable(colorScheme);
