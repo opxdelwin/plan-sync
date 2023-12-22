@@ -4,14 +4,14 @@ import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/logger.dart';
 
-class FiltersBar extends StatefulWidget {
-  const FiltersBar({super.key});
+class SectionsBar extends StatefulWidget {
+  const SectionsBar({super.key});
 
   @override
-  State<FiltersBar> createState() => _FiltersBarState();
+  State<SectionsBar> createState() => _SectionsBarState();
 }
 
-class _FiltersBarState extends State<FiltersBar> {
+class _SectionsBarState extends State<SectionsBar> {
   String? selectedValue;
 
   @override
@@ -42,7 +42,13 @@ class _FiltersBarState extends State<FiltersBar> {
                 ),
                 value: filterController.activeSection,
                 dropdownColor: colorScheme.onBackground,
-                disabledHint: const Text("Select Semester First"),
+                disabledHint: Text(
+                  "Select Semester First",
+                  style: TextStyle(
+                    color: colorScheme.background,
+                    fontSize: 16,
+                  ),
+                ),
                 hint: Text(
                   "Section",
                   style: TextStyle(
@@ -61,7 +67,7 @@ class _FiltersBarState extends State<FiltersBar> {
                 onChanged: filterController.activeSemester == null
                     ? null
                     : (String? newSelection) {
-                        Logger.i(newSelection);
+                        Logger.i('new section selected: $newSelection');
                         filterController.activeSection = newSelection;
                       },
               );
