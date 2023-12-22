@@ -38,6 +38,12 @@ class _ElectiveSemesterBarState extends State<ElectiveSemesterBar> {
                   Icons.arrow_drop_down,
                   color: colorScheme.background,
                 ),
+                disabledHint: Text(
+                  "Select Semester First",
+                  style: TextStyle(
+                    color: colorScheme.background,
+                  ),
+                ),
                 value: filterController.activeElectiveSemester,
                 dropdownColor: colorScheme.onBackground,
                 menuMaxHeight: 256,
