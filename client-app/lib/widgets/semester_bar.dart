@@ -41,6 +41,13 @@ class _SemesterBarState extends State<SemesterBar> {
                 value: filterController.activeSemester,
                 dropdownColor: colorScheme.onBackground,
                 menuMaxHeight: 256,
+                disabledHint: Text(
+                  "Select Year First",
+                  style: TextStyle(
+                    color: colorScheme.background,
+                    fontSize: 16,
+                  ),
+                ),
                 hint: serviceController.semesters == null
                     ? LoadingAnimationWidget.prograssiveDots(
                         color: colorScheme.onPrimary,
@@ -49,7 +56,7 @@ class _SemesterBarState extends State<SemesterBar> {
                     : Text(
                         "Semester",
                         style: TextStyle(
-                          color: colorScheme.onPrimary,
+                          color: colorScheme.background,
                           fontSize: 16,
                         ),
                       ),
