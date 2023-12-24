@@ -53,7 +53,8 @@ class GitService extends GetxController {
     if (kReleaseMode) {
       branch = 'main';
     } else {
-      branch = 'pre-mvp';
+      // branch = 'pre-mvp';
+      branch = '2024-multiplesem-test';
     }
     return;
   }
