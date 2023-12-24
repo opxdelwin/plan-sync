@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:plan_sync/controllers/version_controller.dart';
 import 'package:plan_sync/util/constants.dart';
 import 'package:plan_sync/util/external_links.dart';
 import 'package:plan_sync/widgets/bottom_sheets.dart';
@@ -17,6 +18,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Auth auth = Get.find();
+    VersionController versionController = Get.find();
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -215,6 +217,13 @@ class SettingsPage extends StatelessWidget {
                   label: Text(
                     "Logout",
                     style: TextStyle(color: colorScheme.onError),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Plan Sync ${versionController.appVersion}",
+                  style: TextStyle(
+                    color: colorScheme.onBackground.withOpacity(0.6),
                   ),
                 ),
                 const SizedBox(height: 80),

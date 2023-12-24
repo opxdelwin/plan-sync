@@ -49,7 +49,7 @@ class _ElectiveSemesterBarState extends State<ElectiveSemesterBar> {
                 menuMaxHeight: 256,
                 hint: serviceController.electivesSemesters == null
                     ? LoadingAnimationWidget.prograssiveDots(
-                        color: colorScheme.onBackground, size: 18)
+                        color: colorScheme.background, size: 18)
                     : Text(
                         "Elective Semester",
                         style: TextStyle(
