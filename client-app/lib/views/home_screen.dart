@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
-import 'package:plan_sync/widgets/bottom_sheets.dart';
-import 'package:plan_sync/widgets/schedule_preferences_button.dart';
+import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
+import 'package:plan_sync/widgets/buttons/schedule_preferences_button.dart';
 import '../widgets/time_table.dart';
 import '../widgets/version_check.dart';
 
