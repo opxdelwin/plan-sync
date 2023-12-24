@@ -5,7 +5,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
 import 'package:plan_sync/util/constants.dart';
 import 'package:plan_sync/util/external_links.dart';
-import 'package:plan_sync/widgets/bottom_sheets.dart';
+import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
+import 'package:plan_sync/widgets/buttons/logout_button.dart';
 import '../controllers/auth.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -206,26 +207,7 @@ class SettingsPage extends StatelessWidget {
                   onTap: () => ExternalLinks.privacyPolicy(),
                 ),
                 const SizedBox(height: 32),
-                ElevatedButton.icon(
-                  style: ButtonStyle(
-                    elevation: const MaterialStatePropertyAll(0.0),
-                    backgroundColor:
-                        MaterialStatePropertyAll(colorScheme.error),
-                  ),
-                  onPressed: () => auth.logout(),
-                  icon: Icon(Icons.logout, color: colorScheme.onError),
-                  label: Text(
-                    "Logout",
-                    style: TextStyle(color: colorScheme.onError),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "Plan Sync ${versionController.appVersion}",
-                  style: TextStyle(
-                    color: colorScheme.onBackground.withOpacity(0.6),
-                  ),
-                ),
+                const LogoutButton(),
                 const SizedBox(height: 80),
               ],
             ),
