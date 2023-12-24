@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/widgets/bottom_sheets.dart';
+import 'package:plan_sync/widgets/schedule_preferences_button.dart';
 import '../widgets/time_table.dart';
 import '../widgets/version_check.dart';
 
@@ -48,37 +49,9 @@ class _HomeScreenState extends State<HomeScreen> {
               letterSpacing: 0.2,
             ),
           ),
-          actions: [
-            ElevatedButton(
-              onPressed: () => BottomSheets.changeSectionPreference(
-                context: context,
-              ),
-              style: ButtonStyle(
-                backgroundColor:
-                    MaterialStatePropertyAll(colorScheme.onBackground),
-              ),
-              child: Row(
-                children: [
-                  GetBuilder<FilterController>(builder: (filterController) {
-                    filterController.getShortCode().then(
-                          (code) => setState(() {
-                            sectionSemesterShortCode = code;
-                          }),
-                        );
-                    return Text(
-                      sectionSemesterShortCode ?? 'Processing',
-                      style: TextStyle(color: colorScheme.background),
-                    );
-                  }),
-                  const SizedBox(width: 8),
-                  Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color: colorScheme.background,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
+          actions: const [
+            SchedulePreferenceButton(),
+            SizedBox(width: 16),
           ],
         ),
         body: Padding(
