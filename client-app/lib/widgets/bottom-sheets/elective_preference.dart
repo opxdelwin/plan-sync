@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:plan_sync/controllers/filter_controller.dart';
-import 'package:plan_sync/util/snackbar.dart';
-import 'package:plan_sync/widgets/dropdowns/sections_bar.dart';
-import 'package:plan_sync/widgets/dropdowns/semester_bar.dart';
+import 'package:plan_sync/widgets/dropdowns/electives_scheme_bar.dart';
+import 'package:plan_sync/widgets/dropdowns/electives_sem_bar.dart';
+import 'package:plan_sync/widgets/dropdowns/elective_year_bar.dart';
 
-class SchedulePreferenceBottomSheet extends StatefulWidget {
-  const SchedulePreferenceBottomSheet({this.save = false, super.key});
+class ElectivePreferenceBottomSheet extends StatefulWidget {
+  const ElectivePreferenceBottomSheet({this.save = false, super.key});
 
   final bool save;
+
   @override
-  State<SchedulePreferenceBottomSheet> createState() =>
-      _SchedulePreferenceBottomSheetState();
+  State<ElectivePreferenceBottomSheet> createState() =>
+      _ElectivePreferenceBottomSheetState();
 }
 
-class _SchedulePreferenceBottomSheetState
-    extends State<SchedulePreferenceBottomSheet> {
+class _ElectivePreferenceBottomSheetState
+    extends State<ElectivePreferenceBottomSheet> {
   late bool savePreferencesOnExit;
 
   @override
@@ -27,13 +26,14 @@ class _SchedulePreferenceBottomSheetState
 
   void exitBottomSheet() {
     if (savePreferencesOnExit) {
-      FilterController controller = Get.find();
-      controller.storePrimarySemester();
-      controller.storePrimarySection();
-      CustomSnackbar.info(
-        'Primary Preferences Stored!',
-        "Your timetable will be selected by default.",
-      );
+      // FilterController controller = Get.find();
+      // controller.storePrimaryElectiveYear();
+      // controller.storePrimaryElectiveSemester();
+      // controller.storePrimaryElectiveScheme();
+      // CustomSnackbar.info(
+      //   'Primary Preferences Stored!',
+      //   "Your timetable will be selected by default.",
+      // );
     }
 
     context.pop();
@@ -83,11 +83,9 @@ class _SchedulePreferenceBottomSheetState
                 value: savePreferencesOnExit,
                 activeTrackColor: colorScheme.secondary.withOpacity(0.72),
                 inactiveTrackColor: Colors.transparent,
-                onChanged: (value) {
-                  setState(() {
-                    savePreferencesOnExit = value;
-                  });
-                },
+
+                // will be fixed by https://github.com/opxdelwin/plan-sync/issues/19
+                onChanged: null,
               ),
             ),
             const SizedBox(height: 8),
@@ -128,6 +126,22 @@ class _SchedulePreferenceBottomSheetState
               ),
             ),
 
+            // year selection
+            ListTile(
+              enableFeedback: true,
+              leading: Icon(
+                Icons.book_rounded,
+                color: colorScheme.onPrimary,
+              ),
+              title: Text(
+                'Year',
+                style: TextStyle(
+                  color: colorScheme.onPrimary,
+                ),
+              ),
+              trailing: const ElectiveYearBar(),
+            ),
+
             // semester selection
             ListTile(
               enableFeedback: true,
@@ -141,7 +155,7 @@ class _SchedulePreferenceBottomSheetState
                   color: colorScheme.onPrimary,
                 ),
               ),
-              trailing: const SemesterBar(),
+              trailing: const ElectiveSemesterBar(),
             ),
 
             // section selection
@@ -152,12 +166,12 @@ class _SchedulePreferenceBottomSheetState
                 color: colorScheme.onPrimary,
               ),
               title: Text(
-                'Section',
+                'Scheme',
                 style: TextStyle(
                   color: colorScheme.onPrimary,
                 ),
               ),
-              trailing: const SectionsBar(),
+              trailing: const ElectiveSchemeBar(),
             ),
             const SizedBox(height: 32),
 

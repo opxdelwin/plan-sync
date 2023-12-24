@@ -27,7 +27,7 @@ class FilterController extends GetxController {
     String? code = service.sections?.keys
         .firstWhereOrNull((key) => service.sections![key] == newSectionCode);
     code != null ? _activeSectionCode = code.obs : _activeSectionCode = null;
-    print('new section code: $code');
+    Logger.i('new section code: $code');
     update();
   }
 
