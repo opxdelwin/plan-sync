@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:plan_sync/util/constants.dart';
 import 'package:plan_sync/util/external_links.dart';
+import 'package:plan_sync/util/snackbar.dart';
 import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
 import 'package:plan_sync/widgets/buttons/logout_button.dart';
 import '../controllers/auth.dart';
@@ -13,6 +15,23 @@ class SettingsPage extends StatelessWidget {
 
   void setPrimarySections(BuildContext context) {
     BottomSheets.changeSectionPreference(context: context, save: true);
+  }
+
+  void copyUID() async {
+    Auth auth = Get.find();
+    final uid = auth.activeUser?.uid;
+
+    if (uid == null) {
+      CustomSnackbar.error('Error', 'No UID found. Please Login again.');
+      return;
+    }
+
+    await Clipboard.setData(ClipboardData(text: uid));
+    CustomSnackbar.info(
+      'Copied',
+      'Your UID has been copied into the clipboard.',
+    );
+    return;
   }
 
   @override
@@ -66,6 +85,27 @@ class SettingsPage extends StatelessWidget {
                   style: TextStyle(
                     color: colorScheme.onBackground.withOpacity(0.6),
                   ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Copy Unique ID',
+                      style: TextStyle(
+                        color: colorScheme.onBackground.withOpacity(0.6),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    InkWell(
+                      onTap: copyUID,
+                      enableFeedback: true,
+                      child: Icon(
+                        Icons.copy,
+                        size: 16,
+                        color: colorScheme.onBackground,
+                      ),
+                    )
+                  ],
                 ),
                 const SizedBox(height: 24),
                 ListTile(
