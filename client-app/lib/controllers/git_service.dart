@@ -373,7 +373,9 @@ class GitService extends GetxController {
 
       final response = await dio.get(url);
       final data = jsonDecode(response.data) as Map<String, dynamic>;
-      electiveSchemes = RxMap.from(data["$selectedYear"][activeSemester]);
+      electiveSchemes = RxMap.from(
+        data["$selectedElectiveYear"][activeSemester],
+      );
 
       // if no schemes are available, show snackbar
       if (electiveSchemes == null) {
