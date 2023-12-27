@@ -44,7 +44,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // callfn();
     return GetMaterialApp.router(
       theme: AppThemeController.lightTheme,
       darkTheme: AppThemeController.darkTheme,
