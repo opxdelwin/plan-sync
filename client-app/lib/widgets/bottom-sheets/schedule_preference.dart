@@ -191,6 +191,18 @@ class _SchedulePreferenceBottomSheetState
                     EdgeInsets.symmetric(horizontal: size.width * 0.08),
                   ),
                 ),
+
+              // save and exit button
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStatePropertyAll(colorScheme.secondary),
+                  foregroundColor:
+                      MaterialStatePropertyAll(colorScheme.onSecondary),
+                  padding: MaterialStatePropertyAll(
+                    EdgeInsets.symmetric(horizontal: size.width * 0.08),
+                  ),
+                ),
                 onPressed: exitBottomSheet,
                 child: Text(
                   'Done',
