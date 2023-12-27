@@ -44,157 +44,161 @@ class _ElectivePreferenceBottomSheetState
     final colorScheme = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
 
-    return Padding(
-      padding: EdgeInsets.only(
-        left: size.width * 0.04,
-        right: size.width * 0.04,
-      ),
-      child: SizedBox(
-        width: double.infinity,
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: size.width * 0.04,
+          right: size.width * 0.04,
+        ),
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            children: [
+              const SizedBox(height: 16),
 
-            // top drag handle
-            Container(
-              height: 8,
-              width: size.width * 0.24,
-              decoration: ShapeDecoration(
-                color: colorScheme.onBackground,
-                shape: const StadiumBorder(),
+              // top drag handle
+              Container(
+                height: 8,
+                width: size.width * 0.24,
+                decoration: ShapeDecoration(
+                  color: colorScheme.onBackground,
+                  shape: const StadiumBorder(),
+                ),
               ),
-            ),
-            const SizedBox(height: 32),
+              const SizedBox(height: 32),
 
-            // preference switch
-            ListTile(
-              enableFeedback: true,
-              leading: Icon(
-                Icons.downloading_rounded,
-                color: colorScheme.onPrimary,
-              ),
-              title: Text(
-                "Save Preferences",
-                style: TextStyle(
+              // preference switch
+              ListTile(
+                enableFeedback: true,
+                leading: Icon(
+                  Icons.downloading_rounded,
                   color: colorScheme.onPrimary,
                 ),
-              ),
-              trailing: Switch.adaptive(
-                value: savePreferencesOnExit,
-                activeTrackColor: colorScheme.secondary.withOpacity(0.72),
-                inactiveTrackColor: Colors.transparent,
+                title: Text(
+                  "Save Preferences",
+                  style: TextStyle(
+                    color: colorScheme.onPrimary,
+                  ),
+                ),
+                trailing: Switch.adaptive(
+                  value: savePreferencesOnExit,
+                  activeTrackColor: colorScheme.secondary.withOpacity(0.72),
+                  inactiveTrackColor: Colors.transparent,
 
-                // will be fixed by https://github.com/opxdelwin/plan-sync/issues/19
-                onChanged: null,
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            // preference description
-            Padding(
-              padding: EdgeInsets.only(
-                left: size.width * 0.04,
-                right: size.width * 0.04,
-              ),
-              child: Text(
-                'We will store these, so that  next time you open Plan Sync, your classes are selected automatically!',
-                style: TextStyle(
-                  color: colorScheme.onPrimary.withOpacity(0.6),
+                  // will be fixed by https://github.com/opxdelwin/plan-sync/issues/19
+                  onChanged: null,
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
+              const SizedBox(height: 8),
 
-            // Program selection
-            ListTile(
-              enableFeedback: true,
-              leading: Icon(
-                Icons.book_rounded,
-                color: colorScheme.onPrimary,
+              // preference description
+              Padding(
+                padding: EdgeInsets.only(
+                  left: size.width * 0.04,
+                  right: size.width * 0.04,
+                ),
+                child: Text(
+                  'We will store these, so that  next time you open Plan Sync, your classes are selected automatically!',
+                  style: TextStyle(
+                    color: colorScheme.onPrimary.withOpacity(0.6),
+                  ),
+                ),
               ),
-              title: Text(
-                'Program',
-                style: TextStyle(
+              const SizedBox(height: 24),
+
+              // Program selection
+              ListTile(
+                enableFeedback: true,
+                leading: Icon(
+                  Icons.book_rounded,
                   color: colorScheme.onPrimary,
                 ),
+                title: Text(
+                  'Program',
+                  style: TextStyle(
+                    color: colorScheme.onPrimary,
+                  ),
+                ),
+                trailing: Text(
+                  'BTech.',
+                  style: TextStyle(
+                    color: colorScheme.onPrimary,
+                  ),
+                ),
               ),
-              trailing: Text(
-                'BTech.',
-                style: TextStyle(
+
+              // year selection
+              ListTile(
+                enableFeedback: true,
+                leading: Icon(
+                  Icons.book_rounded,
                   color: colorScheme.onPrimary,
                 ),
+                title: Text(
+                  'Year',
+                  style: TextStyle(
+                    color: colorScheme.onPrimary,
+                  ),
+                ),
+                trailing: const ElectiveYearBar(),
               ),
-            ),
 
-            // year selection
-            ListTile(
-              enableFeedback: true,
-              leading: Icon(
-                Icons.book_rounded,
-                color: colorScheme.onPrimary,
-              ),
-              title: Text(
-                'Year',
-                style: TextStyle(
+              // semester selection
+              ListTile(
+                enableFeedback: true,
+                leading: Icon(
+                  Icons.book_rounded,
                   color: colorScheme.onPrimary,
                 ),
+                title: Text(
+                  'Semester',
+                  style: TextStyle(
+                    color: colorScheme.onPrimary,
+                  ),
+                ),
+                trailing: const ElectiveSemesterBar(),
               ),
-              trailing: const ElectiveYearBar(),
-            ),
 
-            // semester selection
-            ListTile(
-              enableFeedback: true,
-              leading: Icon(
-                Icons.book_rounded,
-                color: colorScheme.onPrimary,
-              ),
-              title: Text(
-                'Semester',
-                style: TextStyle(
+              // section selection
+              ListTile(
+                enableFeedback: true,
+                leading: Icon(
+                  Icons.book_rounded,
                   color: colorScheme.onPrimary,
                 ),
+                title: Text(
+                  'Scheme',
+                  style: TextStyle(
+                    color: colorScheme.onPrimary,
+                  ),
+                ),
+                trailing: const ElectiveSchemeBar(),
               ),
-              trailing: const ElectiveSemesterBar(),
-            ),
+              const SizedBox(height: 32),
 
-            // section selection
-            ListTile(
-              enableFeedback: true,
-              leading: Icon(
-                Icons.book_rounded,
-                color: colorScheme.onPrimary,
-              ),
-              title: Text(
-                'Scheme',
-                style: TextStyle(
-                  color: colorScheme.onPrimary,
+              // save and exit button
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStatePropertyAll(colorScheme.secondary),
+                  foregroundColor:
+                      MaterialStatePropertyAll(colorScheme.onSecondary),
+                  padding: MaterialStatePropertyAll(
+                    EdgeInsets.symmetric(horizontal: size.width * 0.08),
+                  ),
+                ),
+                onPressed: exitBottomSheet,
+                child: Text(
+                  'Done',
+                  style: TextStyle(
+                    color: colorScheme.background,
+                  ),
                 ),
               ),
-              trailing: const ElectiveSchemeBar(),
-            ),
-            const SizedBox(height: 32),
-
-            // save and exit button
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor:
-                    MaterialStatePropertyAll(colorScheme.secondary),
-                foregroundColor:
-                    MaterialStatePropertyAll(colorScheme.onSecondary),
-                padding: MaterialStatePropertyAll(
-                  EdgeInsets.symmetric(horizontal: size.width * 0.08),
-                ),
-              ),
-              onPressed: exitBottomSheet,
-              child: Text(
-                'Done',
-                style: TextStyle(
-                  color: colorScheme.background,
-                ),
-              ),
-            )
-          ],
+              const SizedBox(height: 16)
+            ],
+          ),
         ),
       ),
     );
