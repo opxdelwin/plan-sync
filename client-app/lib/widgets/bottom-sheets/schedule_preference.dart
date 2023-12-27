@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/util/snackbar.dart';
-import 'package:plan_sync/widgets/dropdowns/filters_bar.dart';
+import 'package:plan_sync/widgets/dropdowns/sections_bar.dart';
 import 'package:plan_sync/widgets/dropdowns/semester_bar.dart';
 import 'package:plan_sync/widgets/dropdowns/year_bar.dart';
 
@@ -178,13 +178,19 @@ class _SchedulePreferenceBottomSheetState
                 ),
                 trailing: const SectionsBar(),
               ),
-<<<<<<< Updated upstream
-              trailing: const FiltersBar(),
-            ),
-            const SizedBox(height: 32),
-=======
               const SizedBox(height: 32),
->>>>>>> Stashed changes
+
+              // save and exit button
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStatePropertyAll(colorScheme.secondary),
+                  foregroundColor:
+                      MaterialStatePropertyAll(colorScheme.onSecondary),
+                  padding: MaterialStatePropertyAll(
+                    EdgeInsets.symmetric(horizontal: size.width * 0.08),
+                  ),
+                ),
 
               // save and exit button
               ElevatedButton(

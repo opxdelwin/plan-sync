@@ -3,12 +3,18 @@ import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/logger.dart';
 import 'package:plan_sync/util/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:collection/collection.dart';
 
 class FilterController extends GetxController {
   RxString? _activeSection;
   String? get activeSection => _activeSection?.value;
   set activeSection(String? newSection) {
-    if (newSection == null || _activeSection?.value == newSection) {
+    if (_activeSection?.value == newSection) {
+      return;
+    }
+    if (newSection == null) {
+      activeSectionCode = null;
+      _activeSection = null;
       return;
     }
     _activeSection = newSection.obs;
@@ -19,19 +25,21 @@ class FilterController extends GetxController {
   RxString? _activeSectionCode;
   String? get activeSectionCode => _activeSectionCode?.value;
   set activeSectionCode(String? newSectionCode) {
-    String code = service.sections?.keys
-        .firstWhere((key) => service.sections![key] == newSectionCode);
-    _activeSectionCode = code.obs;
-    activeSection = service.sections?[code];
-
+    String? code = service.sections?.keys
+        .firstWhereOrNull((key) => service.sections![key] == newSectionCode);
+    code != null ? _activeSectionCode = code.obs : _activeSectionCode = null;
+    Logger.i('new section code: $code');
     update();
   }
 
   String? _activeSemester;
   String? get activeSemester => _activeSemester;
   set activeSemester(String? newValue) {
-    if (newValue == null) return;
+    if (activeSemester == newValue) {
+      return;
+    }
     _activeSemester = newValue;
+    activeSectionCode = null;
     service.getSections();
     update();
   }
@@ -41,6 +49,7 @@ class FilterController extends GetxController {
   set activeElectiveSemester(String? newValue) {
     if (newValue == null) return;
     _activeElectiveSemester = newValue.obs;
+    service.getElectiveSchemes();
     update();
   }
 
@@ -108,13 +117,14 @@ class FilterController extends GetxController {
 
   /// sets the section code while runtime
   Future<void> setPrimarySection() async {
+    activeSection = null;
     final String? primarySection = preferences.getString('primary-section');
     Logger.i("primary section: $primarySection");
 
     if (primarySection != null &&
         service.sections!.containsKey(primarySection) &&
         service.sections != null) {
-      activeSectionCode = service.sections![primarySection];
+      activeSection = service.sections![primarySection];
     }
   }
 
@@ -140,9 +150,47 @@ class FilterController extends GetxController {
 
   /// sets the semester code while runtime
   Future<void> setPrimarySemester() async {
-    final String? primarySection = preferences.getString('primary-semester');
-    Logger.i("primary semester: $primarySection");
+    // activeSemester = null;
+    final String? primarySemester = preferences.getString('primary-semester');
+    Logger.i("primary semester: $primarySemester");
 
-    activeSemester = primarySemester;
+    if (service.semesters?.contains(primarySemester) != false &&
+        primarySemester != null) {
+      activeSemester = primarySemester;
+    }
+  }
+
+  /// returns primary semester from shared-preferences
+  String? get primaryYear {
+    return preferences.getString('primary-year');
+  }
+
+  /// saves the semester code into shared-preferences
+  Future<void> storePrimaryYear() async {
+    if (service.selectedYear == null) {
+      CustomSnackbar.error(
+        'Not Selected',
+        'Please select a year to be saved as default',
+      );
+      Logger.i("select a year to be set as primary.");
+      return;
+    }
+    await preferences.setString(
+      'primary-year',
+      service.selectedYear!.toString(),
+    );
+    Logger.i("set ${service.selectedYear!} as primary year");
+    update();
+  }
+
+  /// sets the semester code while runtime
+  Future<void> setPrimaryYear() async {
+    // activeSemester = null;
+    final String? primaryYear = preferences.getString('primary-year');
+    Logger.i("primary year: $primaryYear");
+
+    if (service.years?.contains(primaryYear) != false && primaryYear != null) {
+      service.selectedYear = int.parse(primaryYear);
+    }
   }
 }

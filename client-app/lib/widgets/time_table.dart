@@ -180,7 +180,8 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                 )),
               ],
             );
-          } else if (snapshot.hasError) {
+          } else if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasError) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,

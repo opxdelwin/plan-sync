@@ -4,8 +4,6 @@ import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
-import 'package:plan_sync/widgets/dropdowns/electives_scheme_bar.dart';
-import 'package:plan_sync/widgets/dropdowns/electives_sem_bar.dart';
 import 'package:plan_sync/widgets/time_table_for_day.dart';
 
 class ElectiveScreen extends StatefulWidget {
@@ -16,6 +14,9 @@ class ElectiveScreen extends StatefulWidget {
 }
 
 class _ElectiveScreenState extends State<ElectiveScreen> {
+  FilterController filterController = Get.find();
+  String? sectionSemesterShortCode;
+
   void reportError() {
     BottomSheets.reportError(context: context);
   }
@@ -27,7 +28,6 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        centerTitle: true,
         backgroundColor: colorScheme.background,
         elevation: 0.0,
         toolbarHeight: 80,
@@ -43,24 +43,38 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
             letterSpacing: 0.2,
           ),
         ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => BottomSheets.changeElectiveSchemePreference(
+              context: context,
+            ),
+            style: ButtonStyle(
+              backgroundColor:
+                  MaterialStatePropertyAll(colorScheme.onBackground),
+            ),
+            child: Row(
+              children: [
+                Text(
+                  'Select',
+                  style: TextStyle(color: colorScheme.background),
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: colorScheme.background,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
+        ],
       ),
       body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const SizedBox(height: 32),
-                const SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      ElectiveSemesterBar(),
-                      SizedBox(width: 16),
-                      ElectiveSchemeBar(),
-                    ],
-                  ),
-                ),
+                const SizedBox(height: 24),
                 GetBuilder<FilterController>(builder: (filterController) {
                   GitService service = Get.find();
                   return FutureBuilder(

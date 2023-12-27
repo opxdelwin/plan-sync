@@ -45,6 +45,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp.router(
+      debugShowCheckedModeBanner: kDebugMode ? true : false,
       theme: AppThemeController.lightTheme,
       darkTheme: AppThemeController.darkTheme,
       routerDelegate: _router.routerDelegate,
