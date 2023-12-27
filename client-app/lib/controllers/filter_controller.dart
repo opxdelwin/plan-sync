@@ -13,6 +13,7 @@ class FilterController extends GetxController {
       return;
     }
     if (newSection == null) {
+      activeSectionCode = null;
       _activeSection = null;
       return;
     }
@@ -38,6 +39,7 @@ class FilterController extends GetxController {
       return;
     }
     _activeSemester = newValue;
+    activeSectionCode = null;
     service.getSections();
     update();
   }
