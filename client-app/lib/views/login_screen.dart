@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               //background doodle
               Opacity(
-                opacity: Get.isDarkMode ? 1 : 0.16,
+                opacity: Get.isDarkMode ? 1.0 : 0.24,
                 child: SvgPicture.asset(
                   Get.isDarkMode
                       ? 'assets/login/background-dark.svg'
@@ -131,9 +131,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         enableFeedback: true,
                         onTap: () => ExternalLinks.cardlink(),
                         child: SizedBox(
-                            height: 48,
-                            child:
-                                Image.asset('assets/logo-no-background.png')),
+                          height: 48,
+                          child: Image.asset(
+                            'assets/logo-no-background.png',
+                            semanticLabel: 'Cardlink',
+                          ),
+                        ),
                       )
                     ],
                   ),
