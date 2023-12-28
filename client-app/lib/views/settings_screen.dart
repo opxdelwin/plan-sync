@@ -109,8 +109,9 @@ class SettingsPage extends StatelessWidget {
                       enableFeedback: true,
                       child: Icon(
                         Icons.copy,
-                        size: 16,
+                        size: 18,
                         color: colorScheme.onBackground,
+                        semanticLabel: 'Copy',
                       ),
                     )
                   ],
