@@ -31,6 +31,7 @@ class _SchedulePreferenceBottomSheetState
       FilterController controller = Get.find();
       controller.storePrimarySemester();
       controller.storePrimarySection();
+      controller.storePrimaryYear();
       CustomSnackbar.info(
         'Primary Preferences Stored!',
         "Your timetable will be selected by default.",
