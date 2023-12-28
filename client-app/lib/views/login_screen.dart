@@ -145,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding:
                         EdgeInsets.symmetric(horizontal: size.width * 0.16),
                     child: Text(
-                      "By continuing you agree Plan Sync’s Terms of Service and Privacy Policy.",
+                      "By continuing you agree Plan Sync's Terms of Service and Privacy Policy.",
                       style: TextStyle(
                         fontWeight: FontWeight.w300,
                         color: Theme.of(context)
