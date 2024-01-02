@@ -66,7 +66,7 @@ class _ElectiveSemesterBarState extends State<ElectiveSemesterBar> {
                 onChanged: (String? newSelection) {
                   Logger.i("new elective semester: $newSelection");
                   filterController.activeElectiveSemester = newSelection;
-                  serviceController.getElectiveSchemes();
+                  // serviceController.getElectiveSchemes();
                 },
               );
             });
