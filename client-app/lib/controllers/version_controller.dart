@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:plan_sync/util/logger.dart';
 
@@ -26,6 +27,7 @@ class VersionController extends GetxController {
     super.onReady();
     packageInfo = await PackageInfo.fromPlatform();
     versionCheck();
+    triggerPlayUpdate();
   }
 
   versionCheck() {
@@ -48,6 +50,17 @@ class VersionController extends GetxController {
     } catch (e) {
       isError = true;
       throw Exception("DioException, $e");
+    }
+  }
+
+  Future<void> triggerPlayUpdate() async {
+    final AppUpdateInfo result = await InAppUpdate.checkForUpdate();
+    print(result);
+    if (result.flexibleUpdateAllowed) {
+      await InAppUpdate.startFlexibleUpdate();
+      print('flex update started');
+      await InAppUpdate.completeFlexibleUpdate();
+      print('flex update installed');
     }
   }
 }
