@@ -98,7 +98,7 @@ class SettingsPage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Copy Unique ID',
+                      'Copy UID',
                       style: TextStyle(
                         color: colorScheme.onBackground.withOpacity(0.6),
                       ),
