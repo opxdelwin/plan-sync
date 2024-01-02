@@ -62,9 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 16),
                   const VersionCheckWidget(),
-                  const SizedBox(height: 40),
                   Text(
                     "Time Sheet",
                     style: TextStyle(

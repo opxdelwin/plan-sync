@@ -47,8 +47,10 @@ class FilterController extends GetxController {
   RxString? _activeElectiveSemester;
   String? get activeElectiveSemester => _activeElectiveSemester?.value;
   set activeElectiveSemester(String? newValue) {
-    if (newValue == null) return;
-    _activeElectiveSemester = newValue.obs;
+    // if (newValue == null) return;
+    _activeElectiveSemester = newValue?.obs;
+    _activeElectiveScheme = null;
+    _activeElectiveSchemeCode = null;
     service.getElectiveSchemes();
     update();
   }

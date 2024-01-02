@@ -222,6 +222,35 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                 ],
               ),
             );
+          } else if (snapshot.data?['meta']['isTimetableUpdating'] ?? false) {
+            return Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 32),
+                  Icon(
+                    Icons.settings_outlined,
+                    color: colorScheme.secondary,
+                    size: 40,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    "We're working on this timetable,",
+                    style: TextStyle(
+                      color: colorScheme.onPrimary,
+                    ),
+                  ),
+                  Text(
+                    "Check back in soon!",
+                    style: TextStyle(
+                      color: colorScheme.onPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            );
           } else {
             final days = [
               "monday",

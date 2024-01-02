@@ -19,12 +19,14 @@ class GitService extends GetxController {
       return;
     }
     _selectedYear = newYear.obs;
+    filterController.activeSemester = null;
     update();
     getSemesters();
   }
 
   // elective year
   List<String>? electiveYears;
+
   RxInt? _selectedElectiveYear;
   int? get selectedElectiveYear => _selectedElectiveYear?.value;
   set selectedElectiveYear(int? newYear) {
@@ -32,9 +34,10 @@ class GitService extends GetxController {
       return;
     }
     _selectedElectiveYear = newYear.obs;
+    filterController.activeElectiveSemester = null;
     update();
     getElectiveSemesters();
-    getElectiveSchemes();
+    // getElectiveSchemes();
   }
 
   RxMap? _sections;
@@ -49,7 +52,19 @@ class GitService extends GetxController {
     update();
   }
 
-  RxList? electivesSemesters;
+  RxList? _electivesSemesters;
+  List? get electivesSemesters => _electivesSemesters?.toList();
+  set electivesSemesters(List? newElectivesSemesters) {
+    if (newElectivesSemesters == null || newElectivesSemesters.isEmpty) {
+      _electivesSemesters = null;
+      update();
+      return;
+    }
+    _electivesSemesters = newElectivesSemesters.obs;
+    update();
+    return;
+  }
+
   RxMap? electiveSchemes;
 
   RxBool isWorking = false.obs;
@@ -72,12 +87,10 @@ class GitService extends GetxController {
   /// and pre-mvp for debug/development.
   void setRepositoryBranch() {
     if (kReleaseMode) {
-      //TODO: revert to main for production release
-      // branch = 'main';
-      branch = '2024-multiplesem-test';
+      branch = 'main';
     } else {
-      // branch = 'pre-mvp';
-      branch = '2024-multiplesem-test';
+      // branch = 'main';
+      branch = 'dev';
     }
     return;
   }
@@ -375,6 +388,13 @@ class GitService extends GetxController {
 
       final response = await dio.get(url);
       final data = jsonDecode(response.data) as Map<String, dynamic>;
+
+      if (data["$selectedElectiveYear"][activeSemester] == null) {
+        electiveSchemes = null;
+        filterController.activeElectiveScheme = null;
+        return;
+      }
+
       electiveSchemes = RxMap.from(
         data["$selectedElectiveYear"][activeSemester],
       );
@@ -383,8 +403,9 @@ class GitService extends GetxController {
       if (electiveSchemes == null) {
         CustomSnackbar.error(
           "Error",
-          "No schemes available for the selected year.",
+          "No schemes available for the selected semester.",
         );
+        return;
       }
 
       Logger.i("Fetched electives schemes: $electiveSchemes");
@@ -413,12 +434,13 @@ class GitService extends GetxController {
   Future<Map<String, dynamic>?> getElectives() async {
     isWorking.value ? null : isWorking.toggle();
 
-    if (filterController.activeElectiveSchemeCode == null) {
+    if (filterController.activeElectiveSchemeCode == null ||
+        filterController.activeElectiveSemester == null) {
       return null;
     }
 
     final url =
-        "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$selectedYear/SEM1/electives-scheme-${filterController.activeElectiveSchemeCode}.json";
+        "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$selectedElectiveYear/${filterController.activeElectiveSemester}/electives-scheme-${filterController.activeElectiveSchemeCode}.json";
     try {
       final response = await dio.get(url,
           options: Options(

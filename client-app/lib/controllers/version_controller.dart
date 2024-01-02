@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:plan_sync/util/external_links.dart';
 import 'package:plan_sync/util/logger.dart';
 
 class VersionController extends GetxController {
@@ -11,6 +13,14 @@ class VersionController extends GetxController {
   set appVersion(String? newVersion) {
     if (newVersion == null) return;
     _appVersion = newVersion.obs;
+    update();
+  }
+
+  RxString? _appBuild;
+  String? get appBuild => _appBuild?.value;
+  set appBuild(String? newVersion) {
+    if (newVersion == null) return;
+    _appBuild = newVersion.obs;
     update();
   }
 
@@ -25,29 +35,39 @@ class VersionController extends GetxController {
   void onReady() async {
     super.onReady();
     packageInfo = await PackageInfo.fromPlatform();
-    versionCheck();
+    printCurrentVersion();
+    triggerPlayUpdate();
   }
 
-  versionCheck() {
+  printCurrentVersion() {
     Logger.i("App version: v${packageInfo.version}");
     appVersion = "v${packageInfo.version}";
+    appBuild = packageInfo.buildNumber;
   }
 
-  Future<bool> isUpdateAvailable() async {
+  void openStore() => ExternalLinks.store();
+
+  Future<bool> checkForUpdate() async {
     isError = false;
     try {
-      final response = await Dio().get(
-          "https://api.github.com/repos/opxdelwin/plan-sync/releases/latest",
-          options: Options(
-            headers: {
-              "accept": "application/vnd.github+json",
-              'X-GitHub-Api-Version': '2022-11-28'
-            },
-          ));
-      return appVersion == response.data["tag_name"];
+      final AppUpdateInfo result = await InAppUpdate.checkForUpdate();
+      return result.updateAvailability == UpdateAvailability.updateAvailable;
     } catch (e) {
       isError = true;
       throw Exception("DioException, $e");
     }
+  }
+
+  Future<void> triggerPlayUpdate() async {
+    final updateAvail = await InAppUpdate.checkForUpdate();
+
+    if (updateAvail.flexibleUpdateAllowed) {
+      Logger.i('starting flex upadte');
+      await InAppUpdate.startFlexibleUpdate();
+      Logger.i('flex update package downloaded');
+      await InAppUpdate.completeFlexibleUpdate();
+      Logger.i('flex update package installed');
+    }
+    return;
   }
 }
