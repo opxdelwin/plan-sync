@@ -8,6 +8,11 @@ class ExternalLinks {
     _launchUrl("https://cardlink.co.in");
   }
 
+  ExternalLinks.store() {
+    _launchUrl(
+        "https://play.google.com/store/apps/details?id=in.co.cardlink.plansync");
+  }
+
   ExternalLinks.updateApp() {
     _launchUrl('https://github.com/opxdelwin/plan-sync/releases/latest');
   }
@@ -94,7 +99,9 @@ Best regards,
   }
 
   ExternalLinks.shareApp() {
-    Share.shareUri(Uri.parse("https://github.com/opxdelwin/plan-sync"));
+    Share.shareUri(Uri.parse(
+      'https://play.google.com/store/apps/details?id=in.co.cardlink.plansync',
+    ));
   }
 
   Future<void> _launchUrl(String url) async {
