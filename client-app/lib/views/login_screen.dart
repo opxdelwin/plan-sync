@@ -94,14 +94,17 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: colorScheme.onSecondary,
                             ),
                             label: isWorking
-                                ? Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 32.0,
-                                    ),
-                                    child:
-                                        LoadingAnimationWidget.prograssiveDots(
-                                      color: colorScheme.onSecondary,
-                                      size: 24,
+                                ? Semantics(
+                                    value: 'Loading',
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 32.0,
+                                      ),
+                                      child: LoadingAnimationWidget
+                                          .prograssiveDots(
+                                        color: colorScheme.onSecondary,
+                                        size: 24,
+                                      ),
                                     ),
                                   )
                                 : Text(
