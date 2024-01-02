@@ -16,6 +16,14 @@ class VersionController extends GetxController {
     update();
   }
 
+  RxString? _appBuild;
+  String? get appBuild => _appBuild?.value;
+  set appBuild(String? newVersion) {
+    if (newVersion == null) return;
+    _appBuild = newVersion.obs;
+    update();
+  }
+
   RxBool _isError = false.obs;
   bool get isError => _isError.value;
   set isError(bool newValue) {
@@ -34,6 +42,7 @@ class VersionController extends GetxController {
   printCurrentVersion() {
     Logger.i("App version: v${packageInfo.version}");
     appVersion = "v${packageInfo.version}";
+    appBuild = packageInfo.buildNumber;
   }
 
   void openStore() => ExternalLinks.store();

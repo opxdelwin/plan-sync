@@ -92,7 +92,7 @@ class SettingsPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Plan Sync ${versionController.appVersion} | ',
+                      'Plan Sync ${versionController.appVersion}+${versionController.appBuild} | ',
                       style: TextStyle(
                         color: colorScheme.onBackground.withOpacity(0.6),
                       ),
