@@ -3,6 +3,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:plan_sync/controllers/analytics_controller.dart';
+import 'package:plan_sync/util/logger.dart';
 
 import '../util/colors.dart';
 
@@ -11,7 +12,7 @@ class Auth extends GetxController {
   User? get activeUser => _auth.currentUser;
 
   Future<void> loginWithGoogle() async {
-    print("login using google");
+    Logger.i("login using google");
     // Trigger the authentication flow
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -54,7 +55,7 @@ class Auth extends GetxController {
   }
 
   Future<void> logout() async {
-    print("logout sequence");
+    Logger.i("logout sequence");
     await _auth.signOut();
     await GoogleSignIn().signOut();
     await FirebaseCrashlytics.instance.setUserIdentifier("");

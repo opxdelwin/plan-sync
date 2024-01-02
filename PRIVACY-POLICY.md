@@ -39,7 +39,7 @@ Welcome to [Plan Sync] ("the App"). Your privacy is important to us, and we are 
 
 ## Your Choices
 
-- You may have the right to access, correct, or delete your personal information. Contact us at [delwinmathew2004@gmail.com](mailto:delwinmathew2004@gmail.com) for assistance.
+- You may have the right to access, correct, or delete your personal information. Contact us at [connect.plansync@gmail.com](mailto:connect.plansync@gmail.com) for assistance.
 - You can opt-out of receiving promotional emails by following the instructions in the email.
 
 ## Changes to This Privacy Policy
@@ -48,4 +48,4 @@ Welcome to [Plan Sync] ("the App"). Your privacy is important to us, and we are 
 
 ## Contact Us
 
-If you have any questions or concerns about this Privacy Policy, please contact us at [delwinmathew2004@gmail.com](mailto:delwinmathew2004@gmail.com).
+If you have any questions or concerns about this Privacy Policy, please contact us at [connect.plansync@gmail.com](mailto:connect.plansync@gmail.com).

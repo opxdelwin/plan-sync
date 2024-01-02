@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:plan_sync/util/colors.dart';
 import 'package:plan_sync/util/external_links.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
 import '../controllers/auth.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,85 +16,152 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   Auth auth = Get.find();
   bool isWorking = false;
+
+  Future<void> loginProcedure() async {
+    setState(() {
+      isWorking = true;
+    });
+    await auth.loginWithGoogle();
+    if (!mounted) return;
+    setState(() {
+      isWorking = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final size = MediaQuery.of(context).size;
     return Scaffold(
-        backgroundColor: white,
+        backgroundColor: colorScheme.background,
         body: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          child: Stack(
             children: [
-              const Spacer(flex: 3),
-              const Column(
-                children: [
-                  Text(
-                    "Plan Sync - KIIT",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        letterSpacing: 0.2),
-                  ),
-                  SizedBox(height: 16),
-                  Text("Sync Your College Life with Ease,"),
-                  Text("Advanced, straight to point.")
-                ],
+              //background doodle
+              Opacity(
+                opacity: Get.isDarkMode ? 1.0 : 0.24,
+                child: SvgPicture.asset(
+                  Get.isDarkMode
+                      ? 'assets/login/background-dark.svg'
+                      : 'assets/login/background-light.svg',
+                  fit: BoxFit.cover,
+                ),
               ),
-              const Spacer(flex: 4),
+
+              // main screen
               Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  ElevatedButton.icon(
-                    style: const ButtonStyle(
-                        padding: MaterialStatePropertyAll(
-                          EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                  const Spacer(flex: 7),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Text(
+                        "Synchronize,\nCollaborate,\nElevate.",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 32,
+                          letterSpacing: 0.2,
+                          color: colorScheme.onBackground,
                         ),
-                        enableFeedback: true,
-                        side:
-                            MaterialStatePropertyAll(BorderSide(color: border)),
-                        backgroundColor: MaterialStatePropertyAll(primary)),
-                    onPressed: () async {
-                      setState(() {
-                        isWorking = true;
-                      });
-                      await auth.loginWithGoogle();
-                      if (!mounted) return;
-                      setState(() {
-                        isWorking = false;
-                      });
-                    },
-                    icon: const Icon(FontAwesomeIcons.google, color: white),
-                    label: isWorking
-                        ? Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 32.0),
-                            child: LoadingAnimationWidget.prograssiveDots(
-                                color: white, size: 24),
-                          )
-                        : const Text(
-                            "Continue with Google",
-                            style: TextStyle(color: white),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            style: ButtonStyle(
+                              elevation: const MaterialStatePropertyAll(0),
+                              padding: const MaterialStatePropertyAll(
+                                EdgeInsets.symmetric(
+                                  vertical: 16,
+                                  horizontal: 24,
+                                ),
+                              ),
+                              enableFeedback: true,
+                              backgroundColor: MaterialStatePropertyAll(
+                                  colorScheme.secondary),
+                            ),
+                            onPressed: loginProcedure,
+                            icon: Icon(
+                              FontAwesomeIcons.google,
+                              color: colorScheme.onSecondary,
+                            ),
+                            label: isWorking
+                                ? Semantics(
+                                    value: 'Loading',
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 32.0,
+                                      ),
+                                      child: LoadingAnimationWidget
+                                          .prograssiveDots(
+                                        color: colorScheme.onSecondary,
+                                        size: 24,
+                                      ),
+                                    ),
+                                  )
+                                : Text(
+                                    "Continue with Google",
+                                    style: TextStyle(
+                                      color: colorScheme.onSecondary,
+                                    ),
+                                  ),
                           ),
+                        ),
+                      ],
+                    ),
                   ),
+                  const Spacer(flex: 2),
+                  Column(
+                    children: [
+                      Text(
+                        "Associate Tech Partner",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: colorScheme.onBackground,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      InkWell(
+                        enableFeedback: true,
+                        onTap: () => ExternalLinks.cardlink(),
+                        child: SizedBox(
+                          height: 48,
+                          child: Image.asset(
+                            'assets/logo-no-background.png',
+                            semanticLabel: 'Cardlink',
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  const Spacer(),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: size.width * 0.16),
+                    child: Text(
+                      "By continuing you agree Plan Sync's Terms of Service and Privacy Policy.",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w300,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onBackground
+                            .withOpacity(0.6),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                 ],
               ),
-              const Spacer(flex: 2),
-              Column(
-                children: [
-                  const Text(
-                    "Associate Tech Partner",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const SizedBox(height: 16),
-                  InkWell(
-                    enableFeedback: true,
-                    onTap: () => ExternalLinks.cardlink(),
-                    child: SizedBox(
-                        height: 48,
-                        child: Image.asset('assets/logo-no-background.png')),
-                  )
-                ],
-              ),
-              const Spacer(),
             ],
           ),
         ));

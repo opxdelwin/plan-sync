@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:plan_sync/controllers/auth.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
+import 'package:plan_sync/util/logger.dart';
 
 class AnalyticsController extends GetxController {
   late FirebaseAnalytics _analytics;
@@ -14,7 +15,7 @@ class AnalyticsController extends GetxController {
     super.onReady();
     filters = Get.find();
     auth = Get.find();
-    print("Analytics controller ready");
+    Logger.i("Analytics controller ready");
     _analytics = FirebaseAnalytics.instance;
     await setUserData();
     Future.delayed(const Duration(seconds: 2), () => logOpenApp());
@@ -30,7 +31,7 @@ class AnalyticsController extends GetxController {
       name: "userp_primary_semester",
       value: filters.primarySemester ?? "null",
     );
-    print("user property reported in analytics.");
+    Logger.i("user property reported in analytics.");
   }
 
   void logOpenApp() async {
@@ -46,10 +47,10 @@ class AnalyticsController extends GetxController {
         name: 'app_opened',
         parameters: parameters,
       );
-      print("Logged Analytics");
-      print(parameters);
+      Logger.i("Logged Analytics");
+      Logger.i(parameters);
     } catch (e) {
-      print("Failed logging analytics. \n ${e.toString()}");
+      Logger.i("Failed logging analytics. \n ${e.toString()}");
     }
   }
 }
