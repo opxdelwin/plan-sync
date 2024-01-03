@@ -23,14 +23,14 @@ Copy and modify this template for your contribution
 <details>
   <summary>Normal Class Template</summary>
 
-```
+```json
 {
     "meta": {
       "section": "b17",  //replace with your section here
       "type": "norm-class",  // default value, need not to change
       "revision": "Revision 1.0",  // default value, need not to change
       "effective-date": "Aug 31, 2023",
-      "contributor": "Legendary Contributor",  //replace with your name here
+      "contributor": "PlanSync Wizard",  //replace with your name here
       "isTimetableUpdating": false,  // default value, need not to change
       
       // add day-wise classroom here
@@ -92,14 +92,14 @@ Copy and modify this template for your contribution
 <details>
   <summary>Electives Template</summary>
 
-```
+```json
 {
   "meta": {
     "type": "electives",
     "revision": "Revision 1.0",
     "effective-date": "Aug 31, 2023",
     "name": "Electives Configuration for B14 - B23",
-          "contributor": "Legendary Contributor",  //replace with your name here
+    "contributor": "PlanSync Wizard",  //replace with your name here
     "isTimetableUpdating": false
   },
   "data": {
@@ -139,7 +139,6 @@ Copy and modify this template for your contribution
   }
 }
 ```
-  
 </details>
 
 ## Guidelines for submission
