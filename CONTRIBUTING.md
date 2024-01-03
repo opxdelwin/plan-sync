@@ -21,16 +21,17 @@ We appreciate your interest in contributing to Plan Sync and helping to make it 
 ## JSON Template
 Copy and modify this template for your contribution
 <details>
-  <summary>Template</summary>
+  <summary>Normal Class Template</summary>
 
 ```
 {
     "meta": {
       "section": "b17",  //replace with your section here
       "type": "norm-class",  // default value, need not to change
-      "revision": "Revision 1.0", // default value, need not to change
+      "revision": "Revision 1.0",  // default value, need not to change
       "effective-date": "Aug 31, 2023",
-      "contributor": "Legendary Contributor", //replace with your name here
+      "contributor": "Legendary Contributor",  //replace with your name here
+      "isTimetableUpdating": false,  // default value, need not to change
       
       // add day-wise classroom here
       "room": {
@@ -84,6 +85,59 @@ Copy and modify this template for your contribution
       }
     }
   }
+```
+  
+</details>
+
+<details>
+  <summary>Electives Template</summary>
+
+```
+{
+  "meta": {
+    "type": "electives",
+    "revision": "Revision 1.0",
+    "effective-date": "Aug 31, 2023",
+    "name": "Electives Configuration for B14 - B23",
+          "contributor": "Legendary Contributor",  //replace with your name here
+    "isTimetableUpdating": false
+  },
+  "data": {
+    "monday": {
+      "***": "***"
+    },
+    "tuesday": {
+      "CIE6": "Room 304",
+      "CIE7": "Room 305",
+      "CIE8": "Room 301",
+      "CIE9": "Room 306",
+      "CIE10": "Room 307",
+      "SST3": "Room 401",
+      "SOE5": "Room 302",
+      "SOE6": "Room 402",
+      "SOE7": "Room 404",
+      "SOE8": "Room 303"
+    },
+    "wednesday": {
+      "***": "***"
+    },
+    "thursday": {
+      "CIE6": "Room 404",
+      "CIE7": "Room 302",
+      "CIE8": "Room 306",
+      "CIE9": "Room 303",
+      "CIE10": "Room 304",
+      "SST3": "Room 307",
+      "SOE5": "Room 401",
+      "SOE6": "Room 305",
+      "SOE7": "Room 402",
+      "SOE8": "Room 403"
+    },
+    "friday": {
+      "***": "***"
+    }
+  }
+}
 ```
   
 </details>
