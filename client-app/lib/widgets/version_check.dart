@@ -41,7 +41,7 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
               color: colorScheme.primary,
             ),
             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-            margin: const EdgeInsets.only(top: 16, bottom: 40),
+            margin: const EdgeInsets.only(top: 16, bottom: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
