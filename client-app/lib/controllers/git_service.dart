@@ -1,12 +1,44 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
+import 'package:plan_sync/util/logger.dart';
+import 'package:plan_sync/util/snackbar.dart';
 
 class GitService extends GetxController {
-  final branch = "pre-mvp";
-  final year = 2023;
+  late String branch;
   final dio = Dio(BaseOptions(connectTimeout: const Duration(seconds: 15)));
+
+  // normal schedule years
+  List<String>? years;
+  RxInt? _selectedYear;
+  int? get selectedYear => _selectedYear?.value;
+  set selectedYear(int? newYear) {
+    if (newYear == null || selectedYear == newYear) {
+      return;
+    }
+    _selectedYear = newYear.obs;
+    filterController.activeSemester = null;
+    update();
+    getSemesters();
+  }
+
+  // elective year
+  List<String>? electiveYears;
+
+  RxInt? _selectedElectiveYear;
+  int? get selectedElectiveYear => _selectedElectiveYear?.value;
+  set selectedElectiveYear(int? newYear) {
+    if (newYear == null || selectedElectiveYear == newYear) {
+      return;
+    }
+    _selectedElectiveYear = newYear.obs;
+    filterController.activeElectiveSemester = null;
+    update();
+    getElectiveSemesters();
+    // getElectiveSchemes();
+  }
 
   RxMap? _sections;
   RxMap? get sections => _sections;
@@ -14,18 +46,25 @@ class GitService extends GetxController {
   RxList? _semesters;
   List? get semesters => _semesters?.toList();
   set semesters(List? newSemesters) {
-    print("setting sermestes to $newSemesters");
+    Logger.i("setting sermestes to $newSemesters");
     if (newSemesters == null) return;
     _semesters = newSemesters.obs;
     update();
   }
 
-  Map? latestTimeTable;
-  RxBool isError = false.obs;
-  RxBool isElectivesError = false.obs;
+  RxList? _electivesSemesters;
+  List? get electivesSemesters => _electivesSemesters?.toList();
+  set electivesSemesters(List? newElectivesSemesters) {
+    if (newElectivesSemesters == null || newElectivesSemesters.isEmpty) {
+      _electivesSemesters = null;
+      update();
+      return;
+    }
+    _electivesSemesters = newElectivesSemesters.obs;
+    update();
+    return;
+  }
 
-  RxMap? latestElectives;
-  RxList? electivesSemesters;
   RxMap? electiveSchemes;
 
   RxBool isWorking = false.obs;
@@ -34,26 +73,106 @@ class GitService extends GetxController {
   Map? errorDetails;
 
   @override
-  void onInit() async {
-    super.onInit();
+  void onReady() async {
+    super.onReady();
     filterController = Get.find();
+    setRepositoryBranch();
+    await getYears();
     await getSemesters();
     await getElectiveSemesters();
+    await getElectiveYears();
   }
 
-  // by deault year is 2023
-  Future<void> getSemesters() async {
+  /// From v1.0.0, app will use main branch for release client app,
+  /// and pre-mvp for debug/development.
+  void setRepositoryBranch() {
+    if (kReleaseMode) {
+      branch = 'main';
+    } else {
+      // branch = 'main';
+      branch = 'dev';
+    }
+    return;
+  }
+
+  ///
+  Future<void> getYears() async {
     try {
-      isError.value ? isError.toggle() : null;
       isWorking.value ? null : isWorking.toggle();
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/sections.json";
 
       final response = await dio.get(url);
       final data = jsonDecode(response.data) as Map<String, dynamic>;
-      semesters = RxList.from(data["$year"].keys);
+
+      years = List.from(data.keys);
+
+      // stop execution if there are no semesters for selected year
+      if (years!.isEmpty) {
+        CustomSnackbar.error('Error', 'No Years found, contact support.');
+        return;
+      }
+      Logger.i("Fetched years: $years");
+      setYear();
+      !isWorking.value ? null : isWorking.toggle();
+    } on DioException catch (e) {
+      errorDetails = {
+        "error": "DioException",
+        "data": e.message,
+        "code": e.response?.statusCode,
+      };
+
+      Logger.i(errorDetails);
+
+      !isWorking.value ? null : isWorking.toggle();
+      return;
+    } catch (e) {
+      errorDetails = {"error": "CatchException"};
+      Logger.i(e.toString());
+      !isWorking.value ? null : isWorking.toggle();
+      return;
+    }
+  }
+
+  /// Dynamically sets current year.
+  void setYear() {
+    // final int currentYear = DateTime.now().year;
+    // if (years?.contains(currentYear.toString()) != false) {
+    //   selectedYear = currentYear;
+    // }
+    filterController.setPrimaryYear();
+    return;
+  }
+
+  /// Gets all the available semesters for a selected year.
+  /// While startup, year is same as current year, if available on remote server.
+  /// May be changed later.
+  Future<void> getSemesters() async {
+    try {
+      if (selectedYear == null) {
+        return;
+      }
+
+      isWorking.value ? null : isWorking.toggle();
+      final url =
+          "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/sections.json";
+
+      final response = await dio.get(url);
+      final data = jsonDecode(response.data) as Map<String, dynamic>;
+
+      semesters = RxList.from(data["$selectedYear"]?.keys);
+
+      // stop execution if there are no semesters for selected year
+      if (semesters!.isEmpty) {
+        CustomSnackbar.error(
+          'Error',
+          'No Semesters found for year: $selectedYear',
+        );
+        return;
+      }
+
       update();
-      print("Fetched semesters: $_semesters");
+      Logger.i("Fetched semesters: $_semesters");
 
       filterController.setPrimarySemester();
 
@@ -64,25 +183,30 @@ class GitService extends GetxController {
         "data": e.message,
         "code": e.response?.statusCode,
       };
-      isError = true.obs;
-      update();
+
       !isWorking.value ? null : isWorking.toggle();
       return;
     } catch (e) {
       errorDetails = {"error": "CatchException"};
-      isError = true.obs;
-      update();
+
       !isWorking.value ? null : isWorking.toggle();
       return;
     }
   }
 
+  /// Gets all the available sections for a selected semester.
   Future<void> getSections() async {
-    isError.value ? isError.toggle() : null;
     try {
       isWorking.value ? null : isWorking.toggle();
 
       FilterController filterController = Get.find();
+      if (filterController.activeSemester == null ||
+          selectedYear == null ||
+          semesters == null) {
+        _sections?.clear();
+        update();
+        return;
+      }
       String activeSemester = filterController.activeSemester!;
 
       final url =
@@ -90,10 +214,10 @@ class GitService extends GetxController {
 
       final response = await dio.get(url);
       final data = jsonDecode(response.data) as Map<String, dynamic>;
-      _sections = RxMap.from(data["$year"][activeSemester]);
+      _sections = RxMap.from(data["$selectedYear"][activeSemester]);
       update();
       filterController.setPrimarySection();
-      print("Fetched semesters: $sections");
+      Logger.i("Fetched sections: $sections");
       !isWorking.value ? null : isWorking.toggle();
     } on DioException catch (e) {
       errorDetails = {
@@ -101,32 +225,30 @@ class GitService extends GetxController {
         "data": e.message,
         "code": e.response?.statusCode,
       };
-      isError = true.obs;
-      update();
+
       !isWorking.value ? null : isWorking.toggle();
-      throw Exception(e.toString());
+      throw Future.error(errorDetails.toString());
     } catch (e) {
       errorDetails = {"error": "CatchException"};
-      isError = true.obs;
-      update();
+      Logger.i(e.toString());
       !isWorking.value ? null : isWorking.toggle();
-      throw Exception(e.toString());
+      throw Future.error(errorDetails.toString());
     }
   }
 
-  Future<void> getTimeTable() async {
-    isError.value ? isError.toggle() : null;
+  /// Gets concurrent timetable for unique semester and section.
+  Future<Map<String, dynamic>?> getTimeTable() async {
     FilterController filterController = Get.find();
     final section = filterController.activeSectionCode;
     final semester = filterController.activeSemester;
 
-    if (section == null) {
-      return;
+    if (section == null || semester == null || selectedYear == null) {
+      return null;
     }
 
     isWorking.value ? null : isWorking.toggle();
     final url =
-        "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$year/$semester/$section.json";
+        "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$selectedYear/$semester/$section.json";
     try {
       final response = await dio.get(url,
           options: Options(
@@ -139,37 +261,186 @@ class GitService extends GetxController {
       if (response.statusCode != 200) {
         throw DioException(requestOptions: response.requestOptions);
       }
-      latestTimeTable = jsonDecode(response.data);
-      isError = false.obs;
 
-      update();
       !isWorking.value ? null : isWorking.toggle();
-      return;
+      return jsonDecode(response.data) as Map<String, dynamic>;
+    } on DioException catch (e) {
+      errorDetails = {
+        'error': 'DioException',
+        'type': e.type.toString(),
+        'code': e.response?.statusCode.toString(),
+        'message':
+            'We couldn\'t fetch requested timetable. Please try again later.',
+      };
+
+      !isWorking.value ? null : isWorking.toggle();
+      Logger.i(e.toString());
+      return Future.error(Exception(errorDetails));
+    } catch (e) {
+      errorDetails = {
+        "type": "CatchException",
+        "message": "Some unknown error occoured.",
+      };
+
+      !isWorking.value ? null : isWorking.toggle();
+      return Future.error(Exception(errorDetails));
+    }
+  }
+
+  ///
+  Future<void> getElectiveYears() async {
+    try {
+      electivesSemesters = null;
+      electivesSemesters = null;
+      isWorking.value ? null : isWorking.toggle();
+      final url =
+          "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/electives.json";
+
+      final response = await dio.get(url);
+      final data = jsonDecode(response.data) as Map<String, dynamic>;
+
+      electiveYears = List.from(data.keys);
+
+      // stop execution if there are no semesters for selected year
+      if (electiveYears!.isEmpty) {
+        CustomSnackbar.error('Error', 'No Years found, contact support.');
+        return;
+      }
+      Logger.i("Fetched electives years: $electiveYears");
+
+      getElectiveSemesters();
+      !isWorking.value ? null : isWorking.toggle();
     } on DioException catch (e) {
       errorDetails = {
         "error": "DioException",
         "data": e.message,
         "code": e.response?.statusCode,
       };
-      isError = true.obs;
+
+      Logger.i(errorDetails);
       update();
       !isWorking.value ? null : isWorking.toggle();
+      return;
+    } catch (e) {
+      errorDetails = {"error": "CatchException"};
+      Logger.i(e.toString());
+      !isWorking.value ? null : isWorking.toggle();
+      return;
+    }
+  }
+
+  /// Gets available semesters for elective.
+  Future<void> getElectiveSemesters() async {
+    try {
+      if (selectedElectiveYear == null) {
+        return;
+      }
+      isWorking.value ? null : isWorking.toggle();
+
+      final url =
+          "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/electives.json";
+
+      final response = await dio.get(url);
+      final data = jsonDecode(response.data) as Map<String, dynamic>;
+      electivesSemesters = RxList.from(data["$selectedElectiveYear"].keys);
+      Logger.i("Fetched elective semesters: $electivesSemesters");
+
+      // if no semesters are available, show snackbar
+      if (electivesSemesters!.isEmpty) {
+        CustomSnackbar.error(
+          "Error",
+          "No semesters are available for the selected year.",
+        );
+      }
+
+      !isWorking.value ? null : isWorking.toggle();
+      update();
+    } on DioException catch (e) {
+      errorDetails = {
+        "error": "DioException",
+        "data": e.message,
+        "code": e.response?.statusCode,
+      };
+      !isWorking.value ? null : isWorking.toggle();
+      return;
+    } catch (e) {
+      errorDetails = {"error": "CatchException"};
+
+      !isWorking.value ? null : isWorking.toggle();
+
+      return;
+    }
+  }
+
+  /// Gets available schemes (usually A or B) for elective.
+  Future<void> getElectiveSchemes() async {
+    try {
+      isWorking.value ? null : isWorking.toggle();
+      update();
+      FilterController filterController = Get.find();
+      if (filterController.activeElectiveSemester == null) {
+        return;
+      }
+
+      String activeSemester = filterController.activeElectiveSemester!;
+      final url =
+          "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/electives.json";
+
+      final response = await dio.get(url);
+      final data = jsonDecode(response.data) as Map<String, dynamic>;
+
+      if (data["$selectedElectiveYear"][activeSemester] == null) {
+        electiveSchemes = null;
+        filterController.activeElectiveScheme = null;
+        return;
+      }
+
+      electiveSchemes = RxMap.from(
+        data["$selectedElectiveYear"][activeSemester],
+      );
+
+      // if no schemes are available, show snackbar
+      if (electiveSchemes == null) {
+        CustomSnackbar.error(
+          "Error",
+          "No schemes available for the selected semester.",
+        );
+        return;
+      }
+
+      Logger.i("Fetched electives schemes: $electiveSchemes");
+      !isWorking.value ? null : isWorking.toggle();
+      update();
+    } on DioException catch (e) {
+      errorDetails = {
+        "error": "DioException",
+        "data": e.message,
+        "code": e.response?.statusCode,
+      };
+
+      !isWorking.value ? null : isWorking.toggle();
+      update();
       throw Exception(e.toString());
     } catch (e) {
       errorDetails = {"error": "CatchException"};
-      isError = true.obs;
-      update();
+
       !isWorking.value ? null : isWorking.toggle();
+
       throw Exception(e.toString());
     }
   }
 
-  Future<void> getElectives() async {
-    isElectivesError.value ? isElectivesError.toggle() : null;
+  /// Gets concurrent elective timetable for unique semester and section.
+  Future<Map<String, dynamic>?> getElectives() async {
     isWorking.value ? null : isWorking.toggle();
-    update();
+
+    if (filterController.activeElectiveSchemeCode == null ||
+        filterController.activeElectiveSemester == null) {
+      return null;
+    }
+
     final url =
-        "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$year/SEM1/electives-scheme-${filterController.activeElectiveSchemeCode}.json";
+        "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$selectedElectiveYear/${filterController.activeElectiveSemester}/electives-scheme-${filterController.activeElectiveSchemeCode}.json";
     try {
       final response = await dio.get(url,
           options: Options(
@@ -183,102 +454,33 @@ class GitService extends GetxController {
         throw DioException(requestOptions: response.requestOptions);
       }
       if (response.data == "") {
-        latestElectives = null;
-        update();
-        return;
+        return null;
       }
-      latestElectives = RxMap.from(jsonDecode(response.data));
-      isElectivesError = false.obs;
 
       !isWorking.value ? null : isWorking.toggle();
-      update();
-      return;
+
+      return jsonDecode(response.data);
     } on DioException catch (e) {
       errorDetails = {
-        "error": "DioException",
-        "data": e.message,
-        "code": e.response?.statusCode,
+        'error': 'DioException',
+        'type': e.type.toString(),
+        'code': e.response?.statusCode.toString(),
+        'message':
+            'We couldn\'t fetch requested timetable. Please try again later.',
       };
-      isElectivesError = true.obs;
+
       !isWorking.value ? null : isWorking.toggle();
-      update();
-      throw Exception(e.toString());
+
+      return Future.error(Exception(errorDetails));
     } catch (e) {
-      errorDetails = {"error": "CatchException"};
-      isElectivesError = true.obs;
-      !isWorking.value ? null : isWorking.toggle();
-      update();
-      throw Exception(e.toString());
-    }
-  }
-
-  Future<void> getElectiveSemesters() async {
-    try {
-      isElectivesError.value ? isElectivesError.toggle() : null;
-      isWorking.value ? null : isWorking.toggle();
-      update();
-      final url =
-          "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/electives.json";
-
-      final response = await dio.get(url);
-      final data = jsonDecode(response.data) as Map<String, dynamic>;
-      electivesSemesters = RxList.from(data["$year"].keys);
-      print("Fetched elective semesters: $electivesSemesters");
-
-      !isWorking.value ? null : isWorking.toggle();
-      update();
-    } on DioException catch (e) {
       errorDetails = {
-        "error": "DioException",
-        "data": e.message,
-        "code": e.response?.statusCode,
+        "type": "CatchException",
+        "message": "Some unknown error occoured.",
       };
-      isElectivesError = true.obs;
-      !isWorking.value ? null : isWorking.toggle();
-      update();
-      return;
-    } catch (e) {
-      errorDetails = {"error": "CatchException"};
-      isElectivesError = true.obs;
-      !isWorking.value ? null : isWorking.toggle();
-      update();
-      return;
-    }
-  }
 
-  Future<void> getElectiveSchemes() async {
-    isElectivesError.value ? isElectivesError.toggle() : null;
-    try {
-      isWorking.value ? null : isWorking.toggle();
-      update();
-      FilterController filterController = Get.find();
-      String activeSemester = filterController.activeElectiveSemester!;
+      !isWorking.value ? null : isWorking.toggle();
 
-      final url =
-          "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/electives.json";
-
-      final response = await dio.get(url);
-      final data = jsonDecode(response.data) as Map<String, dynamic>;
-      electiveSchemes = RxMap.from(data["$year"][activeSemester]);
-      print("Fetched electives schemes: $electiveSchemes");
-      !isWorking.value ? null : isWorking.toggle();
-      update();
-    } on DioException catch (e) {
-      errorDetails = {
-        "error": "DioException",
-        "data": e.message,
-        "code": e.response?.statusCode,
-      };
-      isElectivesError = true.obs;
-      !isWorking.value ? null : isWorking.toggle();
-      update();
-      throw Exception(e.toString());
-    } catch (e) {
-      errorDetails = {"error": "CatchException"};
-      isElectivesError = true.obs;
-      !isWorking.value ? null : isWorking.toggle();
-      update();
-      throw Exception(e.toString());
+      return Future.error(Exception(errorDetails));
     }
   }
 }

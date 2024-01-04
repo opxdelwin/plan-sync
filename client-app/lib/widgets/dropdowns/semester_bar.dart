@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
-import 'package:plan_sync/util/colors.dart';
+import 'package:plan_sync/util/logger.dart';
 
 class SemesterBar extends StatefulWidget {
   const SemesterBar({super.key});
@@ -15,10 +15,12 @@ class SemesterBar extends StatefulWidget {
 class _SemesterBarState extends State<SemesterBar> {
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
-      decoration: const ShapeDecoration(
-        shape: StadiumBorder(side: BorderSide(color: border)),
-        color: primary,
+      decoration: ShapeDecoration(
+        shape: const StadiumBorder(),
+        color: colorScheme.onPrimary,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: SizedBox(
@@ -31,23 +33,38 @@ class _SemesterBarState extends State<SemesterBar> {
                 isExpanded: true,
                 elevation: 0,
                 enableFeedback: true,
-                style: const TextStyle(color: black),
-                icon: const Icon(Icons.arrow_drop_down, color: white),
+                style: TextStyle(color: colorScheme.onBackground),
+                icon: Icon(
+                  Icons.arrow_drop_down,
+                  color: colorScheme.background,
+                ),
                 value: filterController.activeSemester,
-                dropdownColor: primary,
+                dropdownColor: colorScheme.onBackground,
                 menuMaxHeight: 256,
+                disabledHint: Text(
+                  "Select Year First",
+                  style: TextStyle(
+                    color: colorScheme.background,
+                    fontSize: 16,
+                  ),
+                ),
                 hint: serviceController.semesters == null
                     ? LoadingAnimationWidget.prograssiveDots(
-                        color: white, size: 18)
-                    : const Text(
+                        color: colorScheme.onPrimary,
+                        size: 18,
+                      )
+                    : Text(
                         "Semester",
-                        style: TextStyle(color: white, fontSize: 16),
+                        style: TextStyle(
+                          color: colorScheme.background,
+                          fontSize: 16,
+                        ),
                       ),
                 items: serviceController.semesters
-                    ?.map((e) => _buildMenuItem(e))
+                    ?.map((e) => _buildMenuItem(e, colorScheme.background))
                     .toList(),
                 onChanged: (String? newSelection) {
-                  print("new semester: $newSelection");
+                  Logger.i("new semester: $newSelection");
                   filterController.activeSemester = newSelection;
                 },
               );
@@ -59,12 +76,12 @@ class _SemesterBarState extends State<SemesterBar> {
   }
 }
 
-DropdownMenuItem<String> _buildMenuItem(String semester) {
+DropdownMenuItem<String> _buildMenuItem(String semester, Color color) {
   return DropdownMenuItem(
     value: semester,
     child: Text(
       semester,
-      style: const TextStyle(color: white),
+      style: TextStyle(color: color),
     ),
   );
 }

@@ -1,5 +1,5 @@
 name: plan_sync
-description: A new Flutter project.
+description: Simplifying college life with an intuitive app for managing class timetables. Never miss a class, effortlessly organize schedules.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 0.1.23+1
+version: 1.0.0+5
 
 environment:
   sdk: ">=3.0.6 <4.0.0"
@@ -34,7 +34,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  go_router: ^12.1.1
+  go_router: ^13.0.0
   loading_animation_widget: ^1.2.0+4
   custom_navigation_bar: ^0.8.2
   font_awesome_flutter: ^10.5.0
@@ -47,12 +47,16 @@ dependencies:
   cached_network_image: ^3.2.3
   shared_preferences: ^2.2.1
   url_launcher: ^6.1.14
-  package_info_plus: ^4.1.0
+  package_info_plus: ^5.0.1
   share_plus: ^7.1.0
   icons_launcher: ^2.1.3
   firebase_crashlytics: ^3.3.5
   flutter_native_splash: ^2.3.2
   firebase_analytics: ^10.4.5
+  collection: ^1.18.0
+  flutter_svg: ^2.0.9
+  rename: ^3.0.1
+  in_app_update: ^4.2.2
 
 icons_launcher:
   image_path: "assets/favicon.png"
@@ -97,6 +101,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+    - assets/login/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
