@@ -1,1 +1,0 @@
- C:\\code\\plan-sync\\client-app\\.dart_tool\\flutter_build\\3c04b20e676b9500946bd02d9c4fa462\\native_assets.yaml: 
