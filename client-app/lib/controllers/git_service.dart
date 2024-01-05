@@ -5,10 +5,15 @@ import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/util/logger.dart';
 import 'package:plan_sync/util/snackbar.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
+import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
+import 'package:path_provider/path_provider.dart';
 
 class GitService extends GetxController {
   late String branch;
-  final dio = Dio(BaseOptions(connectTimeout: const Duration(seconds: 15)));
+
+  late final CacheOptions cacheOptions;
+  late final Dio dio;
 
   // normal schedule years
   List<String>? years;
@@ -77,10 +82,40 @@ class GitService extends GetxController {
     super.onReady();
     filterController = Get.find();
     setRepositoryBranch();
+    await startCachingService();
     await getYears();
     await getSemesters();
     await getElectiveSemesters();
     await getElectiveYears();
+  }
+
+  /// Adds an interceptor to global dio instance, which is used to
+  /// cache responses from requested API's.
+  ///
+  /// Implemented to enable offline functionality, to fetch schedules
+  /// once it's cached in temp storage.
+  Future<void> startCachingService() async {
+    final dir = await getApplicationCacheDirectory();
+
+    cacheOptions = CacheOptions(
+      store: HiveCacheStore(
+        dir.path,
+        hiveBoxName: 'plan_sync',
+      ),
+      policy: CachePolicy.forceCache,
+      hitCacheOnErrorExcept: [401, 403],
+      maxStale: const Duration(days: 7),
+      priority: CachePriority.high,
+      keyBuilder: CacheOptions.defaultCacheKeyBuilder,
+      allowPostMethod: false,
+    );
+
+    dio = Dio(
+        // BaseOptions(connectTimeout: const Duration(seconds: 15)),
+        );
+    dio.interceptors.add(DioCacheInterceptor(options: cacheOptions));
+
+    return;
   }
 
   /// From v1.0.0, app will use main branch for release client app,
@@ -258,8 +293,9 @@ class GitService extends GetxController {
             },
             contentType: "application/json",
           ));
-      if (response.statusCode != 200) {
-        throw DioException(requestOptions: response.requestOptions);
+
+      if (response.statusCode! >= 400) {
+        return Future.error(response);
       }
 
       !isWorking.value ? null : isWorking.toggle();
@@ -272,6 +308,10 @@ class GitService extends GetxController {
         'message':
             'We couldn\'t fetch requested timetable. Please try again later.',
       };
+
+      if (e.type == DioExceptionType.connectionError) {
+        errorDetails?['message'] = 'Please check your network connection.';
+      }
 
       !isWorking.value ? null : isWorking.toggle();
       Logger.i(e.toString());
@@ -450,8 +490,8 @@ class GitService extends GetxController {
             },
             contentType: "application/json",
           ));
-      if (response.statusCode != 200) {
-        throw DioException(requestOptions: response.requestOptions);
+      if (response.statusCode! >= 400) {
+        return Future.error(response);
       }
       if (response.data == "") {
         return null;
