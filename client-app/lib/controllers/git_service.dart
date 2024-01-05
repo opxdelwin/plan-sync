@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -102,7 +103,7 @@ class GitService extends GetxController {
         dir.path,
         hiveBoxName: 'plan_sync',
       ),
-      policy: CachePolicy.forceCache,
+      policy: CachePolicy.refreshForceCache,
       hitCacheOnErrorExcept: [401, 403],
       maxStale: const Duration(days: 7),
       priority: CachePriority.high,
@@ -111,8 +112,12 @@ class GitService extends GetxController {
     );
 
     dio = Dio(
-        // BaseOptions(connectTimeout: const Duration(seconds: 15)),
-        );
+      BaseOptions(
+        connectTimeout: const Duration(seconds: 15),
+        headers: {'Cache-Control': 'no-cache'},
+        contentType: "application/json",
+      ),
+    );
     dio.interceptors.add(DioCacheInterceptor(options: cacheOptions));
 
     return;
@@ -285,14 +290,7 @@ class GitService extends GetxController {
     final url =
         "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$selectedYear/$semester/$section.json";
     try {
-      final response = await dio.get(url,
-          options: Options(
-            headers: {
-              "accept": "application/vnd.github+json",
-              'X-GitHub-Api-Version': '2022-11-28'
-            },
-            contentType: "application/json",
-          ));
+      final response = await dio.get(url);
 
       if (response.statusCode! >= 400) {
         return Future.error(response);
@@ -482,14 +480,8 @@ class GitService extends GetxController {
     final url =
         "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$selectedElectiveYear/${filterController.activeElectiveSemester}/electives-scheme-${filterController.activeElectiveSchemeCode}.json";
     try {
-      final response = await dio.get(url,
-          options: Options(
-            headers: {
-              "accept": "application/vnd.github+json",
-              'X-GitHub-Api-Version': '2022-11-28'
-            },
-            contentType: "application/json",
-          ));
+      final response = await dio.get(url);
+
       if (response.statusCode! >= 400) {
         return Future.error(response);
       }
