@@ -60,12 +60,19 @@ class VersionController extends GetxController {
   Future<void> triggerPlayUpdate() async {
     final updateAvail = await InAppUpdate.checkForUpdate();
 
-    if (updateAvail.flexibleUpdateAllowed) {
-      Logger.i('starting flex upadte');
-      await InAppUpdate.startFlexibleUpdate();
-      Logger.i('flex update package downloaded');
-      await InAppUpdate.completeFlexibleUpdate();
+    if (updateAvail.immediateUpdateAllowed) {
+      Logger.i('starting immediate upadte');
+      await InAppUpdate.performImmediateUpdate();
       Logger.i('flex update package installed');
+    } else if (updateAvail.flexibleUpdateAllowed) {
+      Logger.i('starting flex upadte');
+      AppUpdateResult appUpdateResult = await InAppUpdate.startFlexibleUpdate();
+      Logger.i('flex update package downloaded');
+
+      if (appUpdateResult == AppUpdateResult.success) {
+        await InAppUpdate.completeFlexibleUpdate();
+        Logger.i('flex update package installed');
+      }
     }
     return;
   }
