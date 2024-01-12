@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:plan_sync/controllers/app_tour_controller.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/widgets/buttons/schedule_preferences_button.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import '../widgets/time_table.dart';
 import '../widgets/version_check.dart';
 
@@ -14,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   FilterController filterController = Get.find();
+  AppTourController appTourController = Get.find();
   String? sectionSemesterShortCode;
 
   @override
@@ -24,6 +27,11 @@ class _HomeScreenState extends State<HomeScreen> {
             sectionSemesterShortCode = code;
           }),
         );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        appTourController.startAppTour(context);
+      });
+    });
   }
 
   @override
@@ -48,9 +56,11 @@ class _HomeScreenState extends State<HomeScreen> {
               letterSpacing: 0.2,
             ),
           ),
-          actions: const [
-            SchedulePreferenceButton(),
-            SizedBox(width: 16),
+          actions: [
+            SchedulePreferenceButton(
+              key: appTourController.schedulePreferencesButtonKey,
+            ),
+            const SizedBox(width: 16),
           ],
         ),
         body: Padding(
