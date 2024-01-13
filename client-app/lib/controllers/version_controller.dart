@@ -53,20 +53,39 @@ class VersionController extends GetxController {
       return result.updateAvailability == UpdateAvailability.updateAvailable;
     } catch (e) {
       isError = true;
-      throw Exception("DioException, $e");
+      throw Exception("VersionController.checkForUpdate Exception, $e");
     }
   }
 
   Future<void> triggerPlayUpdate() async {
     final updateAvail = await InAppUpdate.checkForUpdate();
 
-    if (updateAvail.flexibleUpdateAllowed) {
-      Logger.i('starting flex upadte');
-      await InAppUpdate.startFlexibleUpdate();
-      Logger.i('flex update package downloaded');
-      await InAppUpdate.completeFlexibleUpdate();
+    if (updateAvail.immediateUpdateAllowed &&
+        immediateUpdateCondition(updateAvail)) {
+      Logger.i('starting immediate upadte');
+      await InAppUpdate.performImmediateUpdate();
       Logger.i('flex update package installed');
+    } else if (updateAvail.flexibleUpdateAllowed) {
+      Logger.i('starting flex upadte');
+      AppUpdateResult appUpdateResult = await InAppUpdate.startFlexibleUpdate();
+      Logger.i('flex update package downloaded');
+
+      if (appUpdateResult == AppUpdateResult.success) {
+        await InAppUpdate.completeFlexibleUpdate();
+        Logger.i('flex update package installed');
+      }
     }
     return;
+  }
+
+  // wanted to use updateAvail.updatePriority but it's API has been
+  // stale for over 4 years. using updateAvail.availableVersionCode
+  // and performing immediate update if difference in current buildNumber
+  // and incoming buildNumber is greater than 5
+  bool immediateUpdateCondition(AppUpdateInfo info) {
+    int difference =
+        info.availableVersionCode! - int.parse(packageInfo.buildNumber);
+
+    return difference > 5;
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:plan_sync/controllers/app_tour_controller.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/util/snackbar.dart';
 import 'package:plan_sync/widgets/dropdowns/sections_bar.dart';
@@ -45,6 +46,7 @@ class _SchedulePreferenceBottomSheetState
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
+    AppTourController appTourController = Get.find();
 
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
@@ -72,6 +74,7 @@ class _SchedulePreferenceBottomSheetState
 
               // preference switch
               ListTile(
+                key: appTourController.savePreferenceSwitchKey,
                 enableFeedback: true,
                 leading: Icon(
                   Icons.downloading_rounded,
@@ -166,6 +169,7 @@ class _SchedulePreferenceBottomSheetState
 
               // section selection
               ListTile(
+                key: appTourController.sectionBarKey,
                 enableFeedback: true,
                 leading: Icon(
                   Icons.book_rounded,
