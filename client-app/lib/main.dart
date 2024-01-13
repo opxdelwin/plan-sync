@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plan_sync/controllers/analytics_controller.dart';
+import 'package:plan_sync/controllers/app_tour_controller.dart';
 import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/controllers/auth.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
@@ -63,6 +64,7 @@ _injectDependencies() async {
   Get.put(FilterController());
   Get.put(VersionController());
   Get.put(AnalyticsController());
+  Get.put(AppTourController());
 }
 
 // GoRouter configuration
