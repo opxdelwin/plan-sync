@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
+import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/logger.dart';
 import 'package:plan_sync/util/snackbar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:collection/collection.dart';
 
 class FilterController extends GetxController {
@@ -72,13 +72,13 @@ class FilterController extends GetxController {
   }
 
   late GitService service;
-  late SharedPreferences preferences;
+  late AppPreferencesController preferences;
 
   @override
   onInit() async {
-    super.onInit();
-    preferences = await SharedPreferences.getInstance();
     service = Get.find();
+    preferences = Get.find();
+    super.onInit();
   }
 
   Future<String> getShortCode() async {
@@ -97,9 +97,7 @@ class FilterController extends GetxController {
   }
 
   /// returns primary section from shared-preferences
-  String? get primarySection {
-    return preferences.getString('primary-section');
-  }
+  String? get primarySection => preferences.getPrimarySectionPreference();
 
   /// saves the section code into shared-preferences
   Future<void> storePrimarySection() async {
@@ -112,7 +110,18 @@ class FilterController extends GetxController {
       return;
     }
 
-    await preferences.setString('primary-section', activeSectionCode!);
+    final res =
+        await preferences.savePrimarySectionPreference(activeSectionCode!);
+
+    if (res == false) {
+      Logger.i("Could not save preference");
+      CustomSnackbar.error(
+        'Error',
+        'Primary Section wasn\'t saved. Try again',
+      );
+      return;
+    }
+
     Logger.i("set ${activeSectionCode!} as primary");
     update();
   }
@@ -120,7 +129,7 @@ class FilterController extends GetxController {
   /// sets the section code while runtime
   Future<void> setPrimarySection() async {
     activeSection = null;
-    final String? primarySection = preferences.getString('primary-section');
+    final String? primarySection = preferences.getPrimarySectionPreference();
     Logger.i("primary section: $primarySection");
 
     if (primarySection != null &&
@@ -131,9 +140,7 @@ class FilterController extends GetxController {
   }
 
   /// returns primary semester from shared-preferences
-  String? get primarySemester {
-    return preferences.getString('primary-semester');
-  }
+  String? get primarySemester => preferences.getPrimarySemesterPreference();
 
   /// saves the semester code into shared-preferences
   Future<void> storePrimarySemester() async {
@@ -145,7 +152,18 @@ class FilterController extends GetxController {
       Logger.i("select a semester to be set as primary.");
       return;
     }
-    await preferences.setString('primary-semester', activeSemester!);
+    final res =
+        await preferences.savePrimarySemesterPreference(activeSemester!);
+
+    if (res == false) {
+      Logger.i("Could not save preference");
+      CustomSnackbar.error(
+        'Error',
+        'Primary Semester wasn\'t saved. Try again',
+      );
+      return;
+    }
+
     Logger.i("set ${activeSemester!} as primary semester");
     update();
   }
@@ -153,7 +171,7 @@ class FilterController extends GetxController {
   /// sets the semester code while runtime
   Future<void> setPrimarySemester() async {
     // activeSemester = null;
-    final String? primarySemester = preferences.getString('primary-semester');
+    final String? primarySemester = preferences.getPrimarySemesterPreference();
     Logger.i("primary semester: $primarySemester");
 
     if (service.semesters?.contains(primarySemester) != false &&
@@ -163,9 +181,7 @@ class FilterController extends GetxController {
   }
 
   /// returns primary semester from shared-preferences
-  String? get primaryYear {
-    return preferences.getString('primary-year');
-  }
+  String? get primaryYear => preferences.getPrimaryYearPreference();
 
   /// saves the semester code into shared-preferences
   Future<void> storePrimaryYear() async {
@@ -177,10 +193,19 @@ class FilterController extends GetxController {
       Logger.i("select a year to be set as primary.");
       return;
     }
-    await preferences.setString(
-      'primary-year',
+    final res = await preferences.savePrimaryYearPreference(
       service.selectedYear!.toString(),
     );
+
+    if (res == false) {
+      Logger.i("Could not save preference");
+      CustomSnackbar.error(
+        'Error',
+        'Primary Year wasn\'t saved. Try again',
+      );
+      return;
+    }
+
     Logger.i("set ${service.selectedYear!} as primary year");
     update();
   }
@@ -188,7 +213,7 @@ class FilterController extends GetxController {
   /// sets the semester code while runtime
   Future<void> setPrimaryYear() async {
     // activeSemester = null;
-    final String? primaryYear = preferences.getString('primary-year');
+    final String? primaryYear = preferences.getPrimaryYearPreference();
     Logger.i("primary year: $primaryYear");
 
     if (service.years?.contains(primaryYear) != false && primaryYear != null) {
