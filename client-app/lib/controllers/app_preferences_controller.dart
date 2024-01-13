@@ -24,4 +24,12 @@ class AppPreferencesController extends GetxController {
 
   Future<bool> savePrimaryYearPreference(String data) async =>
       await perfs.setString('primary-year', data);
+
+  // In app tutorial
+  /// Returns `true` if tutorial has already been completed.
+  bool? getTutorialStatus() => perfs.getBool('app-tutorial-status');
+
+  /// Save tutorial status as `true` if completed.
+  Future<bool> saveTutorialStatus(bool status) async =>
+      await perfs.setBool('app-tutorial-status', status);
 }

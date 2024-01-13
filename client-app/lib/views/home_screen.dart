@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:plan_sync/controllers/app_tour_controller.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/widgets/buttons/schedule_preferences_button.dart';
-import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import '../widgets/time_table.dart';
 import '../widgets/version_check.dart';
 

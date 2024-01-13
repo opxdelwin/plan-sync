@@ -32,10 +32,92 @@ class AppTargetFocus {
                 child: Text(
                   "View your schedule efficiently and save your preferences here",
                   style: TextStyle(
-                    color: colorScheme.background.withOpacity(0.8),
+                    color: colorScheme.background,
                   ),
                 ),
               )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  static sectionBarButton({
+    required ColorScheme colorScheme,
+    required GlobalKey buttonKey,
+  }) {
+    return TargetFocus(
+      identify: buttonKey.hashCode,
+      keyTarget: buttonKey,
+      shape: ShapeLightFocus.RRect,
+      radius: 24,
+      contents: [
+        TargetContent(
+          align: ContentAlign.top,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                "Select your section",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.background,
+                  fontSize: 20.0,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Text(
+                  "We have all the schedules ready to go!",
+                  style: TextStyle(
+                    color: colorScheme.background,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 48),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  static savePreferenceSwitch({
+    required ColorScheme colorScheme,
+    required GlobalKey buttonKey,
+  }) {
+    return TargetFocus(
+      identify: buttonKey.hashCode,
+      keyTarget: buttonKey,
+      shape: ShapeLightFocus.RRect,
+      radius: 24,
+      contents: [
+        TargetContent(
+          align: ContentAlign.top,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                "Save Everything",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.background,
+                  fontSize: 20.0,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Text(
+                  "Turn this on to save your section details.\nWe'll open this up when you come back!",
+                  style: TextStyle(
+                    color: colorScheme.background,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 48),
             ],
           ),
         ),
