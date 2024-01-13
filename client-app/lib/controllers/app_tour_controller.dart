@@ -43,6 +43,7 @@ class AppTourController extends GetxController {
       targets: targets,
       colorShadow: colorScheme.onBackground,
       textSkip: "SKIP",
+      textStyleSkip: TextStyle(color: colorScheme.background),
       paddingFocus: 0,
       focusAnimationDuration: const Duration(milliseconds: 500),
       unFocusAnimationDuration: const Duration(milliseconds: 500),
