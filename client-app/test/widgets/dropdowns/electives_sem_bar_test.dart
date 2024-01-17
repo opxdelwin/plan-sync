@@ -30,6 +30,12 @@ void main() {
   testWidgets(
     'ElectiveSemesterBar loads when no data',
     (WidgetTester tester) async {
+      final filterController =
+          Get.find<FilterController>() as MockFilterController;
+      final gitController = Get.find<GitService>() as MockGitService;
+
+      filterController.activeElectiveSemester = null;
+      gitController.electivesSemesters = null;
       // initial state
       await pumpBaseWidget(tester);
       await tester.pumpAndSettle();

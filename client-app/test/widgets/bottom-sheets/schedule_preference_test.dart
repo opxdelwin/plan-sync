@@ -181,6 +181,7 @@ void main() {
 
     // save
     await tester.tap(find.text('Done'));
+    Get.closeAllSnackbars();
     await tester.pumpAndSettle();
 
     // verify post saving perfs
