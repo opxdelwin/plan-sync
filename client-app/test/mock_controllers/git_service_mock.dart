@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:dio/dio.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:get/get.dart';
@@ -49,6 +47,7 @@ class MockGitService extends GetxController with Mock implements GitService {
   }
 
   @override
+  // ignore: invalid_use_of_protected_member
   List<String>? get electiveYears => _electiveYears?.value;
 
   RxMap? _electivesSchemes;
@@ -112,6 +111,7 @@ class MockGitService extends GetxController with Mock implements GitService {
   }
 
   @override
+  // ignore: invalid_use_of_protected_member
   List? get semesters => _semesters?.value;
 
   RxInt? _selectedYear;

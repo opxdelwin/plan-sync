@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:get/get.dart';
 import 'package:mockito/mockito.dart';
 import 'package:plan_sync/controllers/app_preferences_controller.dart';

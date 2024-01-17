@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in_mocks/google_sign_in_mocks.dart';
 import 'package:mockito/mockito.dart';
 import 'package:plan_sync/controllers/auth.dart';
 
