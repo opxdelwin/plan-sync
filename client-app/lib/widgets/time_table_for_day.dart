@@ -100,6 +100,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
         ),
         const SizedBox(height: 8),
         SingleChildScrollView(
+          key: const ValueKey('TimeTableForDay._buildForTimetable'),
           scrollDirection: Axis.horizontal,
           child: DataTable(
             dividerThickness: 0.5,
