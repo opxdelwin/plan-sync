@@ -11,7 +11,7 @@ void main() {
   Future<void> pumpBaseWidget(
     WidgetTester tester,
   ) async {
-    return tester.pumpWidget(const MaterialApp(
+    return tester.pumpWidget(const GetMaterialApp(
       home: Scaffold(
         body: Center(
           child: SchedulePreferenceButton(),

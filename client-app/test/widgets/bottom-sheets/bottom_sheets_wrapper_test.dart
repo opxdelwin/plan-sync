@@ -96,7 +96,6 @@ void main() {
       expect(find.byType(ReportErrorBottomSheet), findsNothing);
       expect(find.byType(ContributeScheduleBottomSheet), findsOneWidget);
       expect(find.byType(ElectivePreferenceBottomSheet), findsNothing);
-      ;
     },
   );
 

@@ -11,7 +11,7 @@ import '../../mock_controllers/app_preferences_controller_mock.dart';
 void main() {
   Future<void> pumpTutorialWidget(WidgetTester tester) async {
     await tester.pumpFrames(
-      MaterialApp(
+      GetMaterialApp(
         theme: AppThemeController.lightTheme,
         home: const HomeScreen(),
       ),

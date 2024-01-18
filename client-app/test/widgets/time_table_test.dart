@@ -11,7 +11,7 @@ import '../mock_controllers/git_service_mock.dart';
 
 void main() {
   Future<void> pumpBaseWidget(WidgetTester tester) async {
-    return tester.pumpWidget(const MaterialApp(
+    return tester.pumpWidget(const GetMaterialApp(
       home: Scaffold(
         body: SingleChildScrollView(
           child: TimeTableWidget(),

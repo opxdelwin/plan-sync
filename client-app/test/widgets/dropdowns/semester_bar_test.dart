@@ -13,7 +13,7 @@ void main() {
     WidgetTester tester,
   ) async {
     return tester.pumpWidget(
-      MaterialApp(
+      GetMaterialApp(
         theme: AppThemeController.lightTheme,
         home: const Scaffold(
           body: Center(

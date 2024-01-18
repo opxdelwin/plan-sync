@@ -14,7 +14,7 @@ void main() {
     Map<dynamic, dynamic> data,
     String day,
   ) async {
-    return tester.pumpWidget(MaterialApp(
+    return tester.pumpWidget(GetMaterialApp(
       home: Scaffold(
         body: SingleChildScrollView(
           child: TimeTableForDay(
