@@ -6,7 +6,6 @@ on: [ push ]
 jobs:
   setup:
     runs-on: ubuntu-latest
-    name: "Environment Setup"
     steps:
     - run: pwd
     - name: Checkout Code
