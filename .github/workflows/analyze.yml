@@ -1,0 +1,25 @@
+
+name: "Code Analysis"
+on: [ push ]
+
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    name: "Environment Setup"
+    steps:
+    - run: pwd
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Get Flutter Env
+      uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+    - run: flutter --version
+
+    - name: Code Analysis
+      run: |
+        cd client-app
+        flutter pub get
+        flutter analyze
