@@ -4,8 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:plan_sync/controllers/analytics_controller.dart';
 import 'package:plan_sync/util/logger.dart';
-
-import '../util/colors.dart';
+import 'package:plan_sync/util/snackbar.dart';
 
 class Auth extends GetxController {
   final _auth = FirebaseAuth.instance;
@@ -34,20 +33,16 @@ class Auth extends GetxController {
 
       return;
     } on FirebaseAuthException catch (error) {
-      Get.snackbar(
+      CustomSnackbar.error(
         "Authentication Error",
         "${error.code} : ${error.message}",
-        backgroundColor: secondary,
-        colorText: black,
       );
       logout();
       return;
     } catch (error) {
-      Get.snackbar(
+      CustomSnackbar.error(
         "Authentication Error",
         "Team has been notified, try again later",
-        backgroundColor: secondary,
-        colorText: black,
       );
       logout();
       return;
