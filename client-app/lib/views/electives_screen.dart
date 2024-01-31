@@ -79,7 +79,8 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                   GitService service = Get.find();
                   return FutureBuilder(
                     future: service.getElectives(),
-                    builder: (context, snapshot) {
+                    builder: (context,
+                        AsyncSnapshot<Map<String, dynamic>?> snapshot) {
                       if (snapshot.connectionState != ConnectionState.done) {
                         return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -172,7 +173,8 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                           "tuesday",
                           "wednesday",
                           "thursday",
-                          "friday"
+                          "friday",
+                          "saturday"
                         ];
 
                         return Column(
@@ -214,7 +216,7 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                               width: double.infinity,
                               child: ListView.separated(
                                 scrollDirection: Axis.vertical,
-                                itemCount: 5,
+                                itemCount: snapshot.data!['data'].keys.length,
                                 physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
                                 itemBuilder: (context, index) =>
