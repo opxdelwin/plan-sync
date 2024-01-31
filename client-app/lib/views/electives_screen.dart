@@ -182,18 +182,26 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                           children: [
                             const SizedBox(height: 16),
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Icon(Icons.info_outline_rounded,
-                                    color: colorScheme.tertiary),
                                 const SizedBox(width: 8),
-                                Text(
-                                  "Effective from ${snapshot.data!["meta"]["effective-date"]}",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: colorScheme.onBackground,
+                                Flexible(
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.info_outline_rounded,
+                                          color: colorScheme.tertiary),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        "Effective from ${snapshot.data!["meta"]["effective-date"]}",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: colorScheme.onBackground,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                const Spacer(),
+                                const SizedBox(width: 16),
                                 InkWell(
                                   onTap: () => reportError(),
                                   child: Row(
