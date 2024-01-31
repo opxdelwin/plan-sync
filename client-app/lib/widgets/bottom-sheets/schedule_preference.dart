@@ -14,10 +14,11 @@ class SchedulePreferenceBottomSheet extends StatefulWidget {
   final bool save;
   @override
   State<SchedulePreferenceBottomSheet> createState() =>
-      _SchedulePreferenceBottomSheetState();
+      SchedulePreferenceBottomSheetState();
 }
 
-class _SchedulePreferenceBottomSheetState
+@visibleForTesting
+class SchedulePreferenceBottomSheetState
     extends State<SchedulePreferenceBottomSheet> {
   late bool savePreferencesOnExit;
 
