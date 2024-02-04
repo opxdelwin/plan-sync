@@ -50,4 +50,28 @@ class MockAppPreferencesController extends GetxController
   @override
   Future<bool> saveTutorialStatus(bool status) async =>
       await perfs.setBool('app-tutorial-status', status);
+
+  @override
+  String? getPrimaryElectiveSchemePreference() =>
+      perfs.getString('elective-primary-section');
+
+  @override
+  Future<bool> savePrimaryElectiveSchemePreference(String data) async =>
+      await perfs.setString('elective-primary-section', data);
+
+  @override
+  String? getPrimaryElectiveSemesterPreference() =>
+      perfs.getString('elective-primary-semester');
+
+  @override
+  Future<bool> savePrimaryElectiveSemesterPreference(String data) async =>
+      await perfs.setString('elective-primary-semester', data);
+
+  @override
+  String? getPrimaryElectiveYearPreference() =>
+      perfs.getString('elective-primary-year');
+
+  @override
+  Future<bool> savePrimaryElectiveYearPreference(String data) async =>
+      await perfs.setString('elective-primary-year', data);
 }

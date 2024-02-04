@@ -14,10 +14,11 @@ class ElectivePreferenceBottomSheet extends StatefulWidget {
 
   @override
   State<ElectivePreferenceBottomSheet> createState() =>
-      _ElectivePreferenceBottomSheetState();
+      ElectivePreferenceBottomSheetState();
 }
 
-class _ElectivePreferenceBottomSheetState
+@visibleForTesting
+class ElectivePreferenceBottomSheetState
     extends State<ElectivePreferenceBottomSheet> {
   late bool savePreferencesOnExit;
 
