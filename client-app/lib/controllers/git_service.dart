@@ -344,7 +344,7 @@ class GitService extends GetxController {
         return;
       }
       Logger.i("Fetched electives years: $electiveYears");
-
+      await filterController.setPrimaryElectiveYear();
       getElectiveSemesters();
       !isWorking.value ? null : isWorking.toggle();
     } on DioException catch (e) {
@@ -391,6 +391,7 @@ class GitService extends GetxController {
       }
 
       !isWorking.value ? null : isWorking.toggle();
+      await filterController.setPrimaryElectiveSemester();
       update();
     } on DioException catch (e) {
       errorDetails = {
@@ -447,6 +448,7 @@ class GitService extends GetxController {
 
       Logger.i("Fetched electives schemes: $electiveSchemes");
       !isWorking.value ? null : isWorking.toggle();
+      await filterController.setPrimaryElectiveScheme();
       update();
     } on DioException catch (e) {
       errorDetails = {

@@ -183,7 +183,7 @@ class FilterController extends GetxController {
   /// returns primary semester from shared-preferences
   String? get primaryYear => preferences.getPrimaryYearPreference();
 
-  /// saves the semester code into shared-preferences
+  /// saves the year into shared-preferences
   Future<void> storePrimaryYear() async {
     if (service.selectedYear == null) {
       CustomSnackbar.error(
@@ -218,6 +218,129 @@ class FilterController extends GetxController {
 
     if (service.years?.contains(primaryYear) != false && primaryYear != null) {
       service.selectedYear = int.parse(primaryYear);
+    }
+  }
+
+  String? get primaryElectiveScheme =>
+      preferences.getPrimaryElectiveSchemePreference();
+
+  /// saves the section code into shared-preferences
+  Future<void> storePrimaryElectiveScheme() async {
+    if (activeElectiveSchemeCode == null) {
+      Logger.i("select a section to set as primary.");
+      CustomSnackbar.error(
+        'Not Selected',
+        'Please select a section to be saved as default',
+      );
+      return Future.error('error');
+    }
+
+    final res = await preferences
+        .savePrimaryElectiveSchemePreference(activeElectiveSchemeCode!);
+
+    if (res == false) {
+      Logger.i("Could not save preference");
+      CustomSnackbar.error(
+        'Error',
+        'Primary Section wasn\'t saved. Try again',
+      );
+      return;
+    }
+
+    Logger.i("set ${activeElectiveSchemeCode!} as primary");
+    update();
+  }
+
+  /// sets the section code while runtime
+  Future<void> setPrimaryElectiveScheme() async {
+    activeElectiveScheme = null;
+    Logger.i("primary elective scheme: $primaryElectiveScheme");
+
+    if (primaryElectiveScheme != null &&
+        service.electiveSchemes!.containsKey(primaryElectiveScheme) &&
+        service.electiveSchemes != null) {
+      activeElectiveScheme = service.electiveSchemes![primaryElectiveScheme];
+      activeElectiveSchemeCode = primaryElectiveScheme;
+    }
+  }
+
+  String? get primaryElectiveSemester =>
+      preferences.getPrimaryElectiveSemesterPreference();
+
+  /// saves the semester code into shared-preferences
+  Future<void> storePrimaryElectiveSemester() async {
+    if (activeElectiveSemester == null) {
+      CustomSnackbar.error(
+        'Not Selected',
+        'Please select a semester to be saved as default',
+      );
+      Logger.i("select a semester to be set as primary.");
+      return Future.error('error');
+    }
+    final res = await preferences
+        .savePrimaryElectiveSemesterPreference(activeElectiveSemester!);
+
+    if (res == false) {
+      Logger.i("Could not save preference");
+      CustomSnackbar.error(
+        'Error',
+        'Primary Semester wasn\'t saved. Try again',
+      );
+      return;
+    }
+
+    Logger.i("set ${activeElectiveSemester!} as primary elective-semester");
+    update();
+  }
+
+  /// sets the semester code while runtime
+  Future<void> setPrimaryElectiveSemester() async {
+    Logger.i("primary semester: $primaryElectiveSemester");
+
+    if (service.electivesSemesters?.contains(primaryElectiveSemester) !=
+            false &&
+        primaryElectiveSemester != null) {
+      activeElectiveSemester = primaryElectiveSemester;
+    }
+  }
+
+  String? get primaryElectiveYear =>
+      preferences.getPrimaryElectiveYearPreference();
+
+  /// saves the elective year into shared-preferences
+  Future<void> storePrimaryElectiveYear() async {
+    if (service.selectedElectiveYear == null) {
+      CustomSnackbar.error(
+        'Not Selected',
+        'Please select a year to be saved as default',
+      );
+      Logger.i("select a year to be set as primary.");
+      return Future.error('error');
+    }
+    final res = await preferences.savePrimaryElectiveYearPreference(
+      service.selectedElectiveYear!.toString(),
+    );
+
+    if (res == false) {
+      Logger.i("Could not save preference");
+      CustomSnackbar.error(
+        'Error',
+        'Primary Year wasn\'t saved. Try again',
+      );
+      return;
+    }
+
+    Logger.i("set ${service.selectedElectiveYear!} as primary year");
+    update();
+  }
+
+  /// sets the semester code while runtime
+  Future<void> setPrimaryElectiveYear() async {
+    Logger.i("primary elective year: $primaryElectiveYear");
+
+    if (service.electiveYears?.contains(primaryElectiveYear) != false &&
+        primaryElectiveYear != null) {
+      service.selectedElectiveYear = int.parse(primaryElectiveYear!);
     }
   }
 }
