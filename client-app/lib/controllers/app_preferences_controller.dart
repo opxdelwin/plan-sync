@@ -32,4 +32,23 @@ class AppPreferencesController extends GetxController {
   /// Save tutorial status as `true` if completed.
   Future<bool> saveTutorialStatus(bool status) async =>
       await perfs.setBool('app-tutorial-status', status);
+
+  // elective config
+  String? getPrimaryElectiveSchemePreference() =>
+      perfs.getString('elective-primary-section');
+
+  Future<bool> savePrimaryElectiveSchemePreference(String data) async =>
+      await perfs.setString('elective-primary-section', data);
+
+  String? getPrimaryElectiveSemesterPreference() =>
+      perfs.getString('elective-primary-semester');
+
+  Future<bool> savePrimaryElectiveSemesterPreference(String data) async =>
+      await perfs.setString('elective-primary-semester', data);
+
+  String? getPrimaryElectiveYearPreference() =>
+      perfs.getString('elective-primary-year');
+
+  Future<bool> savePrimaryElectiveYearPreference(String data) async =>
+      await perfs.setString('elective-primary-year', data);
 }

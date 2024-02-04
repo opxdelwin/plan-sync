@@ -44,6 +44,22 @@ class MockFilterController extends GetxController
   @override
   String? get activeElectiveScheme => _activeElectiveScheme?.value;
 
+  RxString? _activeElectiveSchemeCode;
+
+  @override
+  String? get activeElectiveSchemeCode => _activeElectiveSchemeCode?.value;
+  @override
+  set activeElectiveSchemeCode(String? newValue) {
+    if (newValue == null) {
+      _activeElectiveSchemeCode = null;
+      update();
+      return;
+    }
+    _activeElectiveSchemeCode = newValue.obs;
+    update();
+    return;
+  }
+
   RxString? _activeElectiveSemester;
 
   @override
@@ -150,6 +166,52 @@ class MockFilterController extends GetxController
       return Future.error('Couldnt save');
     }
 
+    update();
+  }
+
+  @override
+  Future<void> storePrimaryElectiveScheme() async {
+    if (activeElectiveSchemeCode == null) {
+      return Future.error('error');
+    }
+
+    final res = await preferences
+        .savePrimaryElectiveSchemePreference(activeElectiveSchemeCode!);
+
+    if (res == false) {
+      return;
+    }
+
+    update();
+  }
+
+  @override
+  Future<void> storePrimaryElectiveSemester() async {
+    if (activeElectiveSemester == null) {
+      return;
+    }
+    final res = await preferences
+        .savePrimaryElectiveSemesterPreference(activeElectiveSemester!);
+
+    if (res == false) {
+      return;
+    }
+
+    update();
+  }
+
+  @override
+  Future<void> storePrimaryElectiveYear() async {
+    if (service.selectedElectiveYear == null) {
+      return;
+    }
+    final res = await preferences.savePrimaryElectiveYearPreference(
+      service.selectedElectiveYear!.toString(),
+    );
+
+    if (res == false) {
+      return;
+    }
     update();
   }
 }
