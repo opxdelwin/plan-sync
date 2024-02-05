@@ -257,7 +257,8 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
               "tuesday",
               "wednesday",
               "thursday",
-              "friday"
+              "friday",
+              "saturday"
             ];
 
             return Column(
@@ -310,7 +311,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                   width: double.infinity,
                   child: ListView.separated(
                     scrollDirection: Axis.vertical,
-                    itemCount: 5,
+                    itemCount: snapshot.data!['data'].keys.length,
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemBuilder: (context, index) =>

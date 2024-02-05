@@ -53,7 +53,7 @@ class VersionController extends GetxController {
       return result.updateAvailability == UpdateAvailability.updateAvailable;
     } catch (e) {
       isError = true;
-      throw Exception("DioException, $e");
+      throw Exception("VersionController.checkForUpdate Exception, $e");
     }
   }
 
