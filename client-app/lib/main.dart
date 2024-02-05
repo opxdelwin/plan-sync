@@ -24,9 +24,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  //TODO: remove before commit
   await dotenv.load(
-    fileName: kReleaseMode ? 'env/.prod.env' : 'env/.debug.env',
+    fileName: 'env/.prod.env',
   );
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
