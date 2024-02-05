@@ -19,9 +19,15 @@ import 'package:plan_sync/views/login_screen.dart';
 import 'package:plan_sync/views/settings_screen.dart';
 import 'package:plan_sync/widgets/scaffold_with_nav_bar.dart';
 import 'firebase_options.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  //TODO: remove before commit
+  await dotenv.load(
+    fileName: kReleaseMode ? 'env/.prod.env' : 'env/.debug.env',
+  );
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
