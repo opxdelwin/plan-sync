@@ -3,6 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:plan_sync/widgets/dropdowns/electives_scheme_bar.dart';
 import 'package:plan_sync/widgets/dropdowns/electives_sem_bar.dart';
 import 'package:plan_sync/widgets/dropdowns/elective_year_bar.dart';
+import 'package:plan_sync/util/snackbar.dart';
+import 'package:plan_sync/controllers/filter_controller.dart';
+import 'package:get/get.dart';
 
 class ElectivePreferenceBottomSheet extends StatefulWidget {
   const ElectivePreferenceBottomSheet({this.save = false, super.key});
@@ -11,10 +14,11 @@ class ElectivePreferenceBottomSheet extends StatefulWidget {
 
   @override
   State<ElectivePreferenceBottomSheet> createState() =>
-      _ElectivePreferenceBottomSheetState();
+      ElectivePreferenceBottomSheetState();
 }
 
-class _ElectivePreferenceBottomSheetState
+@visibleForTesting
+class ElectivePreferenceBottomSheetState
     extends State<ElectivePreferenceBottomSheet> {
   late bool savePreferencesOnExit;
 
@@ -26,14 +30,14 @@ class _ElectivePreferenceBottomSheetState
 
   void exitBottomSheet() {
     if (savePreferencesOnExit) {
-      // FilterController controller = Get.find();
-      // controller.storePrimaryElectiveYear();
-      // controller.storePrimaryElectiveSemester();
-      // controller.storePrimaryElectiveScheme();
-      // CustomSnackbar.info(
-      //   'Primary Preferences Stored!',
-      //   "Your timetable will be selected by default.",
-      // );
+      FilterController controller = Get.find();
+      controller.storePrimaryElectiveYear();
+      controller.storePrimaryElectiveSemester();
+      controller.storePrimaryElectiveScheme();
+      CustomSnackbar.info(
+        'Primary Preferences Stored!',
+        "Your timetable will be selected by default.",
+      );
     }
 
     context.pop();
@@ -87,7 +91,11 @@ class _ElectivePreferenceBottomSheetState
                   inactiveTrackColor: Colors.transparent,
 
                   // will be fixed by https://github.com/opxdelwin/plan-sync/issues/19
-                  onChanged: null,
+                  onChanged: (value) {
+                    setState(() {
+                      savePreferencesOnExit = value;
+                    });
+                  },
                 ),
               ),
               const SizedBox(height: 8),

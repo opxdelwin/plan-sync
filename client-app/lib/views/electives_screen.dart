@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
+import 'package:plan_sync/widgets/buttons/elective_preferences_button.dart';
 import 'package:plan_sync/widgets/time_table_for_day.dart';
 
 class ElectiveScreen extends StatefulWidget {
@@ -43,30 +44,9 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
             letterSpacing: 0.2,
           ),
         ),
-        actions: [
-          ElevatedButton(
-            onPressed: () => BottomSheets.changeElectiveSchemePreference(
-              context: context,
-            ),
-            style: ButtonStyle(
-              backgroundColor:
-                  MaterialStatePropertyAll(colorScheme.onBackground),
-            ),
-            child: Row(
-              children: [
-                Text(
-                  'Select',
-                  style: TextStyle(color: colorScheme.background),
-                ),
-                const SizedBox(width: 8),
-                Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  color: colorScheme.background,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 16),
+        actions: const [
+          ElectivePreferenceButton(),
+          SizedBox(width: 16),
         ],
       ),
       body: Padding(
@@ -180,7 +160,7 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                         return Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 8),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [

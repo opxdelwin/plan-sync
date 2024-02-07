@@ -50,7 +50,11 @@ class MockGitService extends GetxController with Mock implements GitService {
   // ignore: invalid_use_of_protected_member
   List<String>? get electiveYears => _electiveYears?.value;
 
-  RxMap? _electivesSchemes;
+  RxMap? _electivesSchemes = {
+    "a": "Sch. A (BTECH-CSE)",
+    "b": "Sch. B (BTECH-CSE)",
+  }.obs;
+
   @override
   set electiveSchemes(RxMap? newElectiveSchemes) {
     if (newElectiveSchemes == null) {

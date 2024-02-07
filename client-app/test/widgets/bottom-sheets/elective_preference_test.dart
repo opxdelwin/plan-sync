@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/controllers/theme_controller.dart';
@@ -11,6 +12,7 @@ import 'package:plan_sync/widgets/dropdowns/electives_scheme_bar.dart';
 import 'package:plan_sync/widgets/dropdowns/electives_sem_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../main.dart';
+import '../../mock_controllers/app_preferences_controller_mock.dart';
 import '../../mock_controllers/filter_controller_mock.dart';
 import '../../mock_controllers/git_service_mock.dart';
 
@@ -53,20 +55,20 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     injectMockDependencies();
   });
-  // testWidgets('ElectivePreferenceBottomSheet switch toggles',
-  //     (WidgetTester tester) async {
-  //   await pumpBaseWidget(tester);
-  //   final ElectivePreferenceBottomSheetState widgetState = tester.state(
-  //     find.byType(ElectivePreferenceBottomSheet),
-  //   );
+  testWidgets('ElectivePreferenceBottomSheet switch toggles when clicked',
+      (WidgetTester tester) async {
+    await pumpBaseWidget(tester);
+    final ElectivePreferenceBottomSheetState widgetState = tester.state(
+      find.byType(ElectivePreferenceBottomSheet),
+    );
 
-  //   await tester.pump();
-  //   expect(widgetState.savePreferencesOnExit, false);
+    await tester.pump();
+    expect(widgetState.savePreferencesOnExit, false);
 
-  //   await tester.tap(find.byType(Switch));
-  //   await tester.pump();
-  //   expect(widgetState.savePreferencesOnExit, true);
-  // });
+    await tester.tap(find.byType(Switch));
+    await tester.pump();
+    expect(widgetState.savePreferencesOnExit, true);
+  });
 
   testWidgets('ElectivePreferenceBottomSheet opens yearbar',
       (WidgetTester tester) async {
@@ -135,104 +137,99 @@ void main() {
     expect(filterController.activeElectiveScheme, 'Scheme B');
   });
 
-  // testWidgets('ElectivePreferenceBottomSheet saves config to SharedPreferences',
-  //     (WidgetTester tester) async {
-  //   final gitController = Get.find<GitService>() as MockGitService;
-  //   final perfs =
-  //       Get.find<AppPreferencesController>() as MockAppPreferencesController;
-  //   final filterController =
-  //       Get.find<FilterController>() as MockFilterController;
+  testWidgets(
+      'ElectivePreferenceBottomSheet does not save config to SharedPreferences',
+      (WidgetTester tester) async {
+    final gitController = Get.find<GitService>() as MockGitService;
+    final perfs =
+        Get.find<AppPreferencesController>() as MockAppPreferencesController;
+    final filterController =
+        Get.find<FilterController>() as MockFilterController;
 
-  //   gitController.sections = {
-  //     "b13": "B13 CSE",
-  //     "b16": "B16 CSE",
-  //     "b18": "B18 CSE",
-  //   };
-  //   gitController.selectedYear = 2023;
-  //   filterController.activeSection = 'B18 CSE';
-  //   filterController.activeSectionCode = 'b18';
-  //   filterController.activeSemester = 'SEM2';
+    // reset existing SharedPreferences data from previous test
+    perfs.resetPreferencesToNull();
 
-  //   // pump widget with above config
-  //   await pumpBaseWidget(tester);
-  //   await tester.tap(find.byType(Switch));
-  //   await tester.pumpAndSettle();
+    gitController.selectedElectiveYear = 2024;
+    filterController.activeElectiveSemester = 'SEM1';
+    filterController.activeElectiveScheme = 'Scheme B';
+    filterController.activeElectiveSchemeCode = 'b';
 
-  //   final ElectivePreferenceBottomSheetState widgetState = tester.state(
-  //     find.byType(ElectivePreferenceBottomSheet),
-  //   );
+    // pump widget with above config
+    await pumpBaseWidget(tester);
+    await tester.pumpAndSettle();
 
-  //   // test controller mutation
-  //   expect(widgetState.savePreferencesOnExit, true);
-  //   expect(filterController.activeSection, 'B18 CSE');
-  //   expect(filterController.activeSectionCode, 'b18');
-  //   expect(filterController.activeSemester, 'SEM2');
-  //   expect(gitController.selectedYear, 2023);
+    final ElectivePreferenceBottomSheetState widgetState = tester.state(
+      find.byType(ElectivePreferenceBottomSheet),
+    );
 
-  //   // verify existing perfs
-  //   expect(perfs.getPrimarySectionPreference(), isNull);
-  //   expect(perfs.getPrimarySemesterPreference(), isNull);
-  //   expect(perfs.getPrimaryYearPreference(), isNull);
+    // test controller mutation
+    expect(widgetState.savePreferencesOnExit, false);
+    expect(filterController.activeElectiveSemester, 'SEM1');
+    expect(filterController.activeElectiveScheme, 'Scheme B');
+    expect(filterController.activeElectiveSchemeCode, 'b');
+    expect(gitController.selectedElectiveYear, 2024);
 
-  //   // save
-  //   await tester.tap(find.text('Done'));
-  //   await tester.pumpAndSettle();
+    // verify existing perfs
+    expect(perfs.getPrimaryElectiveSchemePreference(), isNull);
+    expect(perfs.getPrimaryElectiveSemesterPreference(), isNull);
+    expect(perfs.getPrimaryElectiveYearPreference(), isNull);
 
-  //   // verify post saving perfs
-  //   expect(perfs.getPrimarySectionPreference(), 'b18');
-  //   expect(perfs.getPrimarySemesterPreference(), 'SEM2');
-  //   expect(perfs.getPrimaryYearPreference(), '2023');
-  // });
+    // save
+    await tester.tap(find.text('Done'));
+    await pumpBaseWidget(tester);
 
-  // testWidgets(
-  //     'ElectivePreferenceBottomSheet does not save config to SharedPreferences',
-  //     (WidgetTester tester) async {
-  //   final gitController = Get.find<GitService>() as MockGitService;
-  //   final perfs =
-  //       Get.find<AppPreferencesController>() as MockAppPreferencesController;
-  //   final filterController =
-  //       Get.find<FilterController>() as MockFilterController;
+    // verify post saving perfs
+    expect(perfs.getPrimaryElectiveSchemePreference(), isNull);
+    expect(perfs.getPrimaryElectiveSemesterPreference(), isNull);
+    expect(perfs.getPrimaryElectiveYearPreference(), isNull);
+  });
 
-  //   // reset existing SharedPreferences data from previous test
-  //   perfs.resetPreferencesToNull();
+  testWidgets('ElectivePreferenceBottomSheet saves config to SharedPreferences',
+      (WidgetTester tester) async {
+    final gitController = Get.find<GitService>() as MockGitService;
+    final perfs =
+        Get.find<AppPreferencesController>() as MockAppPreferencesController;
+    final filterController =
+        Get.find<FilterController>() as MockFilterController;
 
-  //   gitController.sections = {
-  //     "b13": "B13 CSE",
-  //     "b16": "B16 CSE",
-  //     "b18": "B18 CSE",
-  //   };
-  //   gitController.selectedYear = 2023;
-  //   filterController.activeSection = 'B18 CSE';
-  //   filterController.activeSectionCode = 'b18';
-  //   filterController.activeSemester = 'SEM2';
+    // reset existing SharedPreferences data from previous test
+    perfs.resetPreferencesToNull();
 
-  //   // pump widget with above config
-  //   await pumpBaseWidget(tester);
-  //   await tester.pumpAndSettle();
+    gitController.selectedElectiveYear = 2024;
+    filterController.activeElectiveSemester = 'SEM1';
+    filterController.activeElectiveScheme = 'Scheme B';
+    filterController.activeElectiveSchemeCode = 'b';
 
-  //   final ElectivePreferenceBottomSheetState widgetState = tester.state(
-  //     find.byType(ElectivePreferenceBottomSheet),
-  //   );
+    // pump widget with above config
+    await pumpBaseWidget(tester);
+    await tester.pumpAndSettle();
 
-  //   // test controller mutation
-  //   expect(widgetState.savePreferencesOnExit, false);
-  //   expect(filterController.activeSection, 'B18 CSE');
-  //   expect(filterController.activeSectionCode, 'b18');
-  //   expect(filterController.activeSemester, 'SEM2');
-  //   expect(gitController.selectedYear, 2023);
+    final ElectivePreferenceBottomSheetState widgetState = tester.state(
+      find.byType(ElectivePreferenceBottomSheet),
+    );
 
-  //   // verify existing perfs
-  //   expect(perfs.getPrimarySectionPreference(), isNull);
-  //   expect(perfs.getPrimarySemesterPreference(), isNull);
-  //   expect(perfs.getPrimaryYearPreference(), isNull);
+    widgetState.savePreferencesOnExit = true;
 
-  //   // save
-  //   await tester.tap(find.text('Done'));
-  //   await tester.pumpAndSettle();
+    // test controller mutation
+    expect(widgetState.savePreferencesOnExit, true);
+    expect(filterController.activeElectiveSemester, 'SEM1');
+    expect(filterController.activeElectiveScheme, 'Scheme B');
+    expect(filterController.activeElectiveSchemeCode, 'b');
+    expect(gitController.selectedElectiveYear, 2024);
 
-  //   // verify post saving perfs
-  //   expect(perfs.getPrimarySectionPreference(), isNull);
-  //   expect(perfs.getPrimarySemesterPreference(), isNull);
-  //   expect(perfs.getPrimaryYearPreference(), isNull);
-  // });
+    // verify existing perfs
+    expect(perfs.getPrimaryElectiveSchemePreference(), isNull);
+    expect(perfs.getPrimaryElectiveSemesterPreference(), isNull);
+    expect(perfs.getPrimaryElectiveYearPreference(), isNull);
+
+    // save
+    await tester.tap(find.text('Done'));
+    Get.closeAllSnackbars();
+    await tester.pumpAndSettle();
+
+    // verify post saving perfs
+    expect(perfs.getPrimaryElectiveSchemePreference(), 'b');
+    expect(perfs.getPrimaryElectiveSemesterPreference(), 'SEM1');
+    expect(perfs.getPrimaryElectiveYearPreference(), '2024');
+  });
 }
