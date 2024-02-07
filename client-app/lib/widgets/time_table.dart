@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
@@ -265,11 +266,13 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Effective from ${snapshot.data!["meta"]["effective-date"]}",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onPrimary,
+                Flexible(
+                  child: Text(
+                    "Effective from ${snapshot.data!["meta"]["effective-date"]}",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onPrimary,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
