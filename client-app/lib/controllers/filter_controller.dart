@@ -81,12 +81,29 @@ class FilterController extends GetxController {
     super.onInit();
   }
 
+  /// Returns a short code for selected noraml schedule configuration
   Future<String> getShortCode() async {
     String? section = activeSectionCode;
     String? semester = activeSemester;
 
     if (section == null && semester == null) {
       return 'Select Sections';
+    } else if (section == null && semester != null) {
+      return semester;
+    } else if (semester == null && section != null) {
+      return section;
+    }
+
+    return '$section | $semester'.toUpperCase();
+  }
+
+  /// Returns a short code for selected elective configuration
+  Future<String> getElectiveShortCode() async {
+    String? section = activeElectiveSchemeCode;
+    String? semester = activeElectiveSemester;
+
+    if (section == null && semester == null) {
+      return 'Select Elective';
     } else if (section == null && semester != null) {
       return semester;
     } else if (semester == null && section != null) {
