@@ -4,7 +4,7 @@ on: [ push ]
 
 
 jobs:
-  setup:
+  analysis:
     runs-on: ubuntu-latest
     steps:
     - run: pwd
@@ -15,10 +15,13 @@ jobs:
       uses: subosito/flutter-action@v2
       with:
         channel: 'stable'
+        cache: true
     - run: flutter --version
 
     - name: Code Analysis
-      run: |
-        cd client-app
-        flutter pub get
-        flutter analyze
+      working-directory: client-app
+      run: flutter analyze
+
+    - name: Unit Testing
+      working-directory: client-app
+      run: flutter test
