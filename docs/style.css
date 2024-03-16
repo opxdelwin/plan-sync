@@ -1,0 +1,169 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'TT Commons', sans-serif, monospace ;
+}
+
+.gradient-background {
+    background: linear-gradient(300deg,#00bfff, #f5f8f2, #ef8172);
+    background-size: 180% 180%;
+    animation: gradient-animation 18s ease infinite;
+  }
+  
+  @keyframes gradient-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  } 
+
+  .title-background {
+    background-color: #f5f8f2;
+  }
+
+  #navbar-home {
+    font-weight: 900;
+    font-size: 1.7rem;
+  }
+#navbar-other {
+    font-weight: 100;
+    font-size: 1.7rem;
+}
+
+
+/* cta section */
+
+
+#cta-color {
+  background-color: #060606;
+}
+
+section.cta .text-information{
+  padding-bottom: 100px;
+}
+
+section.cta h1 {
+  font-size: 70px;
+  font-weight: 650;
+  line-height: 60px;
+  color: white;
+}
+
+section.cta h5 {
+  font-size: 42px;
+  font-weight: 500;
+  line-height: 30px;
+  color: white;
+  padding-bottom: 25px;
+}
+
+section.cta p {
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 28px;
+  color: white;
+  padding-bottom: 20px;
+}
+
+section.cta .info-1 {
+  padding: 180px 0;
+}
+
+/* information section */
+
+#info-color {
+  background-color: #ffffff;
+}
+
+section.information .text-info {
+  padding: 134px 0;
+}
+
+section.information h5 {
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 48px;
+  color: black;
+}
+
+section.information p {
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 28px;
+  color: gray;
+  padding-top: 20px;
+}
+
+section.information .info1{
+  padding: 183px 0;
+}
+
+/* faq */
+
+#faq-section-color {
+  background-color: #ffffff;
+}
+
+.faq-p {
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 28px;
+  color: gray;
+  padding-bottom: 10px;
+}
+
+.faq {
+  font-size: 80px;
+  font-weight: 400;
+  line-height: 48px;
+  color: black;
+  padding-bottom: 15px;
+}
+
+.faq-ps {
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 28px;
+  color: #676767;
+  padding-bottom: 5px;
+}
+
+.faq-email {
+  font-size: 35px;
+  font-weight: 400;
+  text-decoration: solid;
+  color: #2dbe5f;
+}
+
+/* footer*/
+
+.footer-color {
+  background-color: black;
+}
+
+.footer-text-color {
+  color: #ebebeb;
+  font-weight: 500;
+  font-size: 30px;
+}
+
+#footer-link {
+  font-weight: 500;
+  color: #9b9b9b !important;
+  font-size: 20px;
+}
+
+.copyright {
+  font-size: 19px;
+  color: #9b9b9b !important;
+}
+
+.faq-font {
+  font-size: 23px;
+  font-weight: 100;
+}
