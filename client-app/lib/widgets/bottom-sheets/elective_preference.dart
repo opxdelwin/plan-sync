@@ -200,7 +200,7 @@ class ElectivePreferenceBottomSheetState
                 child: Text(
                   'Done',
                   style: TextStyle(
-                    color: colorScheme.background,
+                    color: colorScheme.surface,
                   ),
                 ),
               ),

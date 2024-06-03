@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
-          backgroundColor: colorScheme.background,
+          backgroundColor: colorScheme.surface,
           elevation: 0.0,
           toolbarHeight: 80,
           shape: const RoundedRectangleBorder(

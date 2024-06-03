@@ -44,7 +44,7 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: colorScheme.background,
+          backgroundColor: colorScheme.surface,
           elevation: 0.0,
           toolbarHeight: 80,
           shape: const RoundedRectangleBorder(

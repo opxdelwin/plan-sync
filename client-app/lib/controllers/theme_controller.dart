@@ -6,7 +6,6 @@ class AppThemeController extends GetxController {
     useMaterial3: true,
     colorScheme: const ColorScheme(
       brightness: Brightness.light,
-      background: Color(0xffEAF9E9),
       primary: Color(0x668ADC89),
       onPrimary: Color(0xff061906),
       secondary: Color(0xff2FC02C),
@@ -23,7 +22,6 @@ class AppThemeController extends GetxController {
     useMaterial3: true,
     colorScheme: const ColorScheme(
       brightness: Brightness.dark,
-      background: Color(0xff061906),
       primary: Color(0x4d8ADC89),
       onPrimary: Color(0xffD8E7D7),
       secondary: Color(0xcc2FC02C),

@@ -32,14 +32,14 @@ class _ElectiveYearBarState extends State<ElectiveYearBar> {
               style: TextStyle(color: colorScheme.onSurface),
               icon: Icon(
                 Icons.arrow_drop_down,
-                color: colorScheme.background,
+                color: colorScheme.surface,
               ),
               value: serviceController.selectedElectiveYear?.toString(),
               dropdownColor: colorScheme.onSurface,
               hint: Text(
                 "Year",
                 style: TextStyle(
-                  color: colorScheme.background,
+                  color: colorScheme.surface,
                   fontSize: 16,
                 ),
               ),
@@ -47,7 +47,7 @@ class _ElectiveYearBarState extends State<ElectiveYearBar> {
               items: serviceController.electiveYears
                   ?.map((year) => buildMenuItem(
                         year,
-                        colorScheme.background,
+                        colorScheme.surface,
                       ))
                   .toList(),
               onChanged: (String? newSelection) {

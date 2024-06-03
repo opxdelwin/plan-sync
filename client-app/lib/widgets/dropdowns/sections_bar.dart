@@ -38,21 +38,21 @@ class _SectionsBarState extends State<SectionsBar> {
                 style: TextStyle(color: colorScheme.onSurface),
                 icon: Icon(
                   Icons.arrow_drop_down,
-                  color: colorScheme.background,
+                  color: colorScheme.surface,
                 ),
                 value: filterController.activeSection,
                 dropdownColor: colorScheme.onSurface,
                 disabledHint: Text(
                   "Select Semester First",
                   style: TextStyle(
-                    color: colorScheme.background,
+                    color: colorScheme.surface,
                     fontSize: 16,
                   ),
                 ),
                 hint: Text(
                   "Section",
                   style: TextStyle(
-                    color: colorScheme.background,
+                    color: colorScheme.surface,
                     fontSize: 16,
                   ),
                 ),
@@ -61,7 +61,7 @@ class _SectionsBarState extends State<SectionsBar> {
                     .toList()
                     .map((e) => buildMenuItem(
                           serviceController.sections?[e],
-                          colorScheme.background,
+                          colorScheme.surface,
                         ))
                     .toList(),
                 onChanged: filterController.activeSemester == null

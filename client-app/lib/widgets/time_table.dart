@@ -23,7 +23,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
 
   void showMoreInfo(Map<String, dynamic> data, ColorScheme colorScheme) {
     Widget dialog = Dialog(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       elevation: 0.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),

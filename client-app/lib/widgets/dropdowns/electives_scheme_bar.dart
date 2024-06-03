@@ -34,29 +34,29 @@ class _ElectiveSchemeBarState extends State<ElectiveSchemeBar> {
                 isExpanded: true,
                 elevation: 0,
                 enableFeedback: true,
-                style: TextStyle(color: colorScheme.background),
+                style: TextStyle(color: colorScheme.surface),
                 icon: Icon(
                   Icons.arrow_drop_down,
-                  color: colorScheme.background,
+                  color: colorScheme.surface,
                 ),
                 value: filterController.activeElectiveScheme,
                 dropdownColor: colorScheme.onSurface,
                 disabledHint: Text(
                   "Select Semester First",
                   style: TextStyle(
-                    color: colorScheme.background,
+                    color: colorScheme.surface,
                   ),
                 ),
                 hint: Text(
                   "Scheme",
-                  style: TextStyle(color: colorScheme.background, fontSize: 16),
+                  style: TextStyle(color: colorScheme.surface, fontSize: 16),
                 ),
                 menuMaxHeight: 256,
                 items: serviceController.electiveSchemes?.keys
                     .toList()
                     .map((e) => buildMenuItem(
                           serviceController.electiveSchemes?[e],
-                          colorScheme.background,
+                          colorScheme.surface,
                         ))
                     .toList(),
                 onChanged: filterController.activeElectiveSemester == null

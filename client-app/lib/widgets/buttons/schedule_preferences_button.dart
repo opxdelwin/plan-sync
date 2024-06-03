@@ -48,14 +48,14 @@ class _SchedulePreferenceButtonState extends State<SchedulePreferenceButton> {
                   );
               return Text(
                 sectionSemesterShortCode ?? 'Processing',
-                style: TextStyle(color: colorScheme.background),
+                style: TextStyle(color: colorScheme.surface),
               );
             },
           ),
           const SizedBox(width: 8),
           Icon(
             Icons.keyboard_arrow_down_rounded,
-            color: colorScheme.background,
+            color: colorScheme.surface,
           ),
         ],
       ),

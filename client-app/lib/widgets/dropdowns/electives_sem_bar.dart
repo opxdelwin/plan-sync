@@ -33,15 +33,15 @@ class _ElectiveSemesterBarState extends State<ElectiveSemesterBar> {
                 isExpanded: true,
                 elevation: 0,
                 enableFeedback: true,
-                style: TextStyle(color: colorScheme.background),
+                style: TextStyle(color: colorScheme.surface),
                 icon: Icon(
                   Icons.arrow_drop_down,
-                  color: colorScheme.background,
+                  color: colorScheme.surface,
                 ),
                 disabledHint: Text(
                   "Select Semester First",
                   style: TextStyle(
-                    color: colorScheme.background,
+                    color: colorScheme.surface,
                   ),
                 ),
                 value: filterController.activeElectiveSemester,
@@ -49,18 +49,18 @@ class _ElectiveSemesterBarState extends State<ElectiveSemesterBar> {
                 menuMaxHeight: 256,
                 hint: serviceController.electivesSemesters == null
                     ? LoadingAnimationWidget.prograssiveDots(
-                        color: colorScheme.background, size: 18)
+                        color: colorScheme.surface, size: 18)
                     : Text(
                         "Elective Semester",
                         style: TextStyle(
-                          color: colorScheme.background,
+                          color: colorScheme.surface,
                           fontSize: 16,
                         ),
                       ),
                 items: serviceController.electivesSemesters
                     ?.map((e) => _buildMenuItem(
                           e,
-                          colorScheme.background,
+                          colorScheme.surface,
                         ))
                     .toList(),
                 onChanged: (String? newSelection) {

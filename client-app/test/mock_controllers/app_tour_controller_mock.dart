@@ -52,7 +52,7 @@ class MockAppTourController extends GetxController
       targets: targets,
       colorShadow: colorScheme.onSurface,
       textSkip: "SKIP",
-      textStyleSkip: TextStyle(color: colorScheme.background),
+      textStyleSkip: TextStyle(color: colorScheme.surface),
       paddingFocus: 0,
       focusAnimationDuration: const Duration(milliseconds: 500),
       unFocusAnimationDuration: const Duration(milliseconds: 500),
