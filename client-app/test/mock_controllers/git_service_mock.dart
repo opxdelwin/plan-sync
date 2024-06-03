@@ -118,9 +118,9 @@ class MockGitService extends GetxController with Mock implements GitService {
   // ignore: invalid_use_of_protected_member
   List? get semesters => _semesters?.value;
 
-  RxInt? _selectedYear;
+  RxString? _selectedYear;
   @override
-  set selectedYear(int? newYear) {
+  set selectedYear(String? newYear) {
     if (newYear == null) {
       return;
     }
@@ -129,7 +129,7 @@ class MockGitService extends GetxController with Mock implements GitService {
   }
 
   @override
-  int? get selectedYear => _selectedYear?.value;
+  String? get selectedYear => _selectedYear?.value;
 
   @override
   List<String>? get years => ["2024", "2023", "2022"];

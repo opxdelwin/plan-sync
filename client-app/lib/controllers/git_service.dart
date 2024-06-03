@@ -17,9 +17,9 @@ class GitService extends GetxController {
 
   // normal schedule years
   List<String>? years;
-  RxInt? _selectedYear;
-  int? get selectedYear => _selectedYear?.value;
-  set selectedYear(int? newYear) {
+  RxString? _selectedYear;
+  String? get selectedYear => _selectedYear?.value;
+  set selectedYear(String? newYear) {
     if (newYear == null || selectedYear == newYear) {
       return;
     }
