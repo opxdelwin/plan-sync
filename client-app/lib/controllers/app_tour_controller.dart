@@ -41,7 +41,7 @@ class AppTourController extends GetxController {
 
     TutorialCoachMark tutorial = TutorialCoachMark(
       targets: targets,
-      colorShadow: colorScheme.onBackground,
+      colorShadow: colorScheme.onSurface,
       textSkip: "SKIP",
       textStyleSkip: TextStyle(color: colorScheme.background),
       paddingFocus: 0,

@@ -35,7 +35,7 @@ class _SchedulePreferenceButtonState extends State<SchedulePreferenceButton> {
         context: context,
       ),
       style: ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll(colorScheme.onBackground),
+        backgroundColor: WidgetStatePropertyAll(colorScheme.onSurface),
       ),
       child: Row(
         children: [

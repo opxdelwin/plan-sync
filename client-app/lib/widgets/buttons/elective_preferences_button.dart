@@ -35,7 +35,7 @@ class _ElectivePreferenceButtonState extends State<ElectivePreferenceButton> {
         context: context,
       ),
       style: ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll(colorScheme.onBackground),
+        backgroundColor: WidgetStatePropertyAll(colorScheme.onSurface),
       ),
       child: Row(
         children: [

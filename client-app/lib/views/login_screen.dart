@@ -63,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontWeight: FontWeight.bold,
                           fontSize: 32,
                           letterSpacing: 0.2,
-                          color: colorScheme.onBackground,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -126,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
-                          color: colorScheme.onBackground,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -153,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontWeight: FontWeight.w300,
                         color: Theme.of(context)
                             .colorScheme
-                            .onBackground
+                            .onSurface
                             .withOpacity(0.6),
                       ),
                       textAlign: TextAlign.center,

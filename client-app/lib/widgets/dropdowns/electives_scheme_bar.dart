@@ -20,7 +20,7 @@ class _ElectiveSchemeBarState extends State<ElectiveSchemeBar> {
     return Container(
       decoration: ShapeDecoration(
         shape: const StadiumBorder(),
-        color: colorScheme.onBackground,
+        color: colorScheme.onSurface,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: SizedBox(
@@ -40,7 +40,7 @@ class _ElectiveSchemeBarState extends State<ElectiveSchemeBar> {
                   color: colorScheme.background,
                 ),
                 value: filterController.activeElectiveScheme,
-                dropdownColor: colorScheme.onBackground,
+                dropdownColor: colorScheme.onSurface,
                 disabledHint: Text(
                   "Select Semester First",
                   style: TextStyle(

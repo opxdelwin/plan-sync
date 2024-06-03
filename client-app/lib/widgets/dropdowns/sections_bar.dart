@@ -21,7 +21,7 @@ class _SectionsBarState extends State<SectionsBar> {
     return Container(
       decoration: ShapeDecoration(
         shape: const StadiumBorder(),
-        color: colorScheme.onBackground,
+        color: colorScheme.onSurface,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: SizedBox(
@@ -35,13 +35,13 @@ class _SectionsBarState extends State<SectionsBar> {
                 isExpanded: true,
                 elevation: 0,
                 enableFeedback: true,
-                style: TextStyle(color: colorScheme.onBackground),
+                style: TextStyle(color: colorScheme.onSurface),
                 icon: Icon(
                   Icons.arrow_drop_down,
                   color: colorScheme.background,
                 ),
                 value: filterController.activeSection,
-                dropdownColor: colorScheme.onBackground,
+                dropdownColor: colorScheme.onSurface,
                 disabledHint: Text(
                   "Select Semester First",
                   style: TextStyle(

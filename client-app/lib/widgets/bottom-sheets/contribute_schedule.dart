@@ -34,13 +34,13 @@ class ContributeScheduleBottomSheet extends StatelessWidget {
               Text(
                 "Contribute via mail",
                 style: TextStyle(
-                  color: colorScheme.onBackground,
+                  color: colorScheme.onSurface,
                 ),
               ),
               ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStatePropertyAll(colorScheme.onBackground),
+                        WidgetStatePropertyAll(colorScheme.onSurface),
                   ),
                   onPressed: () => launchMail(),
                   child: Row(
@@ -69,13 +69,13 @@ class ContributeScheduleBottomSheet extends StatelessWidget {
               Text(
                 "Contribute via GitHub",
                 style: TextStyle(
-                  color: colorScheme.onBackground,
+                  color: colorScheme.onSurface,
                 ),
               ),
               ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStatePropertyAll(colorScheme.onBackground),
+                        WidgetStatePropertyAll(colorScheme.onSurface),
                   ),
                   onPressed: () => launchGithub(),
                   child: Row(

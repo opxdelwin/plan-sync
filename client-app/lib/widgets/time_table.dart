@@ -42,7 +42,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
               child: Text(
                 'About this schedule',
                 style: TextStyle(
-                  color: colorScheme.onBackground,
+                  color: colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
@@ -55,14 +55,14 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
               text: TextSpan(
                   text: 'Section:',
                   style: TextStyle(
-                    color: colorScheme.onBackground,
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                   ),
                   children: <TextSpan>[
                     TextSpan(
                       text: '  ${data['meta']['section']}'.toUpperCase(),
                       style: TextStyle(
-                        color: colorScheme.onBackground,
+                        color: colorScheme.onSurface,
                         fontWeight: FontWeight.normal,
                       ),
                     )
@@ -74,14 +74,14 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
               text: TextSpan(
                   text: 'Schedule Type:',
                   style: TextStyle(
-                    color: colorScheme.onBackground,
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                   ),
                   children: <TextSpan>[
                     TextSpan(
                       text: '  ${data['meta']['type']}'.toUpperCase(),
                       style: TextStyle(
-                        color: colorScheme.onBackground,
+                        color: colorScheme.onSurface,
                         fontWeight: FontWeight.normal,
                       ),
                     )
@@ -93,14 +93,14 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
               text: TextSpan(
                   text: 'Schedule Version:',
                   style: TextStyle(
-                    color: colorScheme.onBackground,
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                   ),
                   children: <TextSpan>[
                     TextSpan(
                       text: '  ${data['meta']['revision']}',
                       style: TextStyle(
-                        color: colorScheme.onBackground,
+                        color: colorScheme.onSurface,
                         fontWeight: FontWeight.normal,
                       ),
                     )
@@ -112,14 +112,14 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
               text: TextSpan(
                   text: 'Effective from:',
                   style: TextStyle(
-                    color: colorScheme.onBackground,
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                   ),
                   children: <TextSpan>[
                     TextSpan(
                       text: '  ${data['meta']['effective-date']}',
                       style: TextStyle(
-                        color: colorScheme.onBackground,
+                        color: colorScheme.onSurface,
                         fontWeight: FontWeight.normal,
                       ),
                     )
@@ -131,14 +131,14 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
               text: TextSpan(
                   text: 'Contributor:',
                   style: TextStyle(
-                    color: colorScheme.onBackground,
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                   ),
                   children: <TextSpan>[
                     TextSpan(
                       text: '  ${data['meta']['contributor']}',
                       style: TextStyle(
-                        color: colorScheme.onBackground,
+                        color: colorScheme.onSurface,
                         fontWeight: FontWeight.normal,
                       ),
                     )
@@ -151,7 +151,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
 
     Get.dialog(
       dialog,
-      barrierColor: colorScheme.onBackground.withOpacity(0.32),
+      barrierColor: colorScheme.onSurface.withOpacity(0.32),
     );
   }
 

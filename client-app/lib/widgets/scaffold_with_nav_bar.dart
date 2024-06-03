@@ -28,7 +28,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
           scaleCurve: Curves.easeInOutExpo,
           isFloating: true,
           elevation: 0,
-          backgroundColor: colorScheme.onBackground,
+          backgroundColor: colorScheme.onSurface,
           borderRadius: const Radius.circular(32),
           selectedColor: colorScheme.secondary,
           unSelectedColor: colorScheme.background,

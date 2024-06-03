@@ -20,7 +20,7 @@ class _ElectiveSemesterBarState extends State<ElectiveSemesterBar> {
     return Container(
       decoration: ShapeDecoration(
         shape: const StadiumBorder(),
-        color: colorScheme.onBackground,
+        color: colorScheme.onSurface,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: SizedBox(
@@ -45,7 +45,7 @@ class _ElectiveSemesterBarState extends State<ElectiveSemesterBar> {
                   ),
                 ),
                 value: filterController.activeElectiveSemester,
-                dropdownColor: colorScheme.onBackground,
+                dropdownColor: colorScheme.onSurface,
                 menuMaxHeight: 256,
                 hint: serviceController.electivesSemesters == null
                     ? LoadingAnimationWidget.prograssiveDots(

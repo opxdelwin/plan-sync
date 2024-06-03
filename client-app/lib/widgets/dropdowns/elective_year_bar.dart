@@ -17,7 +17,7 @@ class _ElectiveYearBarState extends State<ElectiveYearBar> {
     return Container(
       decoration: ShapeDecoration(
         shape: const StadiumBorder(),
-        color: colorScheme.onBackground,
+        color: colorScheme.onSurface,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: SizedBox(
@@ -29,13 +29,13 @@ class _ElectiveYearBarState extends State<ElectiveYearBar> {
               isExpanded: true,
               elevation: 0,
               enableFeedback: true,
-              style: TextStyle(color: colorScheme.onBackground),
+              style: TextStyle(color: colorScheme.onSurface),
               icon: Icon(
                 Icons.arrow_drop_down,
                 color: colorScheme.background,
               ),
               value: serviceController.selectedElectiveYear?.toString(),
-              dropdownColor: colorScheme.onBackground,
+              dropdownColor: colorScheme.onSurface,
               hint: Text(
                 "Year",
                 style: TextStyle(

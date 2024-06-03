@@ -29,7 +29,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
           label: Text(
         timespace,
         style: TextStyle(
-          color: Theme.of(context).colorScheme.onBackground,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       )));
     });
@@ -41,7 +41,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
       cells.add(DataCell(Text(
         value,
         style: TextStyle(
-          color: Theme.of(context).colorScheme.onBackground,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       )));
     });

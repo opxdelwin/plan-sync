@@ -66,7 +66,7 @@ class ElectivePreferenceBottomSheetState
                 height: 8,
                 width: size.width * 0.24,
                 decoration: ShapeDecoration(
-                  color: colorScheme.onBackground,
+                  color: colorScheme.onSurface,
                   shape: const StadiumBorder(),
                 ),
               ),
