@@ -52,8 +52,8 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
         cells: cells,
 
         // set highlight color for selected (current) day
-        color: MaterialStateProperty.resolveWith<Color?>(
-            (Set<MaterialState> states) {
+        color:
+            WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
           if (states.contains(MaterialState.selected)) {
             return Theme.of(context).colorScheme.secondary.withOpacity(0.12);
           }
