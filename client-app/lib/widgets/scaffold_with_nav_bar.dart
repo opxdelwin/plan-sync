@@ -28,10 +28,10 @@ class ScaffoldWithNavBar extends StatelessWidget {
           scaleCurve: Curves.easeInOutExpo,
           isFloating: true,
           elevation: 0,
-          backgroundColor: colorScheme.onBackground,
+          backgroundColor: colorScheme.onSurface,
           borderRadius: const Radius.circular(32),
           selectedColor: colorScheme.secondary,
-          unSelectedColor: colorScheme.background,
+          unSelectedColor: colorScheme.surface,
 
           //bubble color
           strokeColor: colorScheme.secondary.withOpacity(0.32),
@@ -40,20 +40,20 @@ class ScaffoldWithNavBar extends StatelessWidget {
               icon: const Icon(FontAwesomeIcons.calendar),
               title: Text(
                 'Schedule',
-                style: TextStyle(color: colorScheme.background),
+                style: TextStyle(color: colorScheme.surface),
               ),
             ),
             CustomNavigationBarItem(
                 icon: const Icon(FontAwesomeIcons.clipboard),
                 title: Text(
                   'Electives',
-                  style: TextStyle(color: colorScheme.background),
+                  style: TextStyle(color: colorScheme.surface),
                 )),
             CustomNavigationBarItem(
                 icon: const Icon(Icons.settings_outlined),
                 title: Text(
                   'Settings',
-                  style: TextStyle(color: colorScheme.background),
+                  style: TextStyle(color: colorScheme.surface),
                 )),
           ],
           currentIndex: navigationShell.currentIndex,

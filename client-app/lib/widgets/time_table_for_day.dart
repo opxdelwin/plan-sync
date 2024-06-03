@@ -29,7 +29,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
           label: Text(
         timespace,
         style: TextStyle(
-          color: Theme.of(context).colorScheme.onBackground,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       )));
     });
@@ -41,7 +41,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
       cells.add(DataCell(Text(
         value,
         style: TextStyle(
-          color: Theme.of(context).colorScheme.onBackground,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       )));
     });
@@ -52,9 +52,9 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
         cells: cells,
 
         // set highlight color for selected (current) day
-        color: MaterialStateProperty.resolveWith<Color?>(
-            (Set<MaterialState> states) {
-          if (states.contains(MaterialState.selected)) {
+        color:
+            WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
             return Theme.of(context).colorScheme.secondary.withOpacity(0.12);
           }
           return null;

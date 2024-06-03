@@ -41,9 +41,9 @@ class AppTourController extends GetxController {
 
     TutorialCoachMark tutorial = TutorialCoachMark(
       targets: targets,
-      colorShadow: colorScheme.onBackground,
+      colorShadow: colorScheme.onSurface,
       textSkip: "SKIP",
-      textStyleSkip: TextStyle(color: colorScheme.background),
+      textStyleSkip: TextStyle(color: colorScheme.surface),
       paddingFocus: 0,
       focusAnimationDuration: const Duration(milliseconds: 500),
       unFocusAnimationDuration: const Duration(milliseconds: 500),

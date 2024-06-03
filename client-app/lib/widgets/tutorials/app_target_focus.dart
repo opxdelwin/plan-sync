@@ -23,7 +23,7 @@ class AppTargetFocus {
                 "Select your section here",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: colorScheme.background,
+                  color: colorScheme.surface,
                   fontSize: 20.0,
                 ),
               ),
@@ -32,7 +32,7 @@ class AppTargetFocus {
                 child: Text(
                   "View your schedule efficiently and save your preferences here",
                   style: TextStyle(
-                    color: colorScheme.background,
+                    color: colorScheme.surface,
                   ),
                 ),
               )
@@ -63,7 +63,7 @@ class AppTargetFocus {
                 "Select your section",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: colorScheme.background,
+                  color: colorScheme.surface,
                   fontSize: 20.0,
                 ),
               ),
@@ -72,7 +72,7 @@ class AppTargetFocus {
                 child: Text(
                   "We have all the schedules ready to go!",
                   style: TextStyle(
-                    color: colorScheme.background,
+                    color: colorScheme.surface,
                   ),
                 ),
               ),
@@ -104,7 +104,7 @@ class AppTargetFocus {
                 "Save Everything",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: colorScheme.background,
+                  color: colorScheme.surface,
                   fontSize: 20.0,
                 ),
               ),
@@ -113,7 +113,7 @@ class AppTargetFocus {
                 child: Text(
                   "Turn this on to save your section details.\nWe'll open this up when you come back!",
                   style: TextStyle(
-                    color: colorScheme.background,
+                    color: colorScheme.surface,
                   ),
                 ),
               ),

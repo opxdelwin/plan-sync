@@ -33,18 +33,18 @@ class _SemesterBarState extends State<SemesterBar> {
                 isExpanded: true,
                 elevation: 0,
                 enableFeedback: true,
-                style: TextStyle(color: colorScheme.onBackground),
+                style: TextStyle(color: colorScheme.onSurface),
                 icon: Icon(
                   Icons.arrow_drop_down,
-                  color: colorScheme.background,
+                  color: colorScheme.surface,
                 ),
                 value: filterController.activeSemester,
-                dropdownColor: colorScheme.onBackground,
+                dropdownColor: colorScheme.onSurface,
                 menuMaxHeight: 256,
                 disabledHint: Text(
                   "Select Year First",
                   style: TextStyle(
-                    color: colorScheme.background,
+                    color: colorScheme.surface,
                     fontSize: 16,
                   ),
                 ),
@@ -56,12 +56,12 @@ class _SemesterBarState extends State<SemesterBar> {
                     : Text(
                         "Semester",
                         style: TextStyle(
-                          color: colorScheme.background,
+                          color: colorScheme.surface,
                           fontSize: 16,
                         ),
                       ),
                 items: serviceController.semesters
-                    ?.map((e) => _buildMenuItem(e, colorScheme.background))
+                    ?.map((e) => _buildMenuItem(e, colorScheme.surface))
                     .toList(),
                 onChanged: (String? newSelection) {
                   Logger.i("new semester: $newSelection");

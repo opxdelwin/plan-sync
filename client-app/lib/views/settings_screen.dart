@@ -44,7 +44,7 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: colorScheme.background,
+          backgroundColor: colorScheme.surface,
           elevation: 0.0,
           toolbarHeight: 80,
           shape: const RoundedRectangleBorder(
@@ -54,7 +54,7 @@ class SettingsPage extends StatelessWidget {
           title: Text(
             "Account",
             style: TextStyle(
-              color: colorScheme.onBackground,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.2,
             ),
@@ -77,7 +77,7 @@ class SettingsPage extends StatelessWidget {
                 Text(
                   auth.activeUser!.displayName ?? "username",
                   style: TextStyle(
-                    color: colorScheme.onBackground,
+                    color: colorScheme.onSurface,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -85,7 +85,7 @@ class SettingsPage extends StatelessWidget {
                 Text(
                   auth.activeUser!.email ?? "connect.plansync@gmail.com",
                   style: TextStyle(
-                    color: colorScheme.onBackground.withOpacity(0.6),
+                    color: colorScheme.onSurface.withOpacity(0.6),
                   ),
                 ),
                 Row(
@@ -94,13 +94,13 @@ class SettingsPage extends StatelessWidget {
                     Text(
                       'Plan Sync ${versionController.appVersion}+${versionController.appBuild} | ',
                       style: TextStyle(
-                        color: colorScheme.onBackground.withOpacity(0.6),
+                        color: colorScheme.onSurface.withOpacity(0.6),
                       ),
                     ),
                     Text(
                       'Copy UID',
                       style: TextStyle(
-                        color: colorScheme.onBackground.withOpacity(0.6),
+                        color: colorScheme.onSurface.withOpacity(0.6),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -110,7 +110,7 @@ class SettingsPage extends StatelessWidget {
                       child: Icon(
                         Icons.copy,
                         size: 18,
-                        color: colorScheme.onBackground,
+                        color: colorScheme.onSurface,
                         semanticLabel: 'Copy',
                       ),
                     )

@@ -33,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
     return Scaffold(
-        backgroundColor: colorScheme.background,
+        backgroundColor: colorScheme.surface,
         body: Center(
           child: Stack(
             children: [
@@ -63,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontWeight: FontWeight.bold,
                           fontSize: 32,
                           letterSpacing: 0.2,
-                          color: colorScheme.onBackground,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -77,16 +77,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         Expanded(
                           child: ElevatedButton.icon(
                             style: ButtonStyle(
-                              elevation: const MaterialStatePropertyAll(0),
-                              padding: const MaterialStatePropertyAll(
+                              elevation: const WidgetStatePropertyAll(0),
+                              padding: const WidgetStatePropertyAll(
                                 EdgeInsets.symmetric(
                                   vertical: 16,
                                   horizontal: 24,
                                 ),
                               ),
                               enableFeedback: true,
-                              backgroundColor: MaterialStatePropertyAll(
-                                  colorScheme.secondary),
+                              backgroundColor:
+                                  WidgetStatePropertyAll(colorScheme.secondary),
                             ),
                             onPressed: loginProcedure,
                             icon: Icon(
@@ -126,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
-                          color: colorScheme.onBackground,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -153,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontWeight: FontWeight.w300,
                         color: Theme.of(context)
                             .colorScheme
-                            .onBackground
+                            .onSurface
                             .withOpacity(0.6),
                       ),
                       textAlign: TextAlign.center,
