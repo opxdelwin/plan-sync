@@ -234,7 +234,7 @@ class FilterController extends GetxController {
     Logger.i("primary year: $primaryYear");
 
     if (service.years?.contains(primaryYear) != false && primaryYear != null) {
-      service.selectedYear = int.parse(primaryYear);
+      service.selectedYear = primaryYear;
     }
   }
 

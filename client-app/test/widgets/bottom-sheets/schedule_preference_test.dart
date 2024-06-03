@@ -88,7 +88,7 @@ void main() {
     await tester.tap(find.text('2024'));
     await tester.pumpAndSettle();
 
-    expect(gitController.selectedYear, 2024);
+    expect(gitController.selectedYear, '2024');
   });
 
   testWidgets('SchedulePreferenceBottomSheet opens SemestersBar',
@@ -153,7 +153,7 @@ void main() {
       "b16": "B16 CSE",
       "b18": "B18 CSE",
     };
-    gitController.selectedYear = 2023;
+    gitController.selectedYear = '2023';
     filterController.activeSection = 'B18 CSE';
     filterController.activeSectionCode = 'b18';
     filterController.activeSemester = 'SEM2';
@@ -172,7 +172,7 @@ void main() {
     expect(filterController.activeSection, 'B18 CSE');
     expect(filterController.activeSectionCode, 'b18');
     expect(filterController.activeSemester, 'SEM2');
-    expect(gitController.selectedYear, 2023);
+    expect(gitController.selectedYear, '2023');
 
     // verify existing perfs
     expect(perfs.getPrimarySectionPreference(), isNull);
@@ -208,7 +208,7 @@ void main() {
       "b16": "B16 CSE",
       "b18": "B18 CSE",
     };
-    gitController.selectedYear = 2023;
+    gitController.selectedYear = '2023';
     filterController.activeSection = 'B18 CSE';
     filterController.activeSectionCode = 'b18';
     filterController.activeSemester = 'SEM2';
@@ -226,7 +226,7 @@ void main() {
     expect(filterController.activeSection, 'B18 CSE');
     expect(filterController.activeSectionCode, 'b18');
     expect(filterController.activeSemester, 'SEM2');
-    expect(gitController.selectedYear, 2023);
+    expect(gitController.selectedYear, '2023');
 
     // verify existing perfs
     expect(perfs.getPrimarySectionPreference(), isNull);

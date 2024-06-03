@@ -13,7 +13,7 @@ class BottomSheets {
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       builder: (context) => SchedulePreferenceBottomSheet(
         save: save,
       ),
@@ -27,7 +27,7 @@ class BottomSheets {
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       builder: (context) => const ReportErrorBottomSheet(),
     );
   }
@@ -39,7 +39,7 @@ class BottomSheets {
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       builder: (context) => const ContributeScheduleBottomSheet(),
     );
   }
@@ -52,7 +52,7 @@ class BottomSheets {
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       builder: (context) => ElectivePreferenceBottomSheet(
         save: save,
       ),

@@ -35,7 +35,7 @@ class _ElectivePreferenceButtonState extends State<ElectivePreferenceButton> {
         context: context,
       ),
       style: ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll(colorScheme.onBackground),
+        backgroundColor: WidgetStatePropertyAll(colorScheme.onSurface),
       ),
       child: Row(
         children: [
@@ -48,14 +48,14 @@ class _ElectivePreferenceButtonState extends State<ElectivePreferenceButton> {
                   );
               return Text(
                 electiveSemesterShortCode ?? 'Processing',
-                style: TextStyle(color: colorScheme.background),
+                style: TextStyle(color: colorScheme.surface),
               );
             },
           ),
           const SizedBox(width: 8),
           Icon(
             Icons.keyboard_arrow_down_rounded,
-            color: colorScheme.background,
+            color: colorScheme.surface,
           ),
         ],
       ),

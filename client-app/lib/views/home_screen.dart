@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
-          backgroundColor: colorScheme.background,
+          backgroundColor: colorScheme.surface,
           elevation: 0.0,
           toolbarHeight: 80,
           shape: const RoundedRectangleBorder(
@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
           title: Text(
             "Plan Sync",
             style: TextStyle(
-              color: colorScheme.onBackground,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.2,
             ),

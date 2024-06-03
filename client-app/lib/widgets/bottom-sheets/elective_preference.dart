@@ -66,7 +66,7 @@ class ElectivePreferenceBottomSheetState
                 height: 8,
                 width: size.width * 0.24,
                 decoration: ShapeDecoration(
-                  color: colorScheme.onBackground,
+                  color: colorScheme.onSurface,
                   shape: const StadiumBorder(),
                 ),
               ),
@@ -189,10 +189,10 @@ class ElectivePreferenceBottomSheetState
               ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor:
-                      MaterialStatePropertyAll(colorScheme.secondary),
+                      WidgetStatePropertyAll(colorScheme.secondary),
                   foregroundColor:
-                      MaterialStatePropertyAll(colorScheme.onSecondary),
-                  padding: MaterialStatePropertyAll(
+                      WidgetStatePropertyAll(colorScheme.onSecondary),
+                  padding: WidgetStatePropertyAll(
                     EdgeInsets.symmetric(horizontal: size.width * 0.08),
                   ),
                 ),
@@ -200,7 +200,7 @@ class ElectivePreferenceBottomSheetState
                 child: Text(
                   'Done',
                   style: TextStyle(
-                    color: colorScheme.background,
+                    color: colorScheme.surface,
                   ),
                 ),
               ),
