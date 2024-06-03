@@ -52,12 +52,12 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
                 const SizedBox(width: 16),
                 ElevatedButton.icon(
                   style: ButtonStyle(
-                      elevation: const MaterialStatePropertyAll(0.0),
+                      elevation: const WidgetStatePropertyAll(0.0),
                       backgroundColor:
-                          MaterialStatePropertyAll(colorScheme.secondary),
+                          WidgetStatePropertyAll(colorScheme.secondary),
                       foregroundColor:
-                          MaterialStatePropertyAll(colorScheme.onSecondary),
-                      shape: const MaterialStatePropertyAll(StadiumBorder())),
+                          WidgetStatePropertyAll(colorScheme.onSecondary),
+                      shape: const WidgetStatePropertyAll(StadiumBorder())),
                   onPressed: () => versionController.openStore(),
                   icon: const Icon(Icons.download_rounded),
                   label: const Text("Update Now"),

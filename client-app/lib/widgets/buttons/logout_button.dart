@@ -37,8 +37,8 @@ class _LogoutButtonState extends State<LogoutButton> {
     final colorScheme = Theme.of(context).colorScheme;
     return ElevatedButton.icon(
       style: ButtonStyle(
-        elevation: const MaterialStatePropertyAll(0.0),
-        backgroundColor: MaterialStatePropertyAll(colorScheme.error),
+        elevation: const WidgetStatePropertyAll(0.0),
+        backgroundColor: WidgetStatePropertyAll(colorScheme.error),
       ),
       onPressed: logout,
       icon: Icon(Icons.logout, color: colorScheme.onError),

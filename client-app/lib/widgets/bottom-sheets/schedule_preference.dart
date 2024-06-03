@@ -190,10 +190,10 @@ class SchedulePreferenceBottomSheetState
               ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor:
-                      MaterialStatePropertyAll(colorScheme.secondary),
+                      WidgetStatePropertyAll(colorScheme.secondary),
                   foregroundColor:
-                      MaterialStatePropertyAll(colorScheme.onSecondary),
-                  padding: MaterialStatePropertyAll(
+                      WidgetStatePropertyAll(colorScheme.onSecondary),
+                  padding: WidgetStatePropertyAll(
                     EdgeInsets.symmetric(horizontal: size.width * 0.08),
                   ),
                 ),

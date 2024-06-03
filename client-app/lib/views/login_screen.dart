@@ -77,16 +77,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         Expanded(
                           child: ElevatedButton.icon(
                             style: ButtonStyle(
-                              elevation: const MaterialStatePropertyAll(0),
-                              padding: const MaterialStatePropertyAll(
+                              elevation: const WidgetStatePropertyAll(0),
+                              padding: const WidgetStatePropertyAll(
                                 EdgeInsets.symmetric(
                                   vertical: 16,
                                   horizontal: 24,
                                 ),
                               ),
                               enableFeedback: true,
-                              backgroundColor: MaterialStatePropertyAll(
-                                  colorScheme.secondary),
+                              backgroundColor:
+                                  WidgetStatePropertyAll(colorScheme.secondary),
                             ),
                             onPressed: loginProcedure,
                             icon: Icon(
