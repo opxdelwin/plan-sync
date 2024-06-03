@@ -29,7 +29,7 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        backgroundColor: colorScheme.background,
+        backgroundColor: colorScheme.surface,
         elevation: 0.0,
         toolbarHeight: 80,
         shape: const RoundedRectangleBorder(
@@ -39,7 +39,7 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
         title: Text(
           "Elective Classes",
           style: TextStyle(
-            color: colorScheme.onBackground,
+            color: colorScheme.onSurface,
             fontWeight: FontWeight.bold,
             letterSpacing: 0.2,
           ),
@@ -110,7 +110,7 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                               Text(
                                 "No Data Available",
                                 style: TextStyle(
-                                  color: colorScheme.onBackground,
+                                  color: colorScheme.onSurface,
                                 ),
                               )
                             ],
@@ -175,7 +175,7 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                                         "Effective from ${snapshot.data!["meta"]["effective-date"]}",
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: colorScheme.onBackground,
+                                          color: colorScheme.onSurface,
                                         ),
                                       ),
                                     ],

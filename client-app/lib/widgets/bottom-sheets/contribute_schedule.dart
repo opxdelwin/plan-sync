@@ -34,13 +34,13 @@ class ContributeScheduleBottomSheet extends StatelessWidget {
               Text(
                 "Contribute via mail",
                 style: TextStyle(
-                  color: colorScheme.onBackground,
+                  color: colorScheme.onSurface,
                 ),
               ),
               ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStatePropertyAll(colorScheme.onBackground),
+                        WidgetStatePropertyAll(colorScheme.onSurface),
                   ),
                   onPressed: () => launchMail(),
                   child: Row(
@@ -48,13 +48,13 @@ class ContributeScheduleBottomSheet extends StatelessWidget {
                       Text(
                         'Launch Mail',
                         style: TextStyle(
-                          color: colorScheme.background,
+                          color: colorScheme.surface,
                         ),
                       ),
                       const SizedBox(width: 8),
                       Icon(
                         Icons.mail_outline_rounded,
-                        color: colorScheme.background,
+                        color: colorScheme.surface,
                       )
                     ],
                   ))
@@ -69,13 +69,13 @@ class ContributeScheduleBottomSheet extends StatelessWidget {
               Text(
                 "Contribute via GitHub",
                 style: TextStyle(
-                  color: colorScheme.onBackground,
+                  color: colorScheme.onSurface,
                 ),
               ),
               ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStatePropertyAll(colorScheme.onBackground),
+                        WidgetStatePropertyAll(colorScheme.onSurface),
                   ),
                   onPressed: () => launchGithub(),
                   child: Row(
@@ -83,13 +83,13 @@ class ContributeScheduleBottomSheet extends StatelessWidget {
                       Text(
                         'Launch GitHub',
                         style: TextStyle(
-                          color: colorScheme.background,
+                          color: colorScheme.surface,
                         ),
                       ),
                       const SizedBox(width: 8),
                       Icon(
                         FontAwesomeIcons.github,
-                        color: colorScheme.background,
+                        color: colorScheme.surface,
                       )
                     ],
                   ))
