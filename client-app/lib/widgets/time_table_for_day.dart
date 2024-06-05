@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:plan_sync/widgets/no_schedule_widget.dart';
+import 'package:plan_sync/widgets/subject_tile.dart';
 
 class TimeTableForDay extends StatefulWidget {
   const TimeTableForDay({super.key, required this.data, required this.day});
@@ -66,8 +68,10 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    buildColumn(context);
-    buildRow(context);
+    if (widget.data['meta']['type'] != 'norm-class') {
+      buildColumn(context);
+      buildRow(context);
+    }
   }
 
   @override
@@ -80,7 +84,10 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
     }
   }
 
-  Column _buildForTimetable(ColorScheme colorScheme) {
+  Widget _buildForTimetable(ColorScheme colorScheme) {
+    if (widget.data['data'][widget.day] == null) {
+      return const NoScheduleWidget();
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -106,18 +113,20 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
           ),
         ),
         const SizedBox(height: 8),
-        SingleChildScrollView(
+        ListView.separated(
           key: const ValueKey('TimeTableForDay._buildForTimetable'),
-          scrollDirection: Axis.horizontal,
-          child: DataTable(
-            dividerThickness: 0.5,
-            border: TableBorder.all(
-              borderRadius: BorderRadius.circular(8),
-              color: colorScheme.secondary.withOpacity(0.6),
-            ),
-            columns: columns,
-            rows: rows,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) => SubjectTile(
+            location: '${widget.data['meta']['room'][widget.day]}',
+            time:
+                (widget.data['data'][widget.day] as Map).keys.elementAt(index),
+            subject: (widget.data['data'][widget.day] as Map)
+                .values
+                .elementAt(index),
           ),
+          separatorBuilder: (context, index) => const SizedBox(height: 8),
+          itemCount: widget.data['data'][widget.day].keys.length,
         ),
       ],
     );
