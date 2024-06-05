@@ -3,6 +3,7 @@ import 'package:mockito/mockito.dart';
 import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/util/enums.dart';
 
 import 'app_preferences_controller_mock.dart';
 import 'git_service_mock.dart';
@@ -75,6 +76,16 @@ class MockFilterController extends GetxController
   }
 
   @override
+  late Weekday _weekday;
+  @override
+  Weekday get weekday => _weekday;
+  @override
+  set weekday(Weekday newWeekday) {
+    _weekday = newWeekday;
+    update();
+  }
+
+  @override
   String? get activeElectiveSemester => _activeElectiveSemester?.value;
 
   RxString? _activeSection;
@@ -120,6 +131,12 @@ class MockFilterController extends GetxController
     }
 
     return '$section | $semester'.toUpperCase();
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    _weekday = Weekday.today();
   }
 
   @override
