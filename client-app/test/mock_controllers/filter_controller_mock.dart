@@ -75,7 +75,6 @@ class MockFilterController extends GetxController
     return;
   }
 
-  @override
   late Weekday _weekday;
   @override
   Weekday get weekday => _weekday;

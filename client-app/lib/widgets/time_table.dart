@@ -252,15 +252,6 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
               ),
             );
           } else {
-            final days = [
-              "monday",
-              "tuesday",
-              "wednesday",
-              "thursday",
-              "friday",
-              "saturday"
-            ];
-
             return Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,

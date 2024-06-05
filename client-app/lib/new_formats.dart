@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 class Timetable {
   final Meta meta;
   final Map<String, Map<String, Period>> data;
