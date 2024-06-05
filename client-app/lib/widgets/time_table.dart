@@ -309,20 +309,10 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ListView.separated(
-                    scrollDirection: Axis.vertical,
-                    itemCount: snapshot.data!['data'].keys.length,
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) =>
-                        TimeTableForDay(day: days[index], data: snapshot.data!),
-                    separatorBuilder: (context, index) => const SizedBox(
-                      height: 16,
-                    ),
-                  ),
-                )
+                TimeTableForDay(
+                  day: filterController.weekday.key,
+                  data: snapshot.data!,
+                ),
               ],
             );
           }
