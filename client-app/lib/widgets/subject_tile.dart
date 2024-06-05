@@ -22,7 +22,7 @@ class SubjectTile extends StatelessWidget {
         side: const BorderSide(strokeAlign: 2.0),
       ),
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Row(
           children: [
             Column(
