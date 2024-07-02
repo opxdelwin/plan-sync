@@ -83,7 +83,7 @@ class SettingsPage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  auth.activeUser!.email ?? "connect.plansync@gmail.com",
+                  auth.activeUser!.email ?? "connect@plansync.in",
                   style: TextStyle(
                     color: colorScheme.onSurface.withOpacity(0.6),
                   ),

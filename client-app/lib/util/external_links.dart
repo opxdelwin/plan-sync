@@ -54,7 +54,7 @@ Best regards,
 """;
 
     final subject = Uri.encodeComponent("[Schedule Error Report] - Plan Sync");
-    final email = Uri.encodeComponent("connect.plansync@gmail.com");
+    final email = Uri.encodeComponent("connect@plansync.in");
     _launchUrl(
       'mailto:$email?subject=$subject&body=${Uri.encodeComponent(body)}',
     );
@@ -83,7 +83,7 @@ Best regards,
 """;
 
     final subject = Uri.encodeComponent("[Contribution Interest] - Plan Sync");
-    final email = Uri.encodeComponent("connect.plansync@gmail.com");
+    final email = Uri.encodeComponent("connect@plansync.in");
     _launchUrl(
       'mailto:$email?subject=$subject&body=${Uri.encodeComponent(body)}',
     );
