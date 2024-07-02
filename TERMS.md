@@ -39,5 +39,5 @@ We reserve the right to modify or revise these Terms at any time. Your continued
 
 ## 9. Contact Us
 
-If you have any questions or concerns regarding these Terms and Conditions, please contact us at [connect.plansync@gmail.com](mailto:connect.plansync@gmail.com).
+If you have any questions or concerns regarding these Terms and Conditions, please contact us at [connect@plansync.in](mailto:connect@plansync.in).
 

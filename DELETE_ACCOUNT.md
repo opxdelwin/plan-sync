@@ -3,7 +3,7 @@
 We're sorry to see you go, but if you've made up your mind, we're here to help you delete your Plan Sync account. Please follow these simple steps:
 
 1. **Send an Email:**
-   - From the email address associated with your Plan Sync account, send an email to: [connect.plansync@gmail.com](mailto:connect.plansync@gmail.com).
+   - From the email address associated with your Plan Sync account, send an email to: [connect@plansync.in](mailto:connect@plansync.in).
 
 2. **Subject: Account Deletion Request**
    - In the subject line, please mention: "Account Deletion Request."
@@ -15,7 +15,7 @@ We're sorry to see you go, but if you've made up your mind, we're here to help y
 4. **Confirmation:**
    - You'll receive a confirmation email once your account deletion request is processed. This may take a few business days.
 
-If you have any concerns or issues, feel free to reach out to us at [connect.plansync@gmail.com](mailto:connect.plansync@gmail.com).
+If you have any concerns or issues, feel free to reach out to us at [connect@plansync.in](mailto:connect@plansync.in).
 
 Thank you for being a part of Plan Sync. We hope to see you again in the future.
 

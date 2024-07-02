@@ -12,7 +12,7 @@ We appreciate your interest in contributing to Plan Sync and helping to make it 
 
 5. **Review and Double-Check**: Before submitting your JSON file, review it to make sure all the information is correct. This will help us maintain the quality of data in Plan Sync.
 
-6. **Send Us Your JSON File**: Once you've completed the JSON template, send it as an attachment to [connect.plansync@gmail.com](mailto:connect.plansync@gmail.com). Please include your name and contact information in the email so that we can credit you for your contribution.
+6. **Send Us Your JSON File**: Once you've completed the JSON template, send it as an attachment to [connect@plansync.in](mailto:connect@plansync.in). Please include your name and contact information in the email so that we can credit you for your contribution.
 
 7. **Verification**: Our team will review the JSON file you submitted for accuracy and completeness. If any corrections are needed, we will communicate with you to make the necessary adjustments.
 
@@ -182,6 +182,6 @@ Best regards,
 
 Thank you for contributing to Plan Sync and helping to create a valuable resource for college students. Your efforts are greatly appreciated!
 
-If you have any questions or need assistance with the contribution process, please don't hesitate to reach out to us at [connect.plansync@gmail.com](mailto:connect.plansync@gmail.com).
+If you have any questions or need assistance with the contribution process, please don't hesitate to reach out to us at [connect@plansync.in](mailto:connect@plansync.in).
 
 Happy scheduling!

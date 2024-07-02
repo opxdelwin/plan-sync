@@ -31,7 +31,7 @@ You can opt-in your request via **GitHub Issues** (preferred) or via **mail**, a
 
 If you are not familiar with GitHub or prefer email communication, please follow these steps:
 
-1. **Compose an Email**: Send an email to [connect.plansync@gmail.com](mailto:connect.plansync@gmail.com).
+1. **Compose an Email**: Send an email to [connect@plansync.in](mailto:connect@plansync.in).
 
 2. **Subject**: Use a descriptive subject line that summarizes the issue or modification request.
 

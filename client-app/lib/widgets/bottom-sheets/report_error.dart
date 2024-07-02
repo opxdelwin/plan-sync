@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plan_sync/util/external_links.dart';
+import 'package:plan_sync/util/snackbar.dart';
 
 class ReportErrorBottomSheet extends StatelessWidget {
   const ReportErrorBottomSheet({super.key});
@@ -77,7 +78,13 @@ class ReportErrorBottomSheet extends StatelessWidget {
                     backgroundColor:
                         WidgetStatePropertyAll(colorScheme.onSurface),
                   ),
-                  onPressed: () => launchGithub(),
+                  onPressed: () {
+                    // TODO: remove in subsequent updates
+                    CustomSnackbar.error(
+                      'GitHub reporting is disabled.',
+                      'Please use email reporting for the time being.',
+                    );
+                  },
                   child: Row(
                     children: [
                       Text(
