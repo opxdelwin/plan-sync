@@ -2,7 +2,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ExternalLinks {
-  static const appLink = "https://github.com/opxdelwin/plan-sync";
+  static const appLink = "https://plansync.in";
 
   ExternalLinks.cardlink() {
     _launchUrl("https://cardlink.co.in");
@@ -13,19 +13,15 @@ class ExternalLinks {
         "https://play.google.com/store/apps/details?id=in.co.cardlink.plansync");
   }
 
-  ExternalLinks.updateApp() {
-    _launchUrl('https://github.com/opxdelwin/plan-sync/releases/latest');
-  }
-
   ExternalLinks.termsAndConditions() {
-    _launchUrl("https://github.com/opxdelwin/plan-sync/blob/main/TERMS.md");
+    _launchUrl("https://plansync.in/terms-of-service");
   }
 
   ExternalLinks.privacyPolicy() {
-    _launchUrl(
-        "https://github.com/opxdelwin/plan-sync/blob/main/PRIVACY-POLICY.md");
+    _launchUrl("https://plansync.in/privacy-policy");
   }
 
+  /// TODO: Disabled, as repo is private
   ExternalLinks.reportErrorViaGithub() {
     _launchUrl(
         "https://github.com/opxdelwin/plan-sync/blob/main/ERROR_REPORTING.md");
