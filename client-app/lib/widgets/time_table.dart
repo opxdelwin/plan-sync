@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
+import 'package:plan_sync/backend/models/timetable.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
@@ -21,7 +22,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
   List<DataRow> rowList = [];
   List<DataColumn> columnsList = [];
 
-  void showMoreInfo(Map<String, dynamic> data, ColorScheme colorScheme) {
+  void showMoreInfo(Timetable data, ColorScheme colorScheme) {
     Widget dialog = Dialog(
       backgroundColor: colorScheme.surface,
       elevation: 0.0,
@@ -60,7 +61,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                   ),
                   children: <TextSpan>[
                     TextSpan(
-                      text: '  ${data['meta']['section']}'.toUpperCase(),
+                      text: '  ${data.meta.section}'.toUpperCase(),
                       style: TextStyle(
                         color: colorScheme.onSurface,
                         fontWeight: FontWeight.normal,
@@ -79,7 +80,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                   ),
                   children: <TextSpan>[
                     TextSpan(
-                      text: '  ${data['meta']['type']}'.toUpperCase(),
+                      text: '  ${data.meta.type}'.toUpperCase(),
                       style: TextStyle(
                         color: colorScheme.onSurface,
                         fontWeight: FontWeight.normal,
@@ -98,7 +99,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                   ),
                   children: <TextSpan>[
                     TextSpan(
-                      text: '  ${data['meta']['revision']}',
+                      text: '  ${data.meta.revision}',
                       style: TextStyle(
                         color: colorScheme.onSurface,
                         fontWeight: FontWeight.normal,
@@ -117,7 +118,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                   ),
                   children: <TextSpan>[
                     TextSpan(
-                      text: '  ${data['meta']['effective-date']}',
+                      text: '  ${data.meta.effectiveDate}',
                       style: TextStyle(
                         color: colorScheme.onSurface,
                         fontWeight: FontWeight.normal,
@@ -136,7 +137,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                   ),
                   children: <TextSpan>[
                     TextSpan(
-                      text: '  ${data['meta']['contributor']}',
+                      text: '  ${data.meta.contributor}',
                       style: TextStyle(
                         color: colorScheme.onSurface,
                         fontWeight: FontWeight.normal,
@@ -222,7 +223,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                 ],
               ),
             );
-          } else if (snapshot.data?['meta']['isTimetableUpdating'] ?? false) {
+          } else if (snapshot.data?.meta.isTimetableUpdating ?? false) {
             return Center(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -258,7 +259,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
               children: [
                 Flexible(
                   child: Text(
-                    "Effective from ${snapshot.data!["meta"]["effective-date"]}",
+                    "Effective from ${snapshot.data!.meta.effectiveDate}",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: colorScheme.onPrimary,

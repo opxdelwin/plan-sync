@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:plan_sync/backend/models/timetable.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:get/get.dart';
 import 'package:mockito/mockito.dart';
-import 'package:plan_sync/new_formats.dart';
 
 enum MockGitServiceStages {
   /// success request

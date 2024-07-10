@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
+import 'package:plan_sync/backend/models/timetable.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
@@ -59,8 +60,7 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                   GitService service = Get.find();
                   return FutureBuilder(
                     future: service.getElectives(),
-                    builder: (context,
-                        AsyncSnapshot<Map<String, dynamic>?> snapshot) {
+                    builder: (context, AsyncSnapshot<Timetable?> snapshot) {
                       if (snapshot.connectionState != ConnectionState.done) {
                         return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -116,8 +116,7 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                             ],
                           ),
                         );
-                      } else if (snapshot.data?['meta']
-                              ['isTimetableUpdating'] ??
+                      } else if (snapshot.data?.meta.isTimetableUpdating ??
                           false) {
                         return Center(
                           child: Column(
@@ -172,7 +171,7 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                                           color: colorScheme.tertiary),
                                       const SizedBox(width: 8),
                                       Text(
-                                        "Effective from ${snapshot.data!["meta"]["effective-date"]}",
+                                        "Effective from ${snapshot.data!.meta.effectiveDate}",
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: colorScheme.onSurface,
@@ -204,7 +203,7 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                               width: double.infinity,
                               child: ListView.separated(
                                 scrollDirection: Axis.vertical,
-                                itemCount: snapshot.data!['data'].keys.length,
+                                itemCount: snapshot.data!.data.keys.length,
                                 physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
                                 itemBuilder: (context, index) =>

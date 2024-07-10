@@ -55,8 +55,7 @@ class _ElectiveYearBarState extends State<ElectiveYearBar> {
                   return;
                 }
                 Logger.i(newSelection);
-                serviceController.selectedElectiveYear =
-                    int.parse(newSelection);
+                serviceController.selectedElectiveYear = newSelection;
               },
             ),
           ),

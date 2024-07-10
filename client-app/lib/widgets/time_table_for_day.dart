@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:plan_sync/backend/models/timetable.dart';
 import 'package:plan_sync/widgets/no_schedule_widget.dart';
 import 'package:plan_sync/widgets/subject_tile.dart';
 
 class TimeTableForDay extends StatefulWidget {
   const TimeTableForDay({super.key, required this.data, required this.day});
 
-  final Map data;
+  final Timetable data;
   final String day;
   @override
   State<TimeTableForDay> createState() => _TimeTableForDayState();
@@ -26,10 +27,10 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
 
   void buildColumn(BuildContext context) {
     columns.clear();
-    widget.data["data"][widget.day].keys.forEach((timespace) {
+    widget.data.data[widget.day]?.forEach((elective) {
       columns.add(DataColumn(
           label: Text(
-        timespace,
+        elective.subject ?? 'No Elective Name',
         style: TextStyle(
           color: Theme.of(context).colorScheme.onSurface,
         ),
@@ -39,9 +40,9 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
 
   void buildRow(BuildContext context) {
     List<DataCell> cells = [];
-    widget.data["data"][widget.day].forEach((key, value) {
+    widget.data.data[widget.day]?.forEach((elective) {
       cells.add(DataCell(Text(
-        value,
+        elective.room ?? 'No Elective Room',
         style: TextStyle(
           color: Theme.of(context).colorScheme.onSurface,
         ),
@@ -68,7 +69,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (widget.data['meta']['type'] != 'norm-class') {
+    if (widget.data.meta.type != 'norm-class') {
       buildColumn(context);
       buildRow(context);
     }
@@ -77,7 +78,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    if (widget.data["meta"]["type"] == "norm-class") {
+    if (widget.data.meta.type == "norm-class") {
       return _buildForTimetable(colorScheme);
     } else {
       return _buildForElectives(colorScheme);
@@ -85,7 +86,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
   }
 
   Widget _buildForTimetable(ColorScheme colorScheme) {
-    if (widget.data['data'][widget.day] == null) {
+    if (widget.data.data[widget.day] == null) {
       return const NoScheduleWidget();
     }
     return Column(
@@ -100,15 +101,11 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
                 style: TextStyle(
                   color: colorScheme.onPrimary,
                   fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  letterSpacing: 0.24,
                 ),
               ),
               const SizedBox(width: 16),
-              Text(
-                "Room ${widget.data["meta"]["room"][widget.day]}",
-                style: TextStyle(
-                  color: colorScheme.onPrimary,
-                ),
-              )
             ],
           ),
         ),
@@ -118,15 +115,14 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) => SubjectTile(
-            location: '${widget.data['meta']['room'][widget.day]}',
-            time:
-                (widget.data['data'][widget.day] as Map).keys.elementAt(index),
-            subject: (widget.data['data'][widget.day] as Map)
-                .values
-                .elementAt(index),
+            location:
+                widget.data.data[widget.day]?[index].room ?? 'Unavailable',
+            time: widget.data.data[widget.day]?[index].time ?? 'Unavailable',
+            subject:
+                widget.data.data[widget.day]?[index].subject ?? 'Unavailable',
           ),
           separatorBuilder: (context, index) => const SizedBox(height: 8),
-          itemCount: widget.data['data'][widget.day].keys.length,
+          itemCount: widget.data.data[widget.day]?.length ?? 0,
         ),
       ],
     );
