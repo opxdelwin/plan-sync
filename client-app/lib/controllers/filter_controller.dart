@@ -366,7 +366,7 @@ class FilterController extends GetxController {
 
     if (service.electiveYears?.contains(primaryElectiveYear) != false &&
         primaryElectiveYear != null) {
-      service.selectedElectiveYear = int.parse(primaryElectiveYear!);
+      service.selectedElectiveYear = primaryElectiveYear!;
     }
   }
 }

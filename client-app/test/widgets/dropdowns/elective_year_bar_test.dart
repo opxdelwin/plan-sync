@@ -59,7 +59,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // check if controller value updates
-      expect(gitController.selectedElectiveYear, 2024);
+      expect(gitController.selectedElectiveYear, '2024');
     },
   );
 }

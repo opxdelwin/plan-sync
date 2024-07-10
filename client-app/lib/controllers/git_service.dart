@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
+import 'package:plan_sync/new_formats.dart';
 import 'package:plan_sync/util/logger.dart';
 import 'package:plan_sync/util/snackbar.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
@@ -32,9 +33,9 @@ class GitService extends GetxController {
   // elective year
   List<String>? electiveYears;
 
-  RxInt? _selectedElectiveYear;
-  int? get selectedElectiveYear => _selectedElectiveYear?.value;
-  set selectedElectiveYear(int? newYear) {
+  RxString? _selectedElectiveYear;
+  String? get selectedElectiveYear => _selectedElectiveYear?.value;
+  set selectedElectiveYear(String? newYear) {
     if (newYear == null || selectedElectiveYear == newYear) {
       return;
     }
@@ -129,7 +130,7 @@ class GitService extends GetxController {
       branch = 'main';
     } else {
       // branch = 'main';
-      branch = 'dev';
+      branch = 'schema-migration';
     }
     return;
   }
@@ -276,7 +277,7 @@ class GitService extends GetxController {
   }
 
   /// Gets concurrent timetable for unique semester and section.
-  Future<Map<String, dynamic>?> getTimeTable() async {
+  Future<Timetable?> getTimeTable() async {
     FilterController filterController = Get.find();
     final section = filterController.activeSectionCode;
     final semester = filterController.activeSemester;
@@ -296,7 +297,7 @@ class GitService extends GetxController {
       }
 
       !isWorking.value ? null : isWorking.toggle();
-      return jsonDecode(response.data) as Map<String, dynamic>;
+      return Timetable.fromJson(jsonDecode(response.data));
     } on DioException catch (e) {
       errorDetails = {
         'error': 'DioException',
@@ -470,7 +471,7 @@ class GitService extends GetxController {
   }
 
   /// Gets concurrent elective timetable for unique semester and section.
-  Future<Map<String, dynamic>?> getElectives() async {
+  Future<Timetable?> getElectives() async {
     isWorking.value ? null : isWorking.toggle();
 
     if (filterController.activeElectiveSchemeCode == null ||
@@ -492,7 +493,7 @@ class GitService extends GetxController {
 
       !isWorking.value ? null : isWorking.toggle();
 
-      return jsonDecode(response.data);
+      return Timetable.fromJson(jsonDecode(response.data));
     } on DioException catch (e) {
       errorDetails = {
         'error': 'DioException',
