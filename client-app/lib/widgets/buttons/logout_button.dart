@@ -37,19 +37,33 @@ class _LogoutButtonState extends State<LogoutButton> {
     final colorScheme = Theme.of(context).colorScheme;
     return ElevatedButton.icon(
       style: ButtonStyle(
+        side: Get.isDarkMode
+            ? WidgetStatePropertyAll(
+                BorderSide(
+                  color: colorScheme.error,
+                ),
+              )
+            : null,
         elevation: const WidgetStatePropertyAll(0.0),
-        backgroundColor: WidgetStatePropertyAll(colorScheme.error),
+        backgroundColor: Get.isDarkMode
+            ? const WidgetStatePropertyAll(Colors.transparent)
+            : WidgetStatePropertyAll(colorScheme.error),
       ),
       onPressed: logout,
-      icon: Icon(Icons.logout, color: colorScheme.onError),
+      icon: Icon(
+        Icons.logout,
+        color: Get.isDarkMode ? colorScheme.onBackground : colorScheme.onError,
+      ),
       label: isLoggingOut
           ? LoadingAnimationWidget.prograssiveDots(
-              color: colorScheme.onError,
+              color: Get.isDarkMode ? Colors.white : colorScheme.onError,
               size: 24,
             )
           : Text(
               "Logout",
-              style: TextStyle(color: colorScheme.onError),
+              style: TextStyle(
+                color: Get.isDarkMode ? Colors.white : colorScheme.onError,
+              ),
             ),
     );
   }

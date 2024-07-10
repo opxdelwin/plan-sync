@@ -196,8 +196,12 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                 const SizedBox(height: 16),
                 Flexible(child: MarkdownBody(data: "```${snapshot.error}```")),
                 const SizedBox(height: 16),
-                const Text(
-                    "A status report has been sent, this issue will be looked into.")
+                Text(
+                  "A status report has been sent, this issue will be looked into.",
+                  style: TextStyle(
+                    color: colorScheme.error,
+                  ),
+                )
               ],
             );
           } else if (!snapshot.hasData) {
@@ -217,7 +221,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                   Text(
                     "No section selected.",
                     style: TextStyle(
-                      color: colorScheme.onPrimary,
+                      color: colorScheme.onBackground,
                     ),
                   )
                 ],
@@ -240,13 +244,13 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                   Text(
                     "We're working on this timetable,",
                     style: TextStyle(
-                      color: colorScheme.onPrimary,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   Text(
                     "Check back in soon!",
                     style: TextStyle(
-                      color: colorScheme.onPrimary,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                 ],
@@ -262,7 +266,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                     "Effective from ${snapshot.data!.meta.effectiveDate}",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: colorScheme.onPrimary,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                 ),

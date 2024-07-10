@@ -86,12 +86,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               enableFeedback: true,
                               backgroundColor:
-                                  WidgetStatePropertyAll(colorScheme.secondary),
+                                  WidgetStatePropertyAll(colorScheme.primary),
                             ),
                             onPressed: loginProcedure,
                             icon: Icon(
                               FontAwesomeIcons.google,
-                              color: colorScheme.onSecondary,
+                              color: colorScheme.onPrimary,
                             ),
                             label: isWorking
                                 ? Semantics(
@@ -102,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                       child: LoadingAnimationWidget
                                           .prograssiveDots(
-                                        color: colorScheme.onSecondary,
+                                        color: colorScheme.onPrimary,
                                         size: 24,
                                       ),
                                     ),
@@ -110,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 : Text(
                                     "Continue with Google",
                                     style: TextStyle(
-                                      color: colorScheme.onSecondary,
+                                      color: colorScheme.onPrimary,
                                     ),
                                   ),
                           ),
@@ -136,7 +136,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: SizedBox(
                           height: 48,
                           child: Image.asset(
-                            'assets/logo-no-background.png',
+                            Get.isDarkMode
+                                ? 'assets/logo-no-background-dark.png'
+                                : 'assets/logo-no-background-light.png',
                             semanticLabel: 'Cardlink',
                           ),
                         ),

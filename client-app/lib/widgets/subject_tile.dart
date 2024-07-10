@@ -14,12 +14,17 @@ class SubjectTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Card(
       elevation: 2.0,
-      color: Theme.of(context).colorScheme.surface,
+      color: Theme.of(context).colorScheme.background,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: const BorderSide(strokeAlign: 2.0),
+        side: BorderSide(
+          strokeAlign: 2.0,
+          color: colorScheme.onBackground,
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -30,23 +35,37 @@ class SubjectTile extends StatelessWidget {
               children: [
                 Text(
                   subject,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
+                    color: colorScheme.onBackground,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(Icons.location_on_outlined),
+                    const Icon(
+                      Icons.location_on_outlined,
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
-                    Text(location),
+                    Text(
+                      location,
+                      style: TextStyle(
+                        color: colorScheme.onBackground,
+                      ),
+                    ),
                   ],
                 )
               ],
             ),
             const Spacer(),
-            Text(time),
+            Text(
+              time,
+              style: TextStyle(
+                color: colorScheme.onSurface,
+              ),
+            ),
           ],
         ),
       ),

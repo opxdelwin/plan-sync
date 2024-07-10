@@ -14,6 +14,7 @@ class DateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+    final colorScheme = Theme.of(context).colorScheme;
 
     return GetBuilder<FilterController>(
       builder: (controller) {
@@ -21,8 +22,15 @@ class DateWidget extends StatelessWidget {
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
+              side: Get.isDarkMode
+                  ? BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
+                    )
+                  : BorderSide.none,
             ),
-            color: Theme.of(context).colorScheme.primary,
+            color: Get.isDarkMode
+                ? null
+                : Theme.of(context).colorScheme.primary.withOpacity(0.32),
           ),
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Row(
@@ -31,21 +39,26 @@ class DateWidget extends StatelessWidget {
               7,
               (index) => Column(
                 children: [
-                  Text(days[index]),
+                  Text(
+                    days[index],
+                    style: TextStyle(
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   InkWell(
                     enableFeedback: true,
                     onTap: () => controller.weekday = Weekday.fromIndex(index),
                     child: CircleAvatar(
                       backgroundColor: controller.weekday.weekdayIndex == index
-                          ? Colors.red
-                          : Theme.of(context).colorScheme.surface,
+                          ? colorScheme.secondary
+                          : colorScheme.surface,
                       child: Text(
                         '${mostRecentSunday().add(Duration(days: index)).day}',
                         style: TextStyle(
                           color: controller.weekday.weekdayIndex == index
-                              ? Colors.white
-                              : Colors.black,
+                              ? colorScheme.onSecondary
+                              : colorScheme.onBackground,
                         ),
                       ),
                     ),

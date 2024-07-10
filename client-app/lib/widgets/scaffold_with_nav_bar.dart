@@ -1,6 +1,7 @@
-import 'package:custom_navigation_bar/custom_navigation_bar.dart';
+import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 
 class ScaffoldWithNavBar extends StatelessWidget {
@@ -18,42 +19,66 @@ class ScaffoldWithNavBar extends StatelessWidget {
     return Scaffold(
       extendBody: true,
       body: navigationShell,
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(bottom: 12.0),
-        child: CustomNavigationBar(
+      bottomNavigationBar: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+        child: SalomonBottomBar(
+          itemPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
           // Here, the items of BottomNavigationBar are hard coded. In a real
           // world scenario, the items would most likely be generated from the
           // branches of the shell route, which can be fetched using
           // `navigationShell.route.branches`.
-          scaleCurve: Curves.easeInOutExpo,
-          isFloating: true,
-          elevation: 0,
-          backgroundColor: colorScheme.onSurface,
-          borderRadius: const Radius.circular(32),
-          selectedColor: colorScheme.secondary,
-          unSelectedColor: colorScheme.surface,
-
-          //bubble color
-          strokeColor: colorScheme.secondary.withOpacity(0.32),
-          items: <CustomNavigationBarItem>[
-            CustomNavigationBarItem(
+          curve: Curves.easeInOutExpo,
+          duration: Durations.medium2,
+          selectedColorOpacity: 0.08,
+          // // isFloating: true,
+          // elevation: 0,
+          itemShape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          backgroundColor:
+              Get.isDarkMode ? colorScheme.surface : const Color(0xffafddb9),
+          // borderRadius: const Radius.circular(8),
+          selectedItemColor:
+              Get.isDarkMode ? colorScheme.primary : colorScheme.onBackground,
+          unselectedItemColor: Get.isDarkMode
+              ? colorScheme.onSurface
+              : colorScheme.onBackground.withOpacity(0.64),
+          // //bubble color
+          // strokeColor: colorScheme.secondary.withOpacity(0.32),
+          items: <SalomonBottomBarItem>[
+            SalomonBottomBarItem(
               icon: const Icon(FontAwesomeIcons.calendar),
               title: Text(
                 'Schedule',
-                style: TextStyle(color: colorScheme.surface),
+                style: TextStyle(
+                  color: Get.isDarkMode
+                      ? colorScheme.onSurface
+                      : colorScheme.onBackground,
+                ),
               ),
             ),
-            CustomNavigationBarItem(
+            SalomonBottomBarItem(
                 icon: const Icon(FontAwesomeIcons.clipboard),
                 title: Text(
                   'Electives',
-                  style: TextStyle(color: colorScheme.surface),
+                  style: TextStyle(
+                    color: Get.isDarkMode
+                        ? colorScheme.onSurface
+                        : colorScheme.onBackground,
+                  ),
                 )),
-            CustomNavigationBarItem(
+            SalomonBottomBarItem(
                 icon: const Icon(Icons.settings_outlined),
                 title: Text(
                   'Settings',
-                  style: TextStyle(color: colorScheme.surface),
+                  style: TextStyle(
+                    color: Get.isDarkMode
+                        ? colorScheme.onSurface
+                        : colorScheme.onBackground,
+                  ),
                 )),
           ],
           currentIndex: navigationShell.currentIndex,
