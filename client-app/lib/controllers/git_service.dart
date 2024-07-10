@@ -130,7 +130,7 @@ class GitService extends GetxController {
       branch = 'main';
     } else {
       // branch = 'main';
-      branch = 'schema-migration';
+      branch = 'dev';
     }
     return;
   }
