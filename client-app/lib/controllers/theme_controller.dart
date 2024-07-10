@@ -15,8 +15,9 @@ class AppThemeController extends GetxController {
       surface: Color(0xFFE8E8E8), // Slightly darker surface
       onSurface: Color(0xFF202124),
       tertiary: Color(0xFFFFA000), // Accent yellow
-      background: Color(0xFFE8F5E9), // Soft, light green background
-      onBackground: Color(0xFF202124),
+      surfaceContainerHighest:
+          Color(0xFFE8F5E9), // Soft, light green background
+      onSurfaceVariant: Color(0xFF202124),
     ),
     scaffoldBackgroundColor:
         const Color(0xFFE8F5E9), // Soft, light green background
@@ -49,8 +50,9 @@ class AppThemeController extends GetxController {
       onError: Color(0xFF121212),
       surface: Color(0xFF1E1E1E),
       onSurface: Color.fromARGB(255, 240, 240, 240),
-      background: Color(0xFF121212), // Smooth, comfortable black
-      onBackground: Color.fromARGB(255, 240, 240, 240),
+      surfaceContainerHighest:
+          Color(0xFF121212), // Soft, light green background
+      onSurfaceVariant: Color.fromARGB(255, 240, 240, 240),
       tertiary: Color.fromARGB(255, 234, 195, 0), // Light blue for accents
     ),
     scaffoldBackgroundColor:

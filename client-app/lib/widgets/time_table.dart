@@ -221,7 +221,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                   Text(
                     "No section selected.",
                     style: TextStyle(
-                      color: colorScheme.onBackground,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   )
                 ],

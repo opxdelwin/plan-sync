@@ -32,7 +32,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
           label: Text(
         elective.subject ?? 'No Elective Name',
         style: TextStyle(
-          color: Theme.of(context).colorScheme.onBackground,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       )));
     });
@@ -44,7 +44,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
       cells.add(DataCell(Text(
         elective.room ?? 'No Elective Room',
         style: TextStyle(
-          color: Theme.of(context).colorScheme.onBackground,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       )));
     });
@@ -99,7 +99,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
               Text(
                 widget.day.capitalizeFirst!,
                 style: TextStyle(
-                  color: colorScheme.onBackground,
+                  color: colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                   letterSpacing: 0.24,
@@ -155,7 +155,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
             border: TableBorder.all(
               borderRadius: BorderRadius.circular(8),
               color: Get.isDarkMode
-                  ? colorScheme.onBackground.withOpacity(0.4)
+                  ? colorScheme.onSurfaceVariant.withOpacity(0.4)
                   : colorScheme.secondary.withOpacity(0.6),
             ),
             columns: columns,

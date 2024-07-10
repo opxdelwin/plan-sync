@@ -42,7 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
-          backgroundColor: colorScheme.background.withOpacity(0.98),
+          backgroundColor:
+              colorScheme.surfaceContainerHighest.withOpacity(0.98),
           elevation: 0.0,
           toolbarHeight: 80,
           shape: const RoundedRectangleBorder(
@@ -79,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text(
                     "Time Sheet",
                     style: TextStyle(
-                      color: colorScheme.onBackground,
+                      color: colorScheme.onSurfaceVariant,
                       fontSize: 24,
                     ),
                   ),

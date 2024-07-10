@@ -30,7 +30,7 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        backgroundColor: colorScheme.background,
+        backgroundColor: colorScheme.surfaceContainerHighest,
         elevation: 0.0,
         toolbarHeight: 80,
         shape: const RoundedRectangleBorder(

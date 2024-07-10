@@ -43,7 +43,7 @@ class SettingsPage extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: colorScheme.background,
+          backgroundColor: colorScheme.surfaceContainerHighest,
           elevation: 0.0,
           toolbarHeight: 80,
           shape: const RoundedRectangleBorder(
@@ -186,7 +186,7 @@ class SettingsPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Divider(
-                    color: colorScheme.onBackground.withOpacity(0.48),
+                    color: colorScheme.onSurfaceVariant.withOpacity(0.48),
                   ),
                 ),
                 ListTile(

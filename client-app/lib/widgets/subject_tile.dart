@@ -18,12 +18,12 @@ class SubjectTile extends StatelessWidget {
 
     return Card(
       elevation: 2.0,
-      color: Theme.of(context).colorScheme.background,
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
         side: BorderSide(
           strokeAlign: 2.0,
-          color: colorScheme.onBackground,
+          color: colorScheme.onSurfaceVariant,
         ),
       ),
       child: Padding(
@@ -38,7 +38,7 @@ class SubjectTile extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
-                    color: colorScheme.onBackground,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -52,7 +52,7 @@ class SubjectTile extends StatelessWidget {
                     Text(
                       location,
                       style: TextStyle(
-                        color: colorScheme.onBackground,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],

@@ -52,7 +52,8 @@ class _LogoutButtonState extends State<LogoutButton> {
       onPressed: logout,
       icon: Icon(
         Icons.logout,
-        color: Get.isDarkMode ? colorScheme.onBackground : colorScheme.onError,
+        color:
+            Get.isDarkMode ? colorScheme.onSurfaceVariant : colorScheme.onError,
       ),
       label: isLoggingOut
           ? LoadingAnimationWidget.prograssiveDots(

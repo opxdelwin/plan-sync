@@ -58,7 +58,7 @@ class DateWidget extends StatelessWidget {
                         style: TextStyle(
                           color: controller.weekday.weekdayIndex == index
                               ? colorScheme.onSecondary
-                              : colorScheme.onBackground,
+                              : colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),

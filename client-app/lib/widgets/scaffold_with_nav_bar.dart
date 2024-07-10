@@ -41,11 +41,12 @@ class ScaffoldWithNavBar extends StatelessWidget {
           backgroundColor:
               Get.isDarkMode ? colorScheme.surface : const Color(0xffafddb9),
           // borderRadius: const Radius.circular(8),
-          selectedItemColor:
-              Get.isDarkMode ? colorScheme.primary : colorScheme.onBackground,
+          selectedItemColor: Get.isDarkMode
+              ? colorScheme.primary
+              : colorScheme.onSurfaceVariant,
           unselectedItemColor: Get.isDarkMode
               ? colorScheme.onSurface
-              : colorScheme.onBackground.withOpacity(0.64),
+              : colorScheme.onSurfaceVariant.withOpacity(0.64),
           // //bubble color
           // strokeColor: colorScheme.secondary.withOpacity(0.32),
           items: <SalomonBottomBarItem>[
@@ -56,7 +57,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
                 style: TextStyle(
                   color: Get.isDarkMode
                       ? colorScheme.onSurface
-                      : colorScheme.onBackground,
+                      : colorScheme.onSurfaceVariant,
                 ),
               ),
             ),
@@ -67,7 +68,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
                   style: TextStyle(
                     color: Get.isDarkMode
                         ? colorScheme.onSurface
-                        : colorScheme.onBackground,
+                        : colorScheme.onSurfaceVariant,
                   ),
                 )),
             SalomonBottomBarItem(
@@ -77,7 +78,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
                   style: TextStyle(
                     color: Get.isDarkMode
                         ? colorScheme.onSurface
-                        : colorScheme.onBackground,
+                        : colorScheme.onSurfaceVariant,
                   ),
                 )),
           ],
