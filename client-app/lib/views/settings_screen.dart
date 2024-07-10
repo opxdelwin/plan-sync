@@ -43,8 +43,7 @@ class SettingsPage extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: colorScheme.surface,
+          backgroundColor: colorScheme.surfaceContainerHighest,
           elevation: 0.0,
           toolbarHeight: 80,
           shape: const RoundedRectangleBorder(
@@ -59,6 +58,10 @@ class SettingsPage extends StatelessWidget {
               letterSpacing: 0.2,
             ),
           ),
+          actions: const [
+            LogoutButton(),
+            SizedBox(width: 16),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -72,6 +75,7 @@ class SettingsPage extends StatelessWidget {
                   backgroundImage: CachedNetworkImageProvider(
                     auth.activeUser!.photoURL ?? DEFAULT_USER_IMAGE,
                   ),
+                  backgroundColor: colorScheme.surface,
                 ),
                 const SizedBox(height: 24),
                 Text(
@@ -85,7 +89,7 @@ class SettingsPage extends StatelessWidget {
                 Text(
                   auth.activeUser!.email ?? "connect@plansync.in",
                   style: TextStyle(
-                    color: colorScheme.onSurface.withOpacity(0.6),
+                    color: colorScheme.onSurface.withOpacity(0.72),
                   ),
                 ),
                 Row(
@@ -94,13 +98,13 @@ class SettingsPage extends StatelessWidget {
                     Text(
                       'Plan Sync ${versionController.appVersion}+${versionController.appBuild} | ',
                       style: TextStyle(
-                        color: colorScheme.onSurface.withOpacity(0.6),
+                        color: colorScheme.onSurface.withOpacity(0.72),
                       ),
                     ),
                     Text(
                       'Copy UID',
                       style: TextStyle(
-                        color: colorScheme.onSurface.withOpacity(0.6),
+                        color: colorScheme.onSurface.withOpacity(0.72),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -122,139 +126,132 @@ class SettingsPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                   ),
                   enableFeedback: true,
-                  tileColor: colorScheme.primary,
                   leading: Icon(
                     Icons.downloading_rounded,
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                   title: Text(
                     "Set Primary Sections",
                     style: TextStyle(
-                      color: colorScheme.onPrimary,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   trailing: Icon(
                     Icons.keyboard_arrow_right_rounded,
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                   onTap: () => setPrimarySections(context),
                 ),
-                const SizedBox(height: 8),
                 ListTile(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
                   enableFeedback: true,
-                  tileColor: colorScheme.primary,
                   leading: Icon(
                     Icons.report,
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                   title: Text(
                     "Report an error",
                     style: TextStyle(
-                      color: colorScheme.onPrimary,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   trailing: Icon(
                     Icons.keyboard_arrow_right_rounded,
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                   onTap: () => BottomSheets.reportError(
                     context: context,
                   ),
                 ),
-                const SizedBox(height: 8),
                 ListTile(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
                   enableFeedback: true,
-                  tileColor: colorScheme.primary,
-                  leading: Icon(Icons.share, color: colorScheme.onPrimary),
+                  leading: Icon(Icons.share, color: colorScheme.onSurface),
                   title: Text(
                     "Share This App",
                     style: TextStyle(
-                      color: colorScheme.onPrimary,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   trailing: Icon(
                     Icons.keyboard_arrow_right_rounded,
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                   onTap: () => ExternalLinks.shareApp(),
                 ),
-                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Divider(
+                    color: colorScheme.onSurfaceVariant.withOpacity(0.48),
+                  ),
+                ),
                 ListTile(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
                   enableFeedback: true,
-                  tileColor: colorScheme.primary,
                   leading: Icon(
                     Icons.add_circle_outline_rounded,
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                   title: Text(
                     "Contribute Time Table",
                     style: TextStyle(
-                      color: colorScheme.onPrimary,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   trailing: Icon(
                     Icons.keyboard_arrow_right_rounded,
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                   onTap: () => BottomSheets.contributeTimeTable(
                     context: context,
                   ),
                 ),
-                const SizedBox(height: 8),
                 ListTile(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
                   enableFeedback: true,
-                  tileColor: colorScheme.primary,
                   leading: Icon(
                     FontAwesomeIcons.fileLines,
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                   title: Text(
                     "Terms of Service",
                     style: TextStyle(
-                      color: colorScheme.onPrimary,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   trailing: Icon(Icons.keyboard_arrow_right_rounded,
-                      color: colorScheme.onPrimary),
+                      color: colorScheme.onSurface),
                   onTap: () => ExternalLinks.termsAndConditions(),
                 ),
-                const SizedBox(height: 8),
                 ListTile(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
                   enableFeedback: true,
-                  tileColor: colorScheme.primary,
                   leading: Icon(
                     Icons.security_rounded,
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                   title: Text(
                     "Privacy Policy",
                     style: TextStyle(
-                      color: colorScheme.onPrimary,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   trailing: Icon(
                     Icons.keyboard_arrow_right_rounded,
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                   onTap: () => ExternalLinks.privacyPolicy(),
                 ),
-                const SizedBox(height: 32),
-                const LogoutButton(),
                 const SizedBox(height: 80),
               ],
             ),

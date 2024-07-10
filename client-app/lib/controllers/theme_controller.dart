@@ -3,34 +3,79 @@ import 'package:get/get.dart';
 
 class AppThemeController extends GetxController {
   static final ThemeData lightTheme = ThemeData(
-    useMaterial3: true,
-    colorScheme: const ColorScheme(
-      brightness: Brightness.light,
-      primary: Color(0x668ADC89),
-      onPrimary: Color(0xff061906),
-      secondary: Color(0xff2FC02C),
-      onSecondary: Color(0xffffffff),
-      error: Color(0xF5FF0000),
-      onError: Color(0xffFFFFFF),
-      surface: Color(0xffEAF9E9),
-      onSurface: Color(0xff061906),
-      tertiary: Color(0xff4048FF),
+    brightness: Brightness.light,
+    primaryColor: const Color(0xFF34A853), // Vibrant green
+    colorScheme: const ColorScheme.light(
+      primary: Color(0xFF34A853),
+      onPrimary: Color(0xFFFFFFFF),
+      secondary: Color.fromARGB(255, 60, 122, 222), // Complementary blue
+      onSecondary: Color(0xFFFFFFFF),
+      error: Color(0xFFEA4335),
+      onError: Color(0xFFFFFFFF),
+      surface: Color(0xFFE8E8E8), // Slightly darker surface
+      onSurface: Color(0xFF202124),
+      tertiary: Color(0xFFFFA000), // Accent yellow
+      surfaceContainerHighest:
+          Color(0xFFE8F5E9), // Soft, light green background
+      onSurfaceVariant: Color(0xFF202124),
+    ),
+    scaffoldBackgroundColor:
+        const Color(0xFFE8F5E9), // Soft, light green background
+    appBarTheme: const AppBarTheme(
+      color: Color(0xFF34A853),
+      foregroundColor: Color(0xFFFFFFFF),
+    ),
+    textTheme: const TextTheme(
+      headlineMedium: TextStyle(color: Color(0xFF202124)),
+      bodyMedium: TextStyle(color: Color(0xFF5F6368)),
+    ),
+    buttonTheme: const ButtonThemeData(
+      buttonColor: Color(0xFF34A853),
+      textTheme: ButtonTextTheme.primary,
+    ),
+    iconTheme: const IconThemeData(
+      color: Color(0xFF34A853),
     ),
   );
 
   static final ThemeData darkTheme = ThemeData(
-    useMaterial3: true,
-    colorScheme: const ColorScheme(
-      brightness: Brightness.dark,
-      primary: Color(0x4d8ADC89),
-      onPrimary: Color(0xffD8E7D7),
-      secondary: Color(0xcc2FC02C),
-      onSecondary: Color(0xffEAF9E9),
-      error: Color(0xF5FF0000),
-      onError: Color(0xffFFFFFF),
-      surface: Color(0xff061906),
-      onSurface: Color(0xffEAF9E9),
-      tertiary: Color(0xffEAF9E9),
+    brightness: Brightness.dark,
+    primaryColor: const Color(0xFF8ADC89), // Light green from the calendar
+    colorScheme: const ColorScheme.dark(
+      primary: Color(0xFF8ADC89),
+      onPrimary: Color(0xFF121212),
+      secondary: Color.fromARGB(255, 21, 80, 174), // A slightly darker green
+      onSecondary: Color(0xFFE0E0E0),
+      error: Color(0xFFFF5252),
+      onError: Color(0xFF121212),
+      surface: Color(0xFF1E1E1E),
+      onSurface: Color.fromARGB(255, 240, 240, 240),
+      surfaceContainerHighest:
+          Color(0xFF121212), // Soft, light green background
+      onSurfaceVariant: Color.fromARGB(255, 240, 240, 240),
+      tertiary: Color.fromARGB(255, 234, 195, 0), // Light blue for accents
+    ),
+    scaffoldBackgroundColor:
+        const Color(0xFF121212), // Smooth, comfortable black
+    appBarTheme: const AppBarTheme(
+      color: Color(0xFF1E1E1E),
+      foregroundColor: Color(0xFFE0E0E0),
+    ),
+    textTheme: const TextTheme(
+      headlineMedium: TextStyle(color: Color(0xFFE0E0E0)),
+      bodyMedium: TextStyle(color: Color(0xFFBDBDBD)),
+    ),
+    buttonTheme: const ButtonThemeData(
+      buttonColor: Color(0xFF8ADC89),
+      textTheme: ButtonTextTheme.primary,
+    ),
+    iconTheme: const IconThemeData(
+      color: Color(0xFF8ADC89),
+    ),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: Color(0xFF1E1E1E),
+      selectedItemColor: Color(0xFF8ADC89),
+      unselectedItemColor: Color(0xFFBDBDBD),
     ),
   );
 

@@ -35,7 +35,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.example.plan_sync"
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 33
     ndkVersion "25.1.8937393"
 
     compileOptions {
@@ -77,10 +77,10 @@ android {
             signingConfig signingConfigs.release
         }
     }
-
-    lintOptions {
+    lint {
         abortOnError false
     }
+
 }
 
 flutter {

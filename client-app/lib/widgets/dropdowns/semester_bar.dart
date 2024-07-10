@@ -20,7 +20,7 @@ class _SemesterBarState extends State<SemesterBar> {
     return Container(
       decoration: ShapeDecoration(
         shape: const StadiumBorder(),
-        color: colorScheme.onPrimary,
+        color: colorScheme.onSurface,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: SizedBox(

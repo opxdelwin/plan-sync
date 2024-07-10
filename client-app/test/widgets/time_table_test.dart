@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
+import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/util/enums.dart';
 import 'package:plan_sync/widgets/time_table.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
+import '../mock_controllers/filter_controller_mock.dart';
 import '../mock_controllers/git_service_mock.dart';
 
 void main() {
@@ -29,15 +32,32 @@ void main() {
       (WidgetTester tester) async {
     final controller = Get.find<GitService>() as MockGitService;
     controller.stage = MockGitServiceStages.success;
+    final filterController =
+        Get.find<FilterController>() as MockFilterController;
 
+    filterController.weekday = Weekday.monday;
     await pumpBaseWidget(tester);
     await tester.pumpAndSettle();
-
-    // if all days are available
     expect(find.text('Monday'), findsOneWidget);
+
+    filterController.weekday = Weekday.tuesday;
+    await pumpBaseWidget(tester);
+    await tester.pumpAndSettle();
     expect(find.text('Tuesday'), findsOneWidget);
+
+    filterController.weekday = Weekday.wednesday;
+    await pumpBaseWidget(tester);
+    await tester.pumpAndSettle();
     expect(find.text('Wednesday'), findsOneWidget);
+
+    filterController.weekday = Weekday.thursday;
+    await pumpBaseWidget(tester);
+    await tester.pumpAndSettle();
     expect(find.text('Thursday'), findsOneWidget);
+
+    filterController.weekday = Weekday.friday;
+    await pumpBaseWidget(tester);
+    await tester.pumpAndSettle();
     expect(find.text('Friday'), findsOneWidget);
   });
 

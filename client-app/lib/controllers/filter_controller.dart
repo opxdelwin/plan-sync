@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/util/enums.dart';
 import 'package:plan_sync/util/logger.dart';
 import 'package:plan_sync/util/snackbar.dart';
 import 'package:collection/collection.dart';
@@ -71,6 +72,13 @@ class FilterController extends GetxController {
     update();
   }
 
+  late Weekday _weekday;
+  Weekday get weekday => _weekday;
+  set weekday(Weekday newWeekday) {
+    _weekday = newWeekday;
+    update();
+  }
+
   late GitService service;
   late AppPreferencesController preferences;
 
@@ -78,6 +86,7 @@ class FilterController extends GetxController {
   onInit() async {
     service = Get.find();
     preferences = Get.find();
+    _weekday = Weekday.today();
     super.onInit();
   }
 
@@ -357,7 +366,7 @@ class FilterController extends GetxController {
 
     if (service.electiveYears?.contains(primaryElectiveYear) != false &&
         primaryElectiveYear != null) {
-      service.selectedElectiveYear = int.parse(primaryElectiveYear!);
+      service.selectedElectiveYear = primaryElectiveYear!;
     }
   }
 }
