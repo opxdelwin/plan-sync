@@ -33,7 +33,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Update Available'), findsOneWidget);
-    expect(find.text('Update Now'), findsOneWidget);
+    expect(find.text('Download'), findsOneWidget);
     expect(find.byIcon(Icons.download_rounded), findsOneWidget);
   });
 
