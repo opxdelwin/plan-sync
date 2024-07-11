@@ -35,22 +35,54 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
     return isLatest
         ? const SizedBox()
         : Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.only(
+              top: 16,
+              bottom: 8,
+              right: 16,
+              left: 16,
+            ),
             decoration: ShapeDecoration(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24)),
-              color: colorScheme.primary,
+                borderRadius: BorderRadius.circular(24),
+                side: Get.isDarkMode
+                    ? BorderSide.none
+                    : BorderSide(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+              ),
+              color: Get.isDarkMode
+                  ? colorScheme.surface
+                  : colorScheme.surfaceContainerHighest,
             ),
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-            margin: const EdgeInsets.only(top: 16, bottom: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  "Update Available",
-                  style: TextStyle(color: colorScheme.onPrimary),
+                ListTile(
+                  title: Text(
+                    "Update Available",
+                    style: TextStyle(
+                        color: Get.isDarkMode
+                            ? colorScheme.onSurface
+                            : colorScheme.onSurfaceVariant),
+                  ),
+                  subtitle: Text(
+                    "A new version of Plan Sync is available "
+                    "with bug fixes and performance improvements. Tap to download and install.",
+                    style: TextStyle(
+                        color: Get.isDarkMode
+                            ? colorScheme.onSurface
+                            : colorScheme.onSurfaceVariant),
+                  ),
+                  contentPadding: const EdgeInsets.all(0),
+                  leading: const CircleAvatar(
+                    backgroundColor: Colors.white,
+                    backgroundImage: AssetImage(
+                      'assets/favicon.png',
+                    ),
+                  ),
                 ),
-                const SizedBox(width: 16),
-                ElevatedButton.icon(
+                FilledButton(
                   style: ButtonStyle(
                       elevation: const WidgetStatePropertyAll(0.0),
                       backgroundColor:
@@ -59,9 +91,15 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
                           WidgetStatePropertyAll(colorScheme.onSecondary),
                       shape: const WidgetStatePropertyAll(StadiumBorder())),
                   onPressed: () => versionController.openStore(),
-                  icon: const Icon(Icons.download_rounded),
-                  label: const Text("Update Now"),
-                )
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.download_rounded),
+                      const SizedBox(width: 8),
+                      Text('Download')
+                    ],
+                  ),
+                ),
               ],
             ),
           );
