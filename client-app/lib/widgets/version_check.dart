@@ -91,11 +91,11 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
                           WidgetStatePropertyAll(colorScheme.onSecondary),
                       shape: const WidgetStatePropertyAll(StadiumBorder())),
                   onPressed: () => versionController.openStore(),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.download_rounded),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text('Download')
                     ],
                   ),
