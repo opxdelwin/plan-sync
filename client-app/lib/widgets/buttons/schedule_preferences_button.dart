@@ -35,7 +35,9 @@ class _SchedulePreferenceButtonState extends State<SchedulePreferenceButton> {
         context: context,
       ),
       style: ButtonStyle(
-        backgroundColor: WidgetStatePropertyAll(colorScheme.onSurface),
+        backgroundColor: Get.isDarkMode
+            ? WidgetStatePropertyAll(colorScheme.primary)
+            : WidgetStatePropertyAll(colorScheme.onSurface),
       ),
       child: Row(
         children: [
@@ -48,14 +50,18 @@ class _SchedulePreferenceButtonState extends State<SchedulePreferenceButton> {
                   );
               return Text(
                 sectionSemesterShortCode ?? 'Processing',
-                style: TextStyle(color: colorScheme.surface),
+                style: TextStyle(
+                  color: Get.isDarkMode
+                      ? colorScheme.onPrimary
+                      : colorScheme.surface,
+                ),
               );
             },
           ),
           const SizedBox(width: 8),
           Icon(
             Icons.keyboard_arrow_down_rounded,
-            color: colorScheme.surface,
+            color: Get.isDarkMode ? colorScheme.onPrimary : colorScheme.surface,
           ),
         ],
       ),

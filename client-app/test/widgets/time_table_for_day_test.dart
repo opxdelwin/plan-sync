@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
+import 'package:plan_sync/backend/models/timetable.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/widgets/time_table_for_day.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../main.dart';
 import '../mock_controllers/git_service_mock.dart';
 
 void main() {
   Future<void> pumpBaseWidget(
     WidgetTester tester,
-    Map<dynamic, dynamic> data,
+    Timetable data,
     String day,
   ) async {
     return tester.pumpWidget(GetMaterialApp(

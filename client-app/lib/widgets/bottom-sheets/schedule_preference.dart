@@ -79,12 +79,12 @@ class SchedulePreferenceBottomSheetState
                 enableFeedback: true,
                 leading: Icon(
                   Icons.downloading_rounded,
-                  color: colorScheme.onPrimary,
+                  color: colorScheme.onSurface,
                 ),
                 title: Text(
                   "Save Preferences",
                   style: TextStyle(
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 trailing: Switch.adaptive(
@@ -109,7 +109,7 @@ class SchedulePreferenceBottomSheetState
                 child: Text(
                   'We will store these, so that  next time you open Plan Sync, your classes are selected automatically!',
                   style: TextStyle(
-                    color: colorScheme.onPrimary.withOpacity(0.6),
+                    color: colorScheme.onSurface.withOpacity(0.6),
                   ),
                 ),
               ),
@@ -120,18 +120,18 @@ class SchedulePreferenceBottomSheetState
                 enableFeedback: true,
                 leading: Icon(
                   Icons.book_rounded,
-                  color: colorScheme.onPrimary,
+                  color: colorScheme.onSurface,
                 ),
                 title: Text(
                   'Program',
                   style: TextStyle(
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 trailing: Text(
                   'BTech.',
                   style: TextStyle(
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -141,12 +141,12 @@ class SchedulePreferenceBottomSheetState
                 enableFeedback: true,
                 leading: Icon(
                   Icons.book_rounded,
-                  color: colorScheme.onPrimary,
+                  color: colorScheme.onSurface,
                 ),
                 title: Text(
                   'Year',
                   style: TextStyle(
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 trailing: const YearBar(),
@@ -157,12 +157,12 @@ class SchedulePreferenceBottomSheetState
                 enableFeedback: true,
                 leading: Icon(
                   Icons.book_rounded,
-                  color: colorScheme.onPrimary,
+                  color: colorScheme.onSurface,
                 ),
                 title: Text(
                   'Semester',
                   style: TextStyle(
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 trailing: const SemesterBar(),
@@ -174,12 +174,12 @@ class SchedulePreferenceBottomSheetState
                 enableFeedback: true,
                 leading: Icon(
                   Icons.book_rounded,
-                  color: colorScheme.onPrimary,
+                  color: colorScheme.onSurface,
                 ),
                 title: Text(
                   'Section',
                   style: TextStyle(
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 trailing: const SectionsBar(),
@@ -201,7 +201,7 @@ class SchedulePreferenceBottomSheetState
                 child: Text(
                   'Done',
                   style: TextStyle(
-                    color: colorScheme.surface,
+                    color: colorScheme.onSecondary,
                   ),
                 ),
               ),

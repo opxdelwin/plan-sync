@@ -77,12 +77,12 @@ class ElectivePreferenceBottomSheetState
                 enableFeedback: true,
                 leading: Icon(
                   Icons.downloading_rounded,
-                  color: colorScheme.onPrimary,
+                  color: colorScheme.onSurface,
                 ),
                 title: Text(
                   "Save Preferences",
                   style: TextStyle(
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 trailing: Switch.adaptive(
@@ -109,7 +109,7 @@ class ElectivePreferenceBottomSheetState
                 child: Text(
                   'We will store these, so that  next time you open Plan Sync, your classes are selected automatically!',
                   style: TextStyle(
-                    color: colorScheme.onPrimary.withOpacity(0.6),
+                    color: colorScheme.onSurface.withOpacity(0.6),
                   ),
                 ),
               ),
@@ -120,18 +120,18 @@ class ElectivePreferenceBottomSheetState
                 enableFeedback: true,
                 leading: Icon(
                   Icons.book_rounded,
-                  color: colorScheme.onPrimary,
+                  color: colorScheme.onSurface,
                 ),
                 title: Text(
                   'Program',
                   style: TextStyle(
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 trailing: Text(
                   'BTech.',
                   style: TextStyle(
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -141,12 +141,12 @@ class ElectivePreferenceBottomSheetState
                 enableFeedback: true,
                 leading: Icon(
                   Icons.book_rounded,
-                  color: colorScheme.onPrimary,
+                  color: colorScheme.onSurface,
                 ),
                 title: Text(
                   'Year',
                   style: TextStyle(
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 trailing: const ElectiveYearBar(),
@@ -157,12 +157,12 @@ class ElectivePreferenceBottomSheetState
                 enableFeedback: true,
                 leading: Icon(
                   Icons.book_rounded,
-                  color: colorScheme.onPrimary,
+                  color: colorScheme.onSurface,
                 ),
                 title: Text(
                   'Semester',
                   style: TextStyle(
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 trailing: const ElectiveSemesterBar(),
@@ -173,12 +173,12 @@ class ElectivePreferenceBottomSheetState
                 enableFeedback: true,
                 leading: Icon(
                   Icons.book_rounded,
-                  color: colorScheme.onPrimary,
+                  color: colorScheme.onSurface,
                 ),
                 title: Text(
                   'Scheme',
                   style: TextStyle(
-                    color: colorScheme.onPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 trailing: const ElectiveSchemeBar(),
@@ -200,7 +200,7 @@ class ElectivePreferenceBottomSheetState
                 child: Text(
                   'Done',
                   style: TextStyle(
-                    color: colorScheme.surface,
+                    color: colorScheme.onSecondary,
                   ),
                 ),
               ),

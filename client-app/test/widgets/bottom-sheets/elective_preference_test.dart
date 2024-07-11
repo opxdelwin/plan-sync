@@ -87,7 +87,7 @@ void main() {
     await tester.tap(find.text('2024'));
     await tester.pumpAndSettle();
 
-    expect(gitController.selectedElectiveYear, 2024);
+    expect(gitController.selectedElectiveYear, '2024');
   });
 
   testWidgets('ElectivePreferenceBottomSheet opens SemestersBar',
@@ -149,7 +149,7 @@ void main() {
     // reset existing SharedPreferences data from previous test
     perfs.resetPreferencesToNull();
 
-    gitController.selectedElectiveYear = 2024;
+    gitController.selectedElectiveYear = '2024';
     filterController.activeElectiveSemester = 'SEM1';
     filterController.activeElectiveScheme = 'Scheme B';
     filterController.activeElectiveSchemeCode = 'b';
@@ -167,7 +167,7 @@ void main() {
     expect(filterController.activeElectiveSemester, 'SEM1');
     expect(filterController.activeElectiveScheme, 'Scheme B');
     expect(filterController.activeElectiveSchemeCode, 'b');
-    expect(gitController.selectedElectiveYear, 2024);
+    expect(gitController.selectedElectiveYear, '2024');
 
     // verify existing perfs
     expect(perfs.getPrimaryElectiveSchemePreference(), isNull);
@@ -195,7 +195,7 @@ void main() {
     // reset existing SharedPreferences data from previous test
     perfs.resetPreferencesToNull();
 
-    gitController.selectedElectiveYear = 2024;
+    gitController.selectedElectiveYear = '2024';
     filterController.activeElectiveSemester = 'SEM1';
     filterController.activeElectiveScheme = 'Scheme B';
     filterController.activeElectiveSchemeCode = 'b';
@@ -215,7 +215,7 @@ void main() {
     expect(filterController.activeElectiveSemester, 'SEM1');
     expect(filterController.activeElectiveScheme, 'Scheme B');
     expect(filterController.activeElectiveSchemeCode, 'b');
-    expect(gitController.selectedElectiveYear, 2024);
+    expect(gitController.selectedElectiveYear, '2024');
 
     // verify existing perfs
     expect(perfs.getPrimaryElectiveSchemePreference(), isNull);

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:plan_sync/backend/models/timetable.dart';
+import 'package:plan_sync/widgets/no_schedule_widget.dart';
+import 'package:plan_sync/widgets/subject_tile.dart';
 
 class TimeTableForDay extends StatefulWidget {
   const TimeTableForDay({super.key, required this.data, required this.day});
 
-  final Map data;
+  final Timetable data;
   final String day;
   @override
   State<TimeTableForDay> createState() => _TimeTableForDayState();
@@ -24,12 +27,12 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
 
   void buildColumn(BuildContext context) {
     columns.clear();
-    widget.data["data"][widget.day].keys.forEach((timespace) {
+    widget.data.data[widget.day]?.forEach((elective) {
       columns.add(DataColumn(
           label: Text(
-        timespace,
+        elective.subject ?? 'No Elective Name',
         style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       )));
     });
@@ -37,11 +40,11 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
 
   void buildRow(BuildContext context) {
     List<DataCell> cells = [];
-    widget.data["data"][widget.day].forEach((key, value) {
+    widget.data.data[widget.day]?.forEach((elective) {
       cells.add(DataCell(Text(
-        value,
+        elective.room ?? 'No Elective Room',
         style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       )));
     });
@@ -66,21 +69,26 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    buildColumn(context);
-    buildRow(context);
+    if (widget.data.meta.type != 'norm-class') {
+      buildColumn(context);
+      buildRow(context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    if (widget.data["meta"]["type"] == "norm-class") {
+    if (widget.data.meta.type == "norm-class") {
       return _buildForTimetable(colorScheme);
     } else {
       return _buildForElectives(colorScheme);
     }
   }
 
-  Column _buildForTimetable(ColorScheme colorScheme) {
+  Widget _buildForTimetable(ColorScheme colorScheme) {
+    if (widget.data.data[widget.day] == null) {
+      return const NoScheduleWidget();
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -91,33 +99,30 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
               Text(
                 widget.day.capitalizeFirst!,
                 style: TextStyle(
-                  color: colorScheme.onPrimary,
+                  color: colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  letterSpacing: 0.24,
                 ),
               ),
               const SizedBox(width: 16),
-              Text(
-                "Room ${widget.data["meta"]["room"][widget.day]}",
-                style: TextStyle(
-                  color: colorScheme.onPrimary,
-                ),
-              )
             ],
           ),
         ),
         const SizedBox(height: 8),
-        SingleChildScrollView(
+        ListView.separated(
           key: const ValueKey('TimeTableForDay._buildForTimetable'),
-          scrollDirection: Axis.horizontal,
-          child: DataTable(
-            dividerThickness: 0.5,
-            border: TableBorder.all(
-              borderRadius: BorderRadius.circular(8),
-              color: colorScheme.secondary.withOpacity(0.6),
-            ),
-            columns: columns,
-            rows: rows,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) => SubjectTile(
+            location:
+                widget.data.data[widget.day]?[index].room ?? 'Unavailable',
+            time: widget.data.data[widget.day]?[index].time ?? 'Unavailable',
+            subject:
+                widget.data.data[widget.day]?[index].subject ?? 'Unavailable',
           ),
+          separatorBuilder: (context, index) => const SizedBox(height: 8),
+          itemCount: widget.data.data[widget.day]?.length ?? 0,
         ),
       ],
     );
@@ -134,7 +139,8 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
               Text(
                 widget.day.capitalizeFirst!,
                 style: TextStyle(
-                  color: colorScheme.onPrimary,
+                  color: colorScheme.onSurface,
+                  letterSpacing: 0.6,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -148,7 +154,9 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
             dividerThickness: 0.5,
             border: TableBorder.all(
               borderRadius: BorderRadius.circular(8),
-              color: colorScheme.secondary.withOpacity(0.6),
+              color: Get.isDarkMode
+                  ? colorScheme.onSurfaceVariant.withOpacity(0.4)
+                  : colorScheme.secondary.withOpacity(0.6),
             ),
             columns: columns,
             rows: rows,

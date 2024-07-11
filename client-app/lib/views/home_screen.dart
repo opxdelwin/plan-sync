@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:plan_sync/controllers/app_tour_controller.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/widgets/buttons/schedule_preferences_button.dart';
+import 'package:plan_sync/widgets/date_widget.dart';
 import '../widgets/time_table.dart';
 import '../widgets/version_check.dart';
 
@@ -28,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
         );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(milliseconds: 500), () {
+        // ignore: use_build_context_synchronously
         appTourController.startAppTour(context);
       });
     });
@@ -40,7 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
-          backgroundColor: colorScheme.surface,
+          backgroundColor:
+              colorScheme.surfaceContainerHighest.withOpacity(0.98),
           elevation: 0.0,
           toolbarHeight: 80,
           shape: const RoundedRectangleBorder(
@@ -72,11 +75,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const VersionCheckWidget(),
+                  const DateWidget(),
                   const SizedBox(height: 16),
                   Text(
                     "Time Sheet",
                     style: TextStyle(
-                      color: colorScheme.onPrimary,
+                      color: colorScheme.onSurfaceVariant,
                       fontSize: 24,
                     ),
                   ),

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:plan_sync/backend/models/timetable.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/util/logger.dart';
 import 'package:plan_sync/util/snackbar.dart';
@@ -32,9 +33,9 @@ class GitService extends GetxController {
   // elective year
   List<String>? electiveYears;
 
-  RxInt? _selectedElectiveYear;
-  int? get selectedElectiveYear => _selectedElectiveYear?.value;
-  set selectedElectiveYear(int? newYear) {
+  RxString? _selectedElectiveYear;
+  String? get selectedElectiveYear => _selectedElectiveYear?.value;
+  set selectedElectiveYear(String? newYear) {
     if (newYear == null || selectedElectiveYear == newYear) {
       return;
     }
@@ -276,7 +277,7 @@ class GitService extends GetxController {
   }
 
   /// Gets concurrent timetable for unique semester and section.
-  Future<Map<String, dynamic>?> getTimeTable() async {
+  Future<Timetable?> getTimeTable() async {
     FilterController filterController = Get.find();
     final section = filterController.activeSectionCode;
     final semester = filterController.activeSemester;
@@ -296,7 +297,7 @@ class GitService extends GetxController {
       }
 
       !isWorking.value ? null : isWorking.toggle();
-      return jsonDecode(response.data) as Map<String, dynamic>;
+      return Timetable.fromJson(jsonDecode(response.data));
     } on DioException catch (e) {
       errorDetails = {
         'error': 'DioException',
@@ -470,7 +471,7 @@ class GitService extends GetxController {
   }
 
   /// Gets concurrent elective timetable for unique semester and section.
-  Future<Map<String, dynamic>?> getElectives() async {
+  Future<Timetable?> getElectives() async {
     isWorking.value ? null : isWorking.toggle();
 
     if (filterController.activeElectiveSchemeCode == null ||
@@ -492,7 +493,7 @@ class GitService extends GetxController {
 
       !isWorking.value ? null : isWorking.toggle();
 
-      return jsonDecode(response.data);
+      return Timetable.fromJson(jsonDecode(response.data));
     } on DioException catch (e) {
       errorDetails = {
         'error': 'DioException',
@@ -513,6 +514,38 @@ class GitService extends GetxController {
 
       !isWorking.value ? null : isWorking.toggle();
 
+      return Future.error(Exception(errorDetails));
+    }
+  }
+
+  /// Fetches the min.version file from remote.
+  Future<String?> fetchMininumVersion() async {
+    final url =
+        "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/min.version";
+    try {
+      final response = await dio.get(url);
+
+      if (response.statusCode! >= 400) {
+        return Future.error(response);
+      }
+      if (response.data == "") {
+        return null;
+      }
+      return response.data;
+    } on DioException catch (e) {
+      errorDetails = {
+        'error': 'DioException',
+        'type': e.type.toString(),
+        'code': e.response?.statusCode.toString(),
+        'message':
+            'We couldn\'t fetch requested version. Please try again later.',
+      };
+      return Future.error(Exception(errorDetails));
+    } catch (e) {
+      errorDetails = {
+        "type": "CatchException",
+        "message": "Some unknown error occoured.",
+      };
       return Future.error(Exception(errorDetails));
     }
   }

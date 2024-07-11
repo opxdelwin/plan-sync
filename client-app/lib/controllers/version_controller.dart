@@ -1,6 +1,9 @@
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:plan_sync/controllers/app_preferences_controller.dart';
+import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/external_links.dart';
 import 'package:plan_sync/util/logger.dart';
 
@@ -36,11 +39,12 @@ class VersionController extends GetxController {
     packageInfo = await PackageInfo.fromPlatform();
     printCurrentVersion();
     triggerPlayUpdate();
+    verifyMinimumVersion();
   }
 
   printCurrentVersion() {
     Logger.i("App version: v${packageInfo.version}");
-    appVersion = "v${packageInfo.version}";
+    appVersion = packageInfo.version;
     appBuild = packageInfo.buildNumber;
   }
 
@@ -87,5 +91,34 @@ class VersionController extends GetxController {
         info.availableVersionCode! - int.parse(packageInfo.buildNumber);
 
     return difference > 5;
+  }
+
+  /// Verifies if the current app version is less than the
+  /// version code mentioned in the remote version file.
+  /// This is used to ensure that a minimum app version is maintained
+  /// to ensure incompatible apps do not break with live version of
+  /// remote data.
+  Future<void> verifyMinimumVersion() async {
+    final git = Get.find<GitService>();
+    final perfs = Get.find<AppPreferencesController>();
+
+    final minVersion = await git.fetchMininumVersion();
+    if (minVersion == null || appVersion == null) {
+      Logger.w('min.version from remote retuned null!');
+      perfs.saveIsAppBelowMinVersion(false);
+      return;
+    }
+
+    // check major version
+    if (int.parse(appVersion!.split('.')[0]) <
+        int.parse(minVersion.split('.')[0])) {
+      Logger.e('Current App Version is unsupported with database!');
+      perfs.saveIsAppBelowMinVersion(true);
+      Get.context?.go('/forced_update');
+      return;
+    }
+
+    perfs.saveIsAppBelowMinVersion(false);
+    return;
   }
 }
