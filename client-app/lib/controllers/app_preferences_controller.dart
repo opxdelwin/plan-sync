@@ -51,4 +51,10 @@ class AppPreferencesController extends GetxController {
 
   Future<bool> savePrimaryElectiveYearPreference(String data) async =>
       await perfs.setString('elective-primary-year', data);
+
+  Future<bool> saveIsAppBelowMinVersion(bool status) async =>
+      await perfs.setBool('is-app-below-minVersion', status);
+
+  bool isAppBelowMinVersion() =>
+      perfs.getBool('is-app-below-minVersion') ?? false;
 }

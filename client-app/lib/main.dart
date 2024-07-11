@@ -14,6 +14,7 @@ import 'package:plan_sync/controllers/theme_controller.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
 import 'package:plan_sync/router_refresh_stream.dart';
 import 'package:plan_sync/views/electives_screen.dart';
+import 'package:plan_sync/views/forced_update_screen.dart';
 import 'package:plan_sync/views/home_screen.dart';
 import 'package:plan_sync/views/login_screen.dart';
 import 'package:plan_sync/views/settings_screen.dart';
@@ -116,11 +117,18 @@ final _router = GoRouter(
       name: 'login_screen',
       builder: (context, state) => const LoginScreen(),
     ),
+    GoRoute(
+      path: '/forced_update',
+      name: 'forced_update',
+      builder: (context, state) => const ForcedUpdateScreen(),
+    ),
   ],
 );
 
-redirectHandler(context, state) {
+redirectHandler(BuildContext context, GoRouterState state) {
   Auth auth = Get.find();
+  AppPreferencesController perfs = Get.find();
+
   if (auth.activeUser != null && state.matchedLocation == '/login') {
     return '/';
   }
@@ -128,5 +136,9 @@ redirectHandler(context, state) {
     return "/login";
   }
 
+  if (perfs.isAppBelowMinVersion() &&
+      state.matchedLocation != '/forced_update') {
+    return '/forced_update';
+  }
   return null;
 }
