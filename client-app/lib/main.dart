@@ -65,7 +65,11 @@ class MainApp extends StatelessWidget {
 
 _injectDependencies() async {
   Get.put(Auth());
-  Get.put(AppPreferencesController());
+
+  // make sure preferences are initialized
+  final perfInstance = Get.put(AppPreferencesController());
+  await perfInstance.onInit();
+
   Get.put(GitService());
   Get.put(FilterController());
   Get.put(VersionController());
