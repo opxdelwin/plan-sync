@@ -84,8 +84,9 @@ flutter_native_splash:
     color_dark: "#061906"
 
   android: true
-  ios: false
+  ios: true
   web: false
+  ios_content_mode: center
 
 dev_dependencies:
   flutter_test:
