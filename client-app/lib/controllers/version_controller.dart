@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:in_app_update/in_app_update.dart';
@@ -51,6 +53,11 @@ class VersionController extends GetxController {
   void openStore() => ExternalLinks.store();
 
   Future<bool> checkForUpdate() async {
+    // package not supported for iOS
+    if (Platform.isIOS) {
+      return false;
+    }
+
     isError = false;
     try {
       final AppUpdateInfo result = await InAppUpdate.checkForUpdate();
@@ -62,6 +69,12 @@ class VersionController extends GetxController {
   }
 
   Future<void> triggerPlayUpdate() async {
+    // not supported in ios, will use remote config to
+    // track versions
+    if (Platform.isIOS) {
+      return;
+    }
+
     final updateAvail = await InAppUpdate.checkForUpdate();
 
     if (updateAvail.immediateUpdateAllowed &&

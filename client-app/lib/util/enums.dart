@@ -29,3 +29,6 @@ enum Weekday {
     );
   }
 }
+
+// for login page only
+enum LoginProvider { google, apple }

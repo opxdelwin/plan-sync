@@ -49,6 +49,11 @@ class Auth extends GetxController {
     }
   }
 
+  // TODO: Implement
+  Future<void> loginWithApple() async {
+    return;
+  }
+
   Future<void> logout() async {
     Logger.i("logout sequence");
     await _auth.signOut();
