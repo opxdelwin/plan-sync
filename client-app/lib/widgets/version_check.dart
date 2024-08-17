@@ -23,7 +23,6 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.only(
         top: 16,
         bottom: 8,

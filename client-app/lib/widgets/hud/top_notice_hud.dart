@@ -6,6 +6,7 @@ import 'package:plan_sync/controllers/remote_config_controller.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
 import 'package:plan_sync/widgets/hud/notice_carousel_widget.dart';
 import 'package:plan_sync/widgets/version_check.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class TopNoticeHud extends StatefulWidget {
   const TopNoticeHud({super.key});
@@ -17,6 +18,7 @@ class TopNoticeHud extends StatefulWidget {
 class _TopNoticeHudState extends State<TopNoticeHud> {
   late VersionController versionController;
   late RemoteConfigController remoteConfig;
+  late PageController pageController;
 
   bool isUpdateAvailable = false;
   List<HudNoticeModel> notices = [];
@@ -26,6 +28,7 @@ class _TopNoticeHudState extends State<TopNoticeHud> {
     super.initState();
     versionController = Get.find();
     remoteConfig = Get.find();
+    pageController = PageController();
 
     versionController.checkForUpdate().then((val) => setState(() {
           isUpdateAvailable = val;
@@ -37,6 +40,8 @@ class _TopNoticeHudState extends State<TopNoticeHud> {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     List<Widget> widgets = [
       if (isUpdateAvailable) const VersionCheckWidget(),
       if (notices.isNotEmpty)
@@ -47,6 +52,8 @@ class _TopNoticeHudState extends State<TopNoticeHud> {
     ];
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 250),
+      switchInCurve: Curves.easeInOut,
+      switchOutCurve: Curves.easeInOut,
       transitionBuilder: (child, animation) {
         Animation<Offset> tween = Tween<Offset>(
           begin: const Offset(-1.0, 0),
@@ -59,8 +66,35 @@ class _TopNoticeHudState extends State<TopNoticeHud> {
       },
       child: widgets.isEmpty
           ? const SizedBox()
-          : ExpandablePageView(
-              children: widgets,
+          : Column(
+              children: [
+                ExpandablePageView(
+                  controller: pageController,
+                  children: widgets,
+                ),
+                if (widgets.length > 1) ...[
+                  const SizedBox(height: 8),
+                  SmoothPageIndicator(
+                    controller: pageController,
+                    count: widgets.length,
+                    effect: WormEffect(
+                      dotHeight: 6,
+                      dotWidth: 6,
+                      activeDotColor: colorScheme.secondary,
+                      dotColor: colorScheme.onSurface.withOpacity(0.48),
+                      paintStyle: PaintingStyle.stroke,
+                    ),
+                    onDotClicked: (index) {
+                      pageController.animateToPage(
+                        index,
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeInOut,
+                      );
+                    },
+                  )
+                ],
+                SizedBox(height: widgets.length > 1 ? 8 : 12),
+              ],
             ),
     );
   }

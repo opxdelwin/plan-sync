@@ -12,7 +12,6 @@ class NoticeCarouselWidget extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(8),
       decoration: ShapeDecoration(
         shape: RoundedRectangleBorder(
