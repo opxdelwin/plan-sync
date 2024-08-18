@@ -355,7 +355,7 @@ class GitService extends GetxController {
       final cache = await cacheOptions.store?.get(key);
       if (cache != null) {
         final cachedResponse = cache.toResponse(options);
-        print("Yield Cache : ${DateTime.now().millisecondsSinceEpoch}");
+        Logger.i("Yield Cache : ${DateTime.now().millisecondsSinceEpoch}");
         yield Timetable.fromJson(jsonDecode(cachedResponse.data));
       }
 
@@ -366,7 +366,7 @@ class GitService extends GetxController {
       }
 
       !isWorking.value ? null : isWorking.toggle();
-      print("Yield Actual : ${DateTime.now().millisecondsSinceEpoch}");
+      Logger.i("Yield Actual : ${DateTime.now().millisecondsSinceEpoch}");
 
       /// send data again only if e-tag are different
       if (response.headers.map['etag']?.first != cache?.eTag) {
@@ -635,7 +635,7 @@ class GitService extends GetxController {
       final cacheData = await cacheOptions.store?.get(key);
       if (cacheData != null) {
         final cachedResponse = cacheData.toResponse(options);
-        print("Sending Elecive from cache");
+        Logger.i("Sending Elecive from cache");
         yield Timetable.fromJson(jsonDecode(cachedResponse.data));
       }
 
