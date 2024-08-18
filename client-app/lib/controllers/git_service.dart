@@ -411,7 +411,28 @@ class GitService extends GetxController {
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/electives.json";
 
+      final options = RequestOptions(path: url);
+      final key = CacheOptions.defaultCacheKeyBuilder(options);
+
+      final cacheData = await cacheOptions.store?.get(key);
+      if (cacheData != null) {
+        final cachedResponse = cacheData.toResponse(options);
+
+        electiveYears = List.from(jsonDecode(cachedResponse.data).keys);
+        Logger.i("Cached elective years: $electiveYears");
+        await filterController.setPrimaryElectiveYear();
+        getElectiveSemesters();
+      }
+
       final response = await dio.get(url);
+      // stop execution if etags match
+      if (response.headers.map['etag']?.first == cacheData?.eTag &&
+          cacheData?.eTag != null) {
+        Logger.i("Elective Year Etag Matches, aborting fn");
+        !isWorking.value ? null : isWorking.toggle();
+        return;
+      }
+
       final data = jsonDecode(response.data) as Map<String, dynamic>;
 
       electiveYears = List.from(data.keys);
@@ -421,7 +442,7 @@ class GitService extends GetxController {
         CustomSnackbar.error('Error', 'No Years found, contact support.');
         return;
       }
-      Logger.i("Fetched electives years: $electiveYears");
+      Logger.i("Fetched elective years: $electiveYears");
       await filterController.setPrimaryElectiveYear();
       getElectiveSemesters();
       !isWorking.value ? null : isWorking.toggle();
