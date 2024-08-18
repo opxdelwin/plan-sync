@@ -277,27 +277,47 @@ class GitService extends GetxController {
   }
 
   /// Gets concurrent timetable for unique semester and section.
-  Future<Timetable?> getTimeTable() async {
+  Stream<Timetable?> getTimeTable() async* {
     FilterController filterController = Get.find();
     final section = filterController.activeSectionCode;
     final semester = filterController.activeSemester;
 
     if (section == null || semester == null || selectedYear == null) {
-      return null;
+      yield null;
+      yield* const Stream.empty(); // This terminates the stream
+      return;
     }
 
     isWorking.value ? null : isWorking.toggle();
     final url =
         "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$selectedYear/$semester/$section.json";
     try {
+      final options = RequestOptions(path: url);
+      final key = CacheOptions.defaultCacheKeyBuilder(options);
+
+      final cache = await cacheOptions.store?.get(key);
+      if (cache != null) {
+        final cachedResponse = cache.toResponse(options);
+        print("Yield Cache : ${DateTime.now().millisecondsSinceEpoch}");
+        yield Timetable.fromJson(jsonDecode(cachedResponse.data));
+      }
+
       final response = await dio.get(url);
 
       if (response.statusCode! >= 400) {
-        return Future.error(response);
+        yield* Stream.error(response);
       }
 
       !isWorking.value ? null : isWorking.toggle();
-      return Timetable.fromJson(jsonDecode(response.data));
+      print("Yield Actual : ${DateTime.now().millisecondsSinceEpoch}");
+
+      /// send data again only if e-tag are different
+      if (response.headers.map['etag']?.first != cache?.eTag) {
+        Logger.i("Received Schedule with different ETag");
+        yield Timetable.fromJson(jsonDecode(response.data));
+      } else {
+        Logger.i('ETag matches');
+      }
     } on DioException catch (e) {
       errorDetails = {
         'error': 'DioException',
@@ -313,7 +333,7 @@ class GitService extends GetxController {
 
       !isWorking.value ? null : isWorking.toggle();
       Logger.i(e.toString());
-      return Future.error(Exception(errorDetails));
+      yield* Stream.error(Exception(errorDetails));
     } catch (e) {
       errorDetails = {
         "type": "CatchException",
@@ -321,7 +341,7 @@ class GitService extends GetxController {
       };
 
       !isWorking.value ? null : isWorking.toggle();
-      return Future.error(Exception(errorDetails));
+      yield* Stream.error(Exception(errorDetails));
     }
   }
 

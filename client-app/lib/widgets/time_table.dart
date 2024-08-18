@@ -167,10 +167,10 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
     return GetBuilder<FilterController>(builder: (filterController) {
       GitService serviceController = Get.find();
 
-      return FutureBuilder(
-        future: serviceController.getTimeTable(),
+      return StreamBuilder(
+        stream: serviceController.getTimeTable(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -181,8 +181,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                 )),
               ],
             );
-          } else if (snapshot.connectionState == ConnectionState.done &&
-              snapshot.hasError) {
+          } else if (snapshot.hasError) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
