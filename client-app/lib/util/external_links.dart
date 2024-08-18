@@ -101,9 +101,12 @@ Best regards,
   }
 
   ExternalLinks.shareApp() {
-    Share.shareUri(Uri.parse(
-      'https://play.google.com/store/apps/details?id=in.co.cardlink.plansync',
-    ));
+    var text = "Check out the Plan Sync app! "
+        "🚀 It's a game-changer for managing my classes. "
+        "Makes life so much easier.";
+
+    text += "\n\nGive it a try: https://plansync.in/#download";
+    Share.share(text);
   }
 
   Future<void> _launchUrl(String url) async {
