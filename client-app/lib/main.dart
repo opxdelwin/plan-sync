@@ -10,6 +10,7 @@ import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/controllers/auth.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/controllers/remote_config_controller.dart';
 import 'package:plan_sync/controllers/theme_controller.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
 import 'package:plan_sync/router_refresh_stream.dart';
@@ -69,12 +70,14 @@ _injectDependencies() async {
   // make sure preferences are initialized
   final perfInstance = Get.put(AppPreferencesController());
   await perfInstance.onInit();
+  perfInstance.cleanupOldNoticeDismissals();
 
   Get.put(GitService());
   Get.put(FilterController());
   Get.put(VersionController());
   Get.put(AnalyticsController());
   Get.put(AppTourController());
+  Get.put(RemoteConfigController());
 }
 
 // GoRouter configuration

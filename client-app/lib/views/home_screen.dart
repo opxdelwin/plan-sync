@@ -4,8 +4,8 @@ import 'package:plan_sync/controllers/app_tour_controller.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/widgets/buttons/schedule_preferences_button.dart';
 import 'package:plan_sync/widgets/date_widget.dart';
+import 'package:plan_sync/widgets/hud/top_notice_hud.dart';
 import '../widgets/time_table.dart';
-import '../widgets/version_check.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const VersionCheckWidget(),
+                  const TopNoticeHud(),
                   const DateWidget(),
                   const SizedBox(height: 16),
                   Text(
