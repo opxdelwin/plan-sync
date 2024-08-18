@@ -37,10 +37,10 @@ void main() {
     final controller = Get.find<GitService>() as MockGitService;
     controller.stage = MockGitServiceStages.success;
 
-    final data = await controller.getTimeTable();
+    final data = controller.getTimeTable();
     const day = 'monday';
 
-    await pumpBaseWidget(tester, data!, day);
+    await pumpBaseWidget(tester, (await data.first)!, day);
     await tester.pumpAndSettle();
 
     // drag until last element is visible
