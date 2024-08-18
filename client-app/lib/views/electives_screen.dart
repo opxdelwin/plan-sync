@@ -58,10 +58,10 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                 const SizedBox(height: 24),
                 GetBuilder<FilterController>(builder: (filterController) {
                   GitService service = Get.find();
-                  return FutureBuilder(
-                    future: service.getElectives(),
+                  return StreamBuilder(
+                    stream: service.getElectives(),
                     builder: (context, AsyncSnapshot<Timetable?> snapshot) {
-                      if (snapshot.connectionState != ConnectionState.done) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
                         return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
