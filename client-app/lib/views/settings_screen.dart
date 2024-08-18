@@ -164,6 +164,7 @@ class SettingsPage extends StatelessWidget {
                   ),
                   onTap: () => PopupsWrapper.reportError(
                     autoFill: false,
+                    context: context,
                   ),
                 ),
                 ListTile(
@@ -190,29 +191,30 @@ class SettingsPage extends StatelessWidget {
                     color: colorScheme.onSurfaceVariant.withOpacity(0.48),
                   ),
                 ),
-                ListTile(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  enableFeedback: true,
-                  leading: Icon(
-                    Icons.add_circle_outline_rounded,
-                    color: colorScheme.onSurface,
-                  ),
-                  title: Text(
-                    "Contribute Time Table",
-                    style: TextStyle(
-                      color: colorScheme.onSurface,
-                    ),
-                  ),
-                  trailing: Icon(
-                    Icons.keyboard_arrow_right_rounded,
-                    color: colorScheme.onSurface,
-                  ),
-                  onTap: () => BottomSheets.contributeTimeTable(
-                    context: context,
-                  ),
-                ),
+                // TODO: remove around Nov
+                // ListTile(
+                //   shape: RoundedRectangleBorder(
+                //     borderRadius: BorderRadius.circular(16),
+                //   ),
+                //   enableFeedback: true,
+                //   leading: Icon(
+                //     Icons.add_circle_outline_rounded,
+                //     color: colorScheme.onSurface,
+                //   ),
+                //   title: Text(
+                //     "Contribute Time Table",
+                //     style: TextStyle(
+                //       color: colorScheme.onSurface,
+                //     ),
+                //   ),
+                //   trailing: Icon(
+                //     Icons.keyboard_arrow_right_rounded,
+                //     color: colorScheme.onSurface,
+                //   ),
+                //   onTap: () => BottomSheets.contributeTimeTable(
+                //     context: context,
+                //   ),
+                // ),
                 ListTile(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
