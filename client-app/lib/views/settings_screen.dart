@@ -9,6 +9,7 @@ import 'package:plan_sync/util/external_links.dart';
 import 'package:plan_sync/util/snackbar.dart';
 import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
 import 'package:plan_sync/widgets/buttons/logout_button.dart';
+import 'package:plan_sync/widgets/popups/popups_wrapper.dart';
 import '../controllers/auth.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -161,8 +162,8 @@ class SettingsPage extends StatelessWidget {
                     Icons.keyboard_arrow_right_rounded,
                     color: colorScheme.onSurface,
                   ),
-                  onTap: () => BottomSheets.reportError(
-                    context: context,
+                  onTap: () => PopupsWrapper.reportError(
+                    autoFill: false,
                   ),
                 ),
                 ListTile(

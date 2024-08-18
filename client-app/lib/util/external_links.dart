@@ -10,7 +10,8 @@ class ExternalLinks {
 
   ExternalLinks.store() {
     _launchUrl(
-        "https://play.google.com/store/apps/details?id=in.co.cardlink.plansync");
+      "https://play.google.com/store/apps/details?id=in.co.cardlink.plansync",
+    );
   }
 
   ExternalLinks.termsAndConditions() {
@@ -27,18 +28,23 @@ class ExternalLinks {
         "https://github.com/opxdelwin/plan-sync/blob/main/ERROR_REPORTING.md");
   }
 
-  ExternalLinks.reportErrorViaMail() {
-    const body = """Hey Plan Sync Team,
+  ExternalLinks.reportErrorViaMail({
+    String? academicYear,
+    String? course,
+    String? section,
+  }) {
+    String body = """Hey Plan Sync Team,
 
 I hope this message finds you well. I've come across an issue in the schedule and wanted to report it to help improve the app. Here are the details:
 
 **Class Details:**
-- Course Name: [Enter Course Name]
+- Academic Year: ${academicYear ?? '[Enter Academic Year]'}
+- Course Name: ${course ?? '[Enter Course Name]'}
 - Type: Normal Schedule / Electives
-- Section: [Enter Section]
+- Section: ${section ?? '[Enter Section]'}
 - Day/Time: [Enter Day and/or Time]
 
-**Issue Description:**
+ISSUE DESCRIPTION:
 [Describe the issue concisely and clearly. Include any relevant details.]
 
 **Screenshots (if applicable):**

@@ -5,6 +5,7 @@ import 'package:plan_sync/backend/models/timetable.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
+import 'package:plan_sync/widgets/popups/popups_wrapper.dart';
 import 'package:plan_sync/widgets/time_table_for_day.dart';
 
 class TimeTableWidget extends StatefulWidget {
@@ -157,7 +158,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
   }
 
   void reportError() {
-    BottomSheets.reportError(context: context);
+    PopupsWrapper.reportError();
   }
 
   @override
