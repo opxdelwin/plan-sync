@@ -168,6 +168,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
       GitService serviceController = Get.find();
 
       return StreamBuilder(
+        key: ValueKey(filterController.getShortCode()),
         stream: serviceController.getTimeTable(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

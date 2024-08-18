@@ -651,8 +651,7 @@ class GitService extends GetxController {
       }
 
       !isWorking.value ? null : isWorking.toggle();
-      if (response.headers.map['etag']?.first != cacheData?.eTag &&
-          cacheData?.eTag != null) {
+      if (response.headers.map['etag']?.first != cacheData?.eTag) {
         yield Timetable.fromJson(jsonDecode(response.data));
       }
 

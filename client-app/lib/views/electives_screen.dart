@@ -59,6 +59,7 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                 GetBuilder<FilterController>(builder: (filterController) {
                   GitService service = Get.find();
                   return StreamBuilder(
+                    key: ValueKey(filterController.getElectiveShortCode()),
                     stream: service.getElectives(),
                     builder: (context, AsyncSnapshot<Timetable?> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
