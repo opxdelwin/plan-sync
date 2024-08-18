@@ -70,6 +70,7 @@ _injectDependencies() async {
   // make sure preferences are initialized
   final perfInstance = Get.put(AppPreferencesController());
   await perfInstance.onInit();
+  perfInstance.cleanupOldNoticeDismissals();
 
   Get.put(GitService());
   Get.put(FilterController());

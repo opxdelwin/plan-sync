@@ -33,9 +33,15 @@ class _TopNoticeHudState extends State<TopNoticeHud> {
     versionController.checkForUpdate().then((val) => setState(() {
           isUpdateAvailable = val;
         }));
-    remoteConfig.getNotices().then((result) => setState(() {
-          notices = result;
-        }));
+
+    remoteConfig.getNotices().then((result) {
+      result.removeWhere(
+        (item) => !item.shouldShow(),
+      );
+      setState(() {
+        notices = result;
+      });
+    });
   }
 
   @override
@@ -47,7 +53,13 @@ class _TopNoticeHudState extends State<TopNoticeHud> {
       if (notices.isNotEmpty)
         ...List.generate(
           notices.length,
-          (index) => NoticeCarouselWidget(notice: notices[index]),
+          (index) => NoticeCarouselWidget(
+            notice: notices[index],
+            onDelete: () => setState(() {
+              notices[index].dismissNotice();
+              notices.removeAt(index);
+            }),
+          ),
         )
     ];
     return AnimatedSwitcher(

@@ -6,7 +6,6 @@ import 'package:plan_sync/widgets/buttons/schedule_preferences_button.dart';
 import 'package:plan_sync/widgets/date_widget.dart';
 import 'package:plan_sync/widgets/hud/top_notice_hud.dart';
 import '../widgets/time_table.dart';
-import '../widgets/version_check.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

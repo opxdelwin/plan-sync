@@ -3,9 +3,14 @@ import 'package:get/get.dart';
 import 'package:plan_sync/backend/models/remote_config/hud_notices_model.dart';
 
 class NoticeCarouselWidget extends StatelessWidget {
-  const NoticeCarouselWidget({super.key, required this.notice});
+  const NoticeCarouselWidget({
+    super.key,
+    required this.notice,
+    required this.onDelete,
+  });
 
   final HudNoticeModel notice;
+  final Function onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +32,33 @@ class NoticeCarouselWidget extends StatelessWidget {
             : colorScheme.surfaceContainerHighest,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           ListTile(
-            title: Text(
-              notice.title,
-              style: TextStyle(
-                color: Get.isDarkMode
-                    ? colorScheme.onSurface
-                    : colorScheme.onSurfaceVariant,
-              ),
+            contentPadding: const EdgeInsets.only(left: 8.0),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text(
+                    notice.title,
+                    style: TextStyle(
+                      color: Get.isDarkMode
+                          ? colorScheme.onSurface
+                          : colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => onDelete.call(),
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Icon(
+                      Icons.cancel_outlined,
+                      color: colorScheme.onSurface.withOpacity(0.88),
+                    ),
+                  ),
+                ),
+              ],
             ),
             subtitle: Text(
               notice.description,
