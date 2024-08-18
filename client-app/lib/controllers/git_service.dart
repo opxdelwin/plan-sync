@@ -476,7 +476,31 @@ class GitService extends GetxController {
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/electives.json";
 
+      final options = RequestOptions(path: url);
+      final key = CacheOptions.defaultCacheKeyBuilder(options);
+
+      final cacheData = await cacheOptions.store?.get(key);
+      if (cacheData != null) {
+        final cachedResponse = cacheData.toResponse(options);
+        electivesSemesters = RxList.from(
+          jsonDecode(cachedResponse.data)["$selectedElectiveYear"].keys,
+        );
+
+        Logger.i("Cached elective semesters: $electivesSemesters");
+        await filterController.setPrimaryElectiveSemester();
+        update();
+      }
+
       final response = await dio.get(url);
+
+      // stop execution if etags match
+      if (response.headers.map['etag']?.first == cacheData?.eTag &&
+          cacheData?.eTag != null) {
+        Logger.i("Elective Semester Etag Matches, aborting fn");
+        !isWorking.value ? null : isWorking.toggle();
+        return;
+      }
+
       final data = jsonDecode(response.data) as Map<String, dynamic>;
       electivesSemesters = RxList.from(data["$selectedElectiveYear"].keys);
       Logger.i("Fetched elective semesters: $electivesSemesters");
@@ -492,6 +516,7 @@ class GitService extends GetxController {
       !isWorking.value ? null : isWorking.toggle();
       await filterController.setPrimaryElectiveSemester();
       update();
+      return;
     } on DioException catch (e) {
       errorDetails = {
         "error": "DioException",
