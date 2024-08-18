@@ -538,7 +538,6 @@ class GitService extends GetxController {
   Future<void> getElectiveSchemes() async {
     try {
       isWorking.value ? null : isWorking.toggle();
-      update();
       FilterController filterController = Get.find();
       if (filterController.activeElectiveSemester == null) {
         return;
@@ -548,7 +547,31 @@ class GitService extends GetxController {
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/electives.json";
 
+      final options = RequestOptions(path: url);
+      final key = CacheOptions.defaultCacheKeyBuilder(options);
+
+      final cacheData = await cacheOptions.store?.get(key);
+      if (cacheData != null) {
+        final cachedResponse = cacheData.toResponse(options);
+        electiveSchemes = RxMap.from(
+          jsonDecode(cachedResponse.data)["$selectedElectiveYear"]
+              [activeSemester],
+        );
+        Logger.i("cached elective schemes: $electiveSchemes");
+        await filterController.setPrimaryElectiveScheme();
+        update();
+      }
+
       final response = await dio.get(url);
+
+      // stop execution if etags match
+      if (response.headers.map['etag']?.first == cacheData?.eTag &&
+          cacheData?.eTag != null) {
+        Logger.i("Elective schemes Etag Matches, aborting fn");
+        !isWorking.value ? null : isWorking.toggle();
+        return;
+      }
+
       final data = jsonDecode(response.data) as Map<String, dynamic>;
 
       if (data["$selectedElectiveYear"][activeSemester] == null) {
@@ -570,7 +593,7 @@ class GitService extends GetxController {
         return;
       }
 
-      Logger.i("Fetched electives schemes: $electiveSchemes");
+      Logger.i("Fetched elective schemes: $electiveSchemes");
       !isWorking.value ? null : isWorking.toggle();
       await filterController.setPrimaryElectiveScheme();
       update();
