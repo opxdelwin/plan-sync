@@ -9,7 +9,6 @@ import 'package:plan_sync/util/snackbar.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:rename/platform_file_editors/abs_platform_file_editor.dart';
 
 class GitService extends GetxController {
   late String branch;
@@ -288,7 +287,29 @@ class GitService extends GetxController {
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/sections.json";
 
+      final options = RequestOptions(path: url);
+      final key = CacheOptions.defaultCacheKeyBuilder(options);
+
+      final cacheData = await cacheOptions.store?.get(key);
+      if (cacheData != null) {
+        final cachedResponse = cacheData.toResponse(options);
+
+        _sections = RxMap.from(
+          jsonDecode(cachedResponse.data)["$selectedYear"][activeSemester],
+        );
+        update();
+        filterController.setPrimarySection();
+        Logger.i("Cached sections: $sections");
+      }
+
       final response = await dio.get(url);
+
+      if (response.headers.map['etag']?.first == cacheData?.eTag) {
+        Logger.i("Sections Etag matches");
+        !isWorking.value ? null : isWorking.toggle();
+        return;
+      }
+
       final data = jsonDecode(response.data) as Map<String, dynamic>;
       _sections = RxMap.from(data["$selectedYear"][activeSemester]);
       update();
