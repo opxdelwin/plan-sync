@@ -142,7 +142,23 @@ class GitService extends GetxController {
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/sections.json";
 
+      final options = RequestOptions(path: url);
+      final key = CacheOptions.defaultCacheKeyBuilder(options);
+
+      final cacheData = await cacheOptions.store?.get(key);
+      if (cacheData != null) {
+        final cacheResponse = cacheData.toResponse(options);
+        final cachedYears = jsonDecode(cacheResponse.data).keys;
+        Logger.i("Cached Years: $cachedYears");
+        years = List.from(cachedYears);
+        setYear();
+      }
+
       final response = await dio.get(url);
+      // stop if the etags match for both cached and newly fetched
+      if (response.headers.map['etag']?.first == cacheData?.eTag) {
+        return;
+      }
       final data = jsonDecode(response.data) as Map<String, dynamic>;
 
       years = List.from(data.keys);
