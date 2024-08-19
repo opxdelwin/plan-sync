@@ -136,7 +136,7 @@ class MockGitService extends GetxController with Mock implements GitService {
   List<String>? get years => ["2024", "2023", "2022"];
 
   @override
-  Future<Timetable?> getTimeTable() async {
+  Stream<Timetable?> getTimeTable() async* {
     bool isTimetableUpdating = false;
 
     if (stage == MockGitServiceStages.scheduleUpdating) {
@@ -144,17 +144,18 @@ class MockGitService extends GetxController with Mock implements GitService {
     }
 
     if (stage == MockGitServiceStages.noInternet) {
-      return Future.error(
+      yield* Stream.error(
         DioException.connectionError(
             requestOptions: RequestOptions(), reason: 'No Internet'),
       );
     }
 
     if (stage == MockGitServiceStages.noneSelected) {
-      return null;
+      yield* const Stream.empty();
+      return;
     }
 
-    return Timetable.fromJson({
+    yield Timetable.fromJson({
       "meta": {
         "section": "b16",
         "type": "norm-class",
@@ -223,8 +224,8 @@ class MockGitService extends GetxController with Mock implements GitService {
   }
 
   @override
-  Future<Timetable?> getElectives() async {
-    return Timetable.fromJson({
+  Stream<Timetable?> getElectives() async* {
+    yield Timetable.fromJson({
       "meta": {
         "type": "electives",
         "revision": "Revision 1.01",

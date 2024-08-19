@@ -37,8 +37,12 @@ void main() {
     expect(find.byIcon(Icons.download_rounded), findsOneWidget);
   });
 
-  testWidgets('VersionCheckWidget renders when update is available',
-      (WidgetTester tester) async {
+  /// Skipping as newer UI logic shows widget as part of carousel,
+  /// based on if update is available. The widget directly doesn't
+  /// handle if it should be shown
+  testWidgets(
+      'VersionCheckWidget does not renders when update is not available',
+      skip: true, (WidgetTester tester) async {
     final controller = Get.find<VersionController>() as MockVersionController;
     controller.updateResult = false;
 

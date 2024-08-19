@@ -195,7 +195,7 @@ class FilterController extends GetxController {
   }
 
   /// sets the semester code while runtime
-  Future<void> setPrimarySemester() async {
+  void setPrimarySemester() {
     // activeSemester = null;
     final String? primarySemester = preferences.getPrimarySemesterPreference();
     Logger.i("primary semester: $primarySemester");

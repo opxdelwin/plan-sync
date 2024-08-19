@@ -142,7 +142,23 @@ class GitService extends GetxController {
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/sections.json";
 
+      final options = RequestOptions(path: url);
+      final key = CacheOptions.defaultCacheKeyBuilder(options);
+
+      final cacheData = await cacheOptions.store?.get(key);
+      if (cacheData != null) {
+        final cacheResponse = cacheData.toResponse(options);
+        final cachedYears = jsonDecode(cacheResponse.data).keys;
+        Logger.i("Cached Years: $cachedYears");
+        years = List.from(cachedYears);
+        setYear();
+      }
+
       final response = await dio.get(url);
+      // stop if the etags match for both cached and newly fetched
+      if (response.headers.map['etag']?.first == cacheData?.eTag) {
+        return;
+      }
       final data = jsonDecode(response.data) as Map<String, dynamic>;
 
       years = List.from(data.keys);
@@ -197,7 +213,26 @@ class GitService extends GetxController {
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/sections.json";
 
+      final options = RequestOptions(path: url);
+      final key = CacheOptions.defaultCacheKeyBuilder(options);
+
+      final cacheData = await cacheOptions.store?.get(key);
+      if (cacheData != null) {
+        final cacheResponse = cacheData.toResponse(options);
+        final cachedSemesters =
+            jsonDecode(cacheResponse.data)["$selectedYear"]?.keys;
+        Logger.i("Cached Semesters: $cachedSemesters");
+        semesters = RxList.from(cachedSemesters);
+        update();
+        filterController.setPrimarySemester();
+      }
+
       final response = await dio.get(url);
+      if (response.headers.map['etag']?.first == cacheData?.eTag) {
+        Logger.i("Semester Etag matches");
+        !isWorking.value ? null : isWorking.toggle();
+        return;
+      }
       final data = jsonDecode(response.data) as Map<String, dynamic>;
 
       semesters = RxList.from(data["$selectedYear"]?.keys);
@@ -252,7 +287,29 @@ class GitService extends GetxController {
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/sections.json";
 
+      final options = RequestOptions(path: url);
+      final key = CacheOptions.defaultCacheKeyBuilder(options);
+
+      final cacheData = await cacheOptions.store?.get(key);
+      if (cacheData != null) {
+        final cachedResponse = cacheData.toResponse(options);
+
+        _sections = RxMap.from(
+          jsonDecode(cachedResponse.data)["$selectedYear"][activeSemester],
+        );
+        update();
+        filterController.setPrimarySection();
+        Logger.i("Cached sections: $sections");
+      }
+
       final response = await dio.get(url);
+
+      if (response.headers.map['etag']?.first == cacheData?.eTag) {
+        Logger.i("Sections Etag matches");
+        !isWorking.value ? null : isWorking.toggle();
+        return;
+      }
+
       final data = jsonDecode(response.data) as Map<String, dynamic>;
       _sections = RxMap.from(data["$selectedYear"][activeSemester]);
       update();
@@ -277,27 +334,47 @@ class GitService extends GetxController {
   }
 
   /// Gets concurrent timetable for unique semester and section.
-  Future<Timetable?> getTimeTable() async {
+  Stream<Timetable?> getTimeTable() async* {
     FilterController filterController = Get.find();
     final section = filterController.activeSectionCode;
     final semester = filterController.activeSemester;
 
     if (section == null || semester == null || selectedYear == null) {
-      return null;
+      yield null;
+      yield* const Stream.empty(); // This terminates the stream
+      return;
     }
 
     isWorking.value ? null : isWorking.toggle();
     final url =
         "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$selectedYear/$semester/$section.json";
     try {
+      final options = RequestOptions(path: url);
+      final key = CacheOptions.defaultCacheKeyBuilder(options);
+
+      final cache = await cacheOptions.store?.get(key);
+      if (cache != null) {
+        final cachedResponse = cache.toResponse(options);
+        Logger.i("Yield Cache : ${DateTime.now().millisecondsSinceEpoch}");
+        yield Timetable.fromJson(jsonDecode(cachedResponse.data));
+      }
+
       final response = await dio.get(url);
 
       if (response.statusCode! >= 400) {
-        return Future.error(response);
+        yield* Stream.error(response);
       }
 
       !isWorking.value ? null : isWorking.toggle();
-      return Timetable.fromJson(jsonDecode(response.data));
+      Logger.i("Yield Actual : ${DateTime.now().millisecondsSinceEpoch}");
+
+      /// send data again only if e-tag are different
+      if (response.headers.map['etag']?.first != cache?.eTag) {
+        Logger.i("Received Schedule with different ETag");
+        yield Timetable.fromJson(jsonDecode(response.data));
+      } else {
+        Logger.i('ETag matches');
+      }
     } on DioException catch (e) {
       errorDetails = {
         'error': 'DioException',
@@ -313,7 +390,7 @@ class GitService extends GetxController {
 
       !isWorking.value ? null : isWorking.toggle();
       Logger.i(e.toString());
-      return Future.error(Exception(errorDetails));
+      yield* Stream.error(Exception(errorDetails));
     } catch (e) {
       errorDetails = {
         "type": "CatchException",
@@ -321,7 +398,7 @@ class GitService extends GetxController {
       };
 
       !isWorking.value ? null : isWorking.toggle();
-      return Future.error(Exception(errorDetails));
+      yield* Stream.error(Exception(errorDetails));
     }
   }
 
@@ -334,7 +411,28 @@ class GitService extends GetxController {
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/electives.json";
 
+      final options = RequestOptions(path: url);
+      final key = CacheOptions.defaultCacheKeyBuilder(options);
+
+      final cacheData = await cacheOptions.store?.get(key);
+      if (cacheData != null) {
+        final cachedResponse = cacheData.toResponse(options);
+
+        electiveYears = List.from(jsonDecode(cachedResponse.data).keys);
+        Logger.i("Cached elective years: $electiveYears");
+        await filterController.setPrimaryElectiveYear();
+        getElectiveSemesters();
+      }
+
       final response = await dio.get(url);
+      // stop execution if etags match
+      if (response.headers.map['etag']?.first == cacheData?.eTag &&
+          cacheData?.eTag != null) {
+        Logger.i("Elective Year Etag Matches, aborting fn");
+        !isWorking.value ? null : isWorking.toggle();
+        return;
+      }
+
       final data = jsonDecode(response.data) as Map<String, dynamic>;
 
       electiveYears = List.from(data.keys);
@@ -344,7 +442,7 @@ class GitService extends GetxController {
         CustomSnackbar.error('Error', 'No Years found, contact support.');
         return;
       }
-      Logger.i("Fetched electives years: $electiveYears");
+      Logger.i("Fetched elective years: $electiveYears");
       await filterController.setPrimaryElectiveYear();
       getElectiveSemesters();
       !isWorking.value ? null : isWorking.toggle();
@@ -378,7 +476,31 @@ class GitService extends GetxController {
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/electives.json";
 
+      final options = RequestOptions(path: url);
+      final key = CacheOptions.defaultCacheKeyBuilder(options);
+
+      final cacheData = await cacheOptions.store?.get(key);
+      if (cacheData != null) {
+        final cachedResponse = cacheData.toResponse(options);
+        electivesSemesters = RxList.from(
+          jsonDecode(cachedResponse.data)["$selectedElectiveYear"].keys,
+        );
+
+        Logger.i("Cached elective semesters: $electivesSemesters");
+        await filterController.setPrimaryElectiveSemester();
+        update();
+      }
+
       final response = await dio.get(url);
+
+      // stop execution if etags match
+      if (response.headers.map['etag']?.first == cacheData?.eTag &&
+          cacheData?.eTag != null) {
+        Logger.i("Elective Semester Etag Matches, aborting fn");
+        !isWorking.value ? null : isWorking.toggle();
+        return;
+      }
+
       final data = jsonDecode(response.data) as Map<String, dynamic>;
       electivesSemesters = RxList.from(data["$selectedElectiveYear"].keys);
       Logger.i("Fetched elective semesters: $electivesSemesters");
@@ -394,6 +516,7 @@ class GitService extends GetxController {
       !isWorking.value ? null : isWorking.toggle();
       await filterController.setPrimaryElectiveSemester();
       update();
+      return;
     } on DioException catch (e) {
       errorDetails = {
         "error": "DioException",
@@ -415,7 +538,6 @@ class GitService extends GetxController {
   Future<void> getElectiveSchemes() async {
     try {
       isWorking.value ? null : isWorking.toggle();
-      update();
       FilterController filterController = Get.find();
       if (filterController.activeElectiveSemester == null) {
         return;
@@ -425,7 +547,31 @@ class GitService extends GetxController {
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/electives.json";
 
+      final options = RequestOptions(path: url);
+      final key = CacheOptions.defaultCacheKeyBuilder(options);
+
+      final cacheData = await cacheOptions.store?.get(key);
+      if (cacheData != null) {
+        final cachedResponse = cacheData.toResponse(options);
+        electiveSchemes = RxMap.from(
+          jsonDecode(cachedResponse.data)["$selectedElectiveYear"]
+              [activeSemester],
+        );
+        Logger.i("cached elective schemes: $electiveSchemes");
+        await filterController.setPrimaryElectiveScheme();
+        update();
+      }
+
       final response = await dio.get(url);
+
+      // stop execution if etags match
+      if (response.headers.map['etag']?.first == cacheData?.eTag &&
+          cacheData?.eTag != null) {
+        Logger.i("Elective schemes Etag Matches, aborting fn");
+        !isWorking.value ? null : isWorking.toggle();
+        return;
+      }
+
       final data = jsonDecode(response.data) as Map<String, dynamic>;
 
       if (data["$selectedElectiveYear"][activeSemester] == null) {
@@ -447,7 +593,7 @@ class GitService extends GetxController {
         return;
       }
 
-      Logger.i("Fetched electives schemes: $electiveSchemes");
+      Logger.i("Fetched elective schemes: $electiveSchemes");
       !isWorking.value ? null : isWorking.toggle();
       await filterController.setPrimaryElectiveScheme();
       update();
@@ -471,29 +617,46 @@ class GitService extends GetxController {
   }
 
   /// Gets concurrent elective timetable for unique semester and section.
-  Future<Timetable?> getElectives() async {
+  Stream<Timetable?> getElectives() async* {
     isWorking.value ? null : isWorking.toggle();
 
     if (filterController.activeElectiveSchemeCode == null ||
         filterController.activeElectiveSemester == null) {
-      return null;
+      yield* const Stream.empty();
+      return;
     }
 
     final url =
         "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$selectedElectiveYear/${filterController.activeElectiveSemester}/electives-scheme-${filterController.activeElectiveSchemeCode}.json";
     try {
+      final options = RequestOptions(path: url);
+      final key = CacheOptions.defaultCacheKeyBuilder(options);
+
+      final cacheData = await cacheOptions.store?.get(key);
+      if (cacheData != null) {
+        final cachedResponse = cacheData.toResponse(options);
+        Logger.i("Sending Elecive from cache");
+        yield Timetable.fromJson(jsonDecode(cachedResponse.data));
+      }
+
       final response = await dio.get(url);
 
       if (response.statusCode! >= 400) {
-        return Future.error(response);
+        yield* Stream.error(response);
+        return;
       }
       if (response.data == "") {
-        return null;
+        yield* const Stream.empty();
+        return;
       }
 
       !isWorking.value ? null : isWorking.toggle();
+      if (response.headers.map['etag']?.first != cacheData?.eTag) {
+        yield Timetable.fromJson(jsonDecode(response.data));
+      }
 
-      return Timetable.fromJson(jsonDecode(response.data));
+      yield* const Stream.empty();
+      return;
     } on DioException catch (e) {
       errorDetails = {
         'error': 'DioException',
@@ -505,7 +668,8 @@ class GitService extends GetxController {
 
       !isWorking.value ? null : isWorking.toggle();
 
-      return Future.error(Exception(errorDetails));
+      yield* Stream.error(Exception(errorDetails));
+      return;
     } catch (e) {
       errorDetails = {
         "type": "CatchException",
@@ -514,7 +678,8 @@ class GitService extends GetxController {
 
       !isWorking.value ? null : isWorking.toggle();
 
-      return Future.error(Exception(errorDetails));
+      yield* Stream.error(Exception(errorDetails));
+      return;
     }
   }
 

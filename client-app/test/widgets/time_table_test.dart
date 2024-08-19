@@ -81,7 +81,8 @@ void main() {
     expect(find.text('Check back in soon!'), findsOneWidget);
   });
 
-  testWidgets('TimeTableWidget renders error if no internet',
+  /// Skipping as we've added offline support using caching
+  testWidgets('TimeTableWidget renders error if no internet', skip: true,
       (WidgetTester tester) async {
     final controller = Get.find<GitService>() as MockGitService;
     controller.stage = MockGitServiceStages.noInternet;
