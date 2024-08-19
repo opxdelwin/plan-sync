@@ -24,6 +24,10 @@ class AnalyticsController extends GetxController {
   Future<void> setUserData() async {
     await _analytics.setUserId(id: auth.activeUser?.uid);
     await _analytics.setUserProperty(
+      name: "userp_primary_year",
+      value: filters.primaryYear ?? "null",
+    );
+    await _analytics.setUserProperty(
       name: "userp_primary_section",
       value: filters.primarySection ?? "null",
     );

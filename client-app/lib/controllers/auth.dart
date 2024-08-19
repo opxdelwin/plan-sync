@@ -49,8 +49,20 @@ class Auth extends GetxController {
     }
   }
 
-  // TODO: Implement
   Future<void> loginWithApple() async {
+    final appleAuth = AppleAuthProvider();
+    await FirebaseAuth.instance.signInWithProvider(
+      appleAuth,
+    );
+    if (activeUser == null) {
+      Logger.e("Active User Null post login -> auth.dart:58");
+      return;
+    }
+    await FirebaseCrashlytics.instance.setUserIdentifier(activeUser!.uid);
+
+    AnalyticsController analytics = Get.find();
+    analytics.setUserData();
+
     return;
   }
 
