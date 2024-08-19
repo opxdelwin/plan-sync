@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:plan_sync/backend/models/timetable.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
-import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
+import 'package:plan_sync/widgets/popups/popups_wrapper.dart';
 import 'package:plan_sync/widgets/time_table_for_day.dart';
 
 class TimeTableWidget extends StatefulWidget {
@@ -157,7 +157,9 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
   }
 
   void reportError() {
-    BottomSheets.reportError(context: context);
+    PopupsWrapper.reportError(
+      context: context,
+    );
   }
 
   @override
@@ -167,10 +169,11 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
     return GetBuilder<FilterController>(builder: (filterController) {
       GitService serviceController = Get.find();
 
-      return FutureBuilder(
-        future: serviceController.getTimeTable(),
+      return StreamBuilder(
+        key: ValueKey(filterController.getShortCode()),
+        stream: serviceController.getTimeTable(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -181,8 +184,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                 )),
               ],
             );
-          } else if (snapshot.connectionState == ConnectionState.done &&
-              snapshot.hasError) {
+          } else if (snapshot.hasError) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,

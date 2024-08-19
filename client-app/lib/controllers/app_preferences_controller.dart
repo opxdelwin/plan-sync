@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -57,4 +58,33 @@ class AppPreferencesController extends GetxController {
 
   bool isAppBelowMinVersion() =>
       perfs.getBool('is-app-below-minVersion') ?? false;
+
+  // regarding HUD Notices
+  static const String _noticesDismissalPerfKey = 'dismissed_notices';
+
+  Future<void> dismissNotice(int noticeId) async {
+    Map<String, dynamic> dismissed =
+        json.decode(perfs.getString(_noticesDismissalPerfKey) ?? '{}');
+    dismissed[noticeId.toString()] = DateTime.now().toIso8601String();
+    await perfs.setString(_noticesDismissalPerfKey, json.encode(dismissed));
+  }
+
+  bool shouldShowNotice(int noticeId) {
+    Map<String, dynamic> dismissed =
+        json.decode(perfs.getString(_noticesDismissalPerfKey) ?? '{}');
+    return !dismissed.containsKey(noticeId.toString());
+  }
+
+  Future<void> cleanupOldNoticeDismissals() async {
+    Map<String, dynamic> dismissed =
+        json.decode(perfs.getString(_noticesDismissalPerfKey) ?? '{}');
+
+    DateTime yesterday = DateTime.now().subtract(const Duration(days: 1));
+    dismissed.removeWhere((key, value) {
+      DateTime dismissedDate = DateTime.parse(value);
+      return dismissedDate.isBefore(yesterday);
+    });
+
+    await perfs.setString(_noticesDismissalPerfKey, json.encode(dismissed));
+  }
 }
