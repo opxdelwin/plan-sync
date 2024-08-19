@@ -183,7 +183,9 @@ class SettingsPage extends StatelessWidget {
                     Icons.keyboard_arrow_right_rounded,
                     color: colorScheme.onSurface,
                   ),
-                  onTap: () => ExternalLinks.shareApp(),
+                  onTap: () => BottomSheets.shareAppBottomSheet(
+                    context: context,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
