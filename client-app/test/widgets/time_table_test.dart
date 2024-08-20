@@ -37,27 +37,27 @@ void main() {
 
     filterController.weekday = Weekday.monday;
     await pumpBaseWidget(tester);
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('Monday'), findsOneWidget);
 
     filterController.weekday = Weekday.tuesday;
     await pumpBaseWidget(tester);
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('Tuesday'), findsOneWidget);
 
     filterController.weekday = Weekday.wednesday;
     await pumpBaseWidget(tester);
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('Wednesday'), findsOneWidget);
 
     filterController.weekday = Weekday.thursday;
     await pumpBaseWidget(tester);
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('Thursday'), findsOneWidget);
 
     filterController.weekday = Weekday.friday;
     await pumpBaseWidget(tester);
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('Friday'), findsOneWidget);
   });
 
