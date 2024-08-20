@@ -5,13 +5,13 @@ class BreathingStatusIndicator extends StatefulWidget {
   final double size;
 
   const BreathingStatusIndicator({
-    Key? key,
+    super.key,
     required this.color,
     this.size = 12,
-  }) : super(key: key);
+  });
 
   @override
-  _BreathingStatusIndicatorState createState() =>
+  State<BreathingStatusIndicator> createState() =>
       _BreathingStatusIndicatorState();
 }
 
