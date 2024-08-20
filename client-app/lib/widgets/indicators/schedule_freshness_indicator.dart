@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:plan_sync/widgets/breathing_status_indicator.dart';
+import 'package:plan_sync/widgets/indicators/breathing_status_indicator.dart';
 
 /// Wrapper of BreathingStatusIndicator
 class ScheduleFreshnessIndicator extends StatelessWidget {
