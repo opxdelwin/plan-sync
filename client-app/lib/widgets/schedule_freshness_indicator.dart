@@ -11,12 +11,13 @@ class ScheduleFreshnessIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return AnimatedOpacity(
       opacity: isFresh ? 0 : 1,
       duration: const Duration(seconds: 1, milliseconds: 500),
       curve: Curves.easeInOutExpo,
       child: BreathingStatusIndicator(
-        color: isFresh ? Colors.green : Colors.red,
+        color: isFresh ? colorScheme.primary : colorScheme.error,
       ),
     );
   }
