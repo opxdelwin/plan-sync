@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:plan_sync/backend/models/timetable.dart';
 import 'package:plan_sync/widgets/no_schedule_widget.dart';
+import 'package:plan_sync/widgets/schedule_freshness_indicator.dart';
 import 'package:plan_sync/widgets/subject_tile.dart';
 
 class TimeTableForDay extends StatefulWidget {
@@ -105,7 +106,11 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
                   letterSpacing: 0.24,
                 ),
               ),
-              const SizedBox(width: 16),
+              const Spacer(),
+              ScheduleFreshnessIndicator(
+                isFresh: widget.data.isFresh,
+              ),
+              const SizedBox(width: 8),
             ],
           ),
         ),
