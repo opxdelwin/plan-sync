@@ -18,6 +18,11 @@ class RemoteConfigController extends GetxController {
         minimumFetchInterval: const Duration(minutes: kReleaseMode ? 60 : 1),
       ),
     );
+
+    // Probable solution for an internal error by remote_config
+    // see https://github.com/firebase/flutterfire/issues/6196#issuecomment-927751667
+    await remoteConfig.activate();
+    await Future.delayed(const Duration(seconds: 1));
     await remoteConfig.fetchAndActivate();
   }
 
