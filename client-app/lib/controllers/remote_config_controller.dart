@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:plan_sync/backend/models/remote_config/hud_notices_model.dart';
+import 'package:plan_sync/util/logger.dart';
 
 class RemoteConfigController extends GetxController {
   final remoteConfig = FirebaseRemoteConfig.instance;
@@ -24,6 +25,13 @@ class RemoteConfigController extends GetxController {
   /// for notices shown in-app
   Future<List<HudNoticeModel>> getNotices() async {
     final val = remoteConfig.getString('hud_notice');
+
+    // data comes as a string
+    if (val == '[]') {
+      Logger.i('No HUD notices');
+      return [];
+    }
+
     List<HudNoticeModel> result = [];
     List data = jsonDecode(val) ?? [];
 
