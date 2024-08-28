@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:plan_sync/controllers/analytics_controller.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
 import 'package:plan_sync/util/constants.dart';
 import 'package:plan_sync/util/external_links.dart';
@@ -183,7 +184,12 @@ class SettingsPage extends StatelessWidget {
                     Icons.keyboard_arrow_right_rounded,
                     color: colorScheme.onSurface,
                   ),
-                  onTap: () => ExternalLinks.shareApp(),
+                  onTap: () {
+                    BottomSheets.shareAppBottomSheet(
+                      context: context,
+                    );
+                    Get.find<AnalyticsController>().logShareSheetOpen();
+                  },
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),

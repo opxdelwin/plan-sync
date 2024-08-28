@@ -3,6 +3,7 @@ import 'package:plan_sync/widgets/bottom-sheets/contribute_schedule.dart';
 import 'package:plan_sync/widgets/bottom-sheets/elective_preference.dart';
 import 'package:plan_sync/widgets/bottom-sheets/report_error.dart';
 import 'package:plan_sync/widgets/bottom-sheets/schedule_preference.dart';
+import 'package:plan_sync/widgets/bottom-sheets/share_app.dart';
 
 class BottomSheets {
   static changeSectionPreference({
@@ -56,6 +57,20 @@ class BottomSheets {
       builder: (context) => ElectivePreferenceBottomSheet(
         save: save,
       ),
+    );
+  }
+
+  static shareAppBottomSheet({
+    required BuildContext context,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      enableDrag: true,
+      useRootNavigator: true,
+      backgroundColor: colorScheme.surfaceContainerHighest,
+      builder: (context) => const ShareAppSheet(),
     );
   }
 }

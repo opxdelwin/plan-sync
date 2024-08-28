@@ -57,4 +57,12 @@ class AnalyticsController extends GetxController {
       Logger.i("Failed logging analytics. \n ${e.toString()}");
     }
   }
+
+  void logShareSheetOpen() async {
+    await _analytics.logEvent(name: 'share-bottomsheet-open');
+  }
+
+  void logShareViaExternalApps() async {
+    await _analytics.logEvent(name: 'share-via-external-apps-open');
+  }
 }

@@ -394,7 +394,7 @@ class GitService extends GetxController {
     } catch (e) {
       errorDetails = {
         "type": "CatchException",
-        "message": "Some unknown error occoured.",
+        "message": "Some unknown error occoured while getting schedule",
       };
 
       !isWorking.value ? null : isWorking.toggle();
@@ -673,7 +673,7 @@ class GitService extends GetxController {
     } catch (e) {
       errorDetails = {
         "type": "CatchException",
-        "message": "Some unknown error occoured.",
+        "message": "Some unknown error occoured while getting electives",
       };
 
       !isWorking.value ? null : isWorking.toggle();
@@ -709,7 +709,7 @@ class GitService extends GetxController {
     } catch (e) {
       errorDetails = {
         "type": "CatchException",
-        "message": "Some unknown error occoured.",
+        "message": "Some unknown error occoured fetching minimum version",
       };
       return Future.error(Exception(errorDetails));
     }
