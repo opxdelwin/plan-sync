@@ -155,7 +155,7 @@ class MockGitService extends GetxController with Mock implements GitService {
       return;
     }
 
-    yield Timetable.fromJson({
+    yield Timetable.fromJson(json: {
       "meta": {
         "section": "b16",
         "type": "norm-class",
@@ -225,7 +225,7 @@ class MockGitService extends GetxController with Mock implements GitService {
 
   @override
   Stream<Timetable?> getElectives() async* {
-    yield Timetable.fromJson({
+    yield Timetable.fromJson(json: {
       "meta": {
         "type": "electives",
         "revision": "Revision 1.01",

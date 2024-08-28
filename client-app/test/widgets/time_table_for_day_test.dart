@@ -41,7 +41,7 @@ void main() {
     const day = 'monday';
 
     await pumpBaseWidget(tester, (await data.first)!, day);
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // drag until last element is visible
     await tester.dragUntilVisible(
@@ -49,7 +49,7 @@ void main() {
       find.byKey(const ValueKey('TimeTableForDay._buildForTimetable')),
       const Offset(0, 500),
     );
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 1));
 
     // no error should be raised
     expect(tester.takeException(), null);
