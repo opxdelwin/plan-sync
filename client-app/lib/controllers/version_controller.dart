@@ -1,11 +1,11 @@
 import 'dart:io';
-
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/controllers/remote_config_controller.dart';
 import 'package:plan_sync/util/external_links.dart';
 import 'package:plan_sync/util/logger.dart';
 
@@ -52,10 +52,32 @@ class VersionController extends GetxController {
 
   void openStore() => ExternalLinks.store();
 
-  Future<bool> checkForUpdate() async {
-    // package not supported for iOS
-    if (Platform.isIOS) {
+  /// returns true if an ios update is available,
+  /// uses remote config.
+  Future<bool> checkIosUpdate() async {
+    final latestValue =
+        await Get.find<RemoteConfigController>().latestIosVersion();
+
+    if (latestValue == null) {
+      // maybe due to internet connectivity
       return false;
+    }
+    appVersion ??= (await PackageInfo.fromPlatform()).version;
+
+    final latestVersionSplit =
+        latestValue.split('.').map((item) => int.parse(item)).toList();
+    final currVersionSplit =
+        appVersion!.split('.').map((item) => int.parse(item)).toList();
+
+    return latestVersionSplit[0] > currVersionSplit[0] ||
+        latestVersionSplit[1] > currVersionSplit[1] ||
+        latestVersionSplit[2] > currVersionSplit[2];
+  }
+
+  Future<bool> checkForUpdate() async {
+    // handle iOS case separately
+    if (Platform.isIOS) {
+      return await checkIosUpdate();
     }
 
     isError = false;
@@ -105,6 +127,9 @@ class VersionController extends GetxController {
 
     return difference > 5;
   }
+
+  //TODO: verifyMinimumVersion still uses git, migrate
+  // to remoteConfig
 
   /// Verifies if the current app version is less than the
   /// version code mentioned in the remote version file.

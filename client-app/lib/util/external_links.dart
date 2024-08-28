@@ -17,9 +17,8 @@ class ExternalLinks {
       );
       return;
     } else if (Platform.isIOS) {
-      // TODO: update store link
       _launchUrl(
-        "https://play.google.com/store/apps/details?id=in.co.cardlink.plansync",
+        "https://apps.apple.com/app/id6642680946",
       );
       return;
     }

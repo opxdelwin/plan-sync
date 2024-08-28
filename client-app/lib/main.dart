@@ -77,7 +77,8 @@ _injectDependencies() async {
   Get.put(VersionController());
   Get.put(AnalyticsController());
   Get.put(AppTourController());
-  Get.put(RemoteConfigController());
+  final remoteConfig = Get.put(RemoteConfigController());
+  await remoteConfig.onReady();
 }
 
 // GoRouter configuration
