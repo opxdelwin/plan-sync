@@ -6,6 +6,12 @@ import 'package:plan_sync/controllers/remote_config_controller.dart';
 class MockRemoteConfigController extends GetxController
     with Mock
     implements RemoteConfigController {
+  @override
+  Future<void> onReady() async {
+    // TODO: implement onReady
+    return super.onReady();
+  }
+
   /// fetches all configs from firebase, and makes models only
   /// for notices shown in-app
   @override
