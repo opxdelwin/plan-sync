@@ -22,11 +22,24 @@ class Auth extends GetxController {
       final GoogleSignInAuthentication? googleAuth =
           await googleUser?.authentication;
 
+      if (googleAuth == null) {
+        Logger.e(
+          "googleAuth was null, login potentially cancelled by the user",
+        );
+        CustomSnackbar.error(
+          "Authentication Error",
+          "Login was cancelled by the user.",
+        );
+
+        return;
+      }
+
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
+
       await FirebaseAuth.instance.signInWithCredential(credential);
       await FirebaseCrashlytics.instance.setUserIdentifier(activeUser!.uid);
 
@@ -41,11 +54,12 @@ class Auth extends GetxController {
       );
       logout();
       return;
-    } catch (error) {
+    } catch (error, trace) {
       CustomSnackbar.error(
         "Authentication Error",
         "Team has been notified, try again later",
       );
+      FirebaseCrashlytics.instance.recordError(error, trace);
       logout();
       return;
     }
@@ -53,9 +67,28 @@ class Auth extends GetxController {
 
   Future<void> loginWithApple() async {
     final appleAuth = AppleAuthProvider();
-    await FirebaseAuth.instance.signInWithProvider(
-      appleAuth,
-    );
+    try {
+      await FirebaseAuth.instance.signInWithProvider(
+        appleAuth,
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == "web-context-canceled" || e.code == "canceled") {
+        CustomSnackbar.error(
+          "Authentication Error",
+          "Procedure was cancelled by the user.",
+        );
+      }
+      return;
+    } catch (error, trace) {
+      CustomSnackbar.error(
+        "Authentication Error",
+        "Team has been notified, try again later",
+      );
+      FirebaseCrashlytics.instance.recordError(error, trace);
+      logout();
+      return;
+    }
+
     if (activeUser == null) {
       Logger.e("Active User Null post login -> auth.dart:58");
       return;
