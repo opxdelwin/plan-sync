@@ -9,6 +9,7 @@ import 'package:plan_sync/util/snackbar.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 class GitService extends GetxController {
   late String branch;
@@ -353,10 +354,15 @@ class GitService extends GetxController {
       final key = CacheOptions.defaultCacheKeyBuilder(options);
 
       final cache = await cacheOptions.store?.get(key);
+
       if (cache != null) {
         final cachedResponse = cache.toResponse(options);
         Logger.i("Yield Cache : ${DateTime.now().millisecondsSinceEpoch}");
-        yield Timetable.fromJson(jsonDecode(cachedResponse.data));
+
+        yield Timetable.fromJson(
+          json: jsonDecode(cachedResponse.data),
+          isFresh: false,
+        );
       }
 
       final response = await dio.get(url);
@@ -371,9 +377,25 @@ class GitService extends GetxController {
       /// send data again only if e-tag are different
       if (response.headers.map['etag']?.first != cache?.eTag) {
         Logger.i("Received Schedule with different ETag");
-        yield Timetable.fromJson(jsonDecode(response.data));
+
+        yield Timetable.fromJson(
+          json: jsonDecode(response.data),
+          isFresh: true,
+        );
+        yield* const Stream.empty();
       } else {
         Logger.i('ETag matches');
+
+        // as Dio may respond from the cache itself, we can check if the
+        // device has active network connection to judge if the response
+        // is really from the server..
+        final connectionAvailable =
+            await InternetConnection().hasInternetAccess;
+
+        yield Timetable.fromJson(
+          json: jsonDecode(cache!.toResponse(options).data),
+          isFresh: connectionAvailable,
+        );
       }
     } on DioException catch (e) {
       errorDetails = {
@@ -394,7 +416,7 @@ class GitService extends GetxController {
     } catch (e) {
       errorDetails = {
         "type": "CatchException",
-        "message": "Some unknown error occoured.",
+        "message": "Some unknown error occoured while getting schedule",
       };
 
       !isWorking.value ? null : isWorking.toggle();
@@ -636,7 +658,11 @@ class GitService extends GetxController {
       if (cacheData != null) {
         final cachedResponse = cacheData.toResponse(options);
         Logger.i("Sending Elecive from cache");
-        yield Timetable.fromJson(jsonDecode(cachedResponse.data));
+
+        yield Timetable.fromJson(
+          json: jsonDecode(cachedResponse.data),
+          isFresh: false,
+        );
       }
 
       final response = await dio.get(url);
@@ -652,7 +678,10 @@ class GitService extends GetxController {
 
       !isWorking.value ? null : isWorking.toggle();
       if (response.headers.map['etag']?.first != cacheData?.eTag) {
-        yield Timetable.fromJson(jsonDecode(response.data));
+        yield Timetable.fromJson(
+          json: jsonDecode(response.data),
+          isFresh: true,
+        );
       }
 
       yield* const Stream.empty();
@@ -673,7 +702,7 @@ class GitService extends GetxController {
     } catch (e) {
       errorDetails = {
         "type": "CatchException",
-        "message": "Some unknown error occoured.",
+        "message": "Some unknown error occoured while getting electives",
       };
 
       !isWorking.value ? null : isWorking.toggle();
@@ -709,7 +738,7 @@ class GitService extends GetxController {
     } catch (e) {
       errorDetails = {
         "type": "CatchException",
-        "message": "Some unknown error occoured.",
+        "message": "Some unknown error occoured fetching minimum version",
       };
       return Future.error(Exception(errorDetails));
     }

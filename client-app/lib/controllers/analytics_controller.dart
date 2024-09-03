@@ -24,6 +24,10 @@ class AnalyticsController extends GetxController {
   Future<void> setUserData() async {
     await _analytics.setUserId(id: auth.activeUser?.uid);
     await _analytics.setUserProperty(
+      name: "userp_primary_year",
+      value: filters.primaryYear ?? "null",
+    );
+    await _analytics.setUserProperty(
       name: "userp_primary_section",
       value: filters.primarySection ?? "null",
     );
@@ -52,5 +56,13 @@ class AnalyticsController extends GetxController {
     } catch (e) {
       Logger.i("Failed logging analytics. \n ${e.toString()}");
     }
+  }
+
+  void logShareSheetOpen() async {
+    await _analytics.logEvent(name: 'share_bottomsheet_open');
+  }
+
+  void logShareViaExternalApps() async {
+    await _analytics.logEvent(name: 'share_via_external_apps_open');
   }
 }
