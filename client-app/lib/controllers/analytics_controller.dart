@@ -59,10 +59,10 @@ class AnalyticsController extends GetxController {
   }
 
   void logShareSheetOpen() async {
-    await _analytics.logEvent(name: 'share-bottomsheet-open');
+    await _analytics.logEvent(name: 'share_bottomsheet_open');
   }
 
   void logShareViaExternalApps() async {
-    await _analytics.logEvent(name: 'share-via-external-apps-open');
+    await _analytics.logEvent(name: 'share_via_external_apps_open');
   }
 }

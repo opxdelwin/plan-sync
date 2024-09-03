@@ -81,7 +81,7 @@ class SettingsPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  auth.activeUser!.displayName ?? "username",
+                  auth.activeUser!.displayName ?? "Plan Sync Wizard",
                   style: TextStyle(
                     color: colorScheme.onSurface,
                     fontSize: 18,
