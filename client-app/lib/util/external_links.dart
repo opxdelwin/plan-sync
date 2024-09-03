@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -9,9 +11,17 @@ class ExternalLinks {
   }
 
   ExternalLinks.store() {
-    _launchUrl(
-      "https://play.google.com/store/apps/details?id=in.co.cardlink.plansync",
-    );
+    if (Platform.isAndroid) {
+      _launchUrl(
+        "https://play.google.com/store/apps/details?id=in.co.cardlink.plansync",
+      );
+      return;
+    } else if (Platform.isIOS) {
+      _launchUrl(
+        "https://apps.apple.com/app/id6642680946",
+      );
+      return;
+    }
   }
 
   ExternalLinks.termsAndConditions() {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:plan_sync/util/enums.dart';
 import 'package:plan_sync/util/external_links.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../controllers/auth.dart';
@@ -17,11 +18,24 @@ class _LoginScreenState extends State<LoginScreen> {
   Auth auth = Get.find();
   bool isWorking = false;
 
-  Future<void> loginProcedure() async {
+  Future<void> loginProcedure({required LoginProvider provider}) async {
     setState(() {
       isWorking = true;
     });
-    await auth.loginWithGoogle();
+
+    switch (provider) {
+      case LoginProvider.google:
+        {
+          await auth.loginWithGoogle();
+          break;
+        }
+      case LoginProvider.apple:
+        {
+          await auth.loginWithApple();
+          break;
+        }
+    }
+
     if (!mounted) return;
     setState(() {
       isWorking = false;
@@ -68,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 64),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
@@ -88,7 +102,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               backgroundColor:
                                   WidgetStatePropertyAll(colorScheme.primary),
                             ),
-                            onPressed: loginProcedure,
+                            onPressed: () => loginProcedure(
+                              provider: LoginProvider.google,
+                            ),
                             icon: Icon(
                               FontAwesomeIcons.google,
                               color: colorScheme.onPrimary,
@@ -111,6 +127,62 @@ class _LoginScreenState extends State<LoginScreen> {
                                     "Continue with Google",
                                     style: TextStyle(
                                       color: colorScheme.onPrimary,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            style: ButtonStyle(
+                              elevation: const WidgetStatePropertyAll(0),
+                              padding: const WidgetStatePropertyAll(
+                                EdgeInsets.symmetric(
+                                  vertical: 16,
+                                  horizontal: 24,
+                                ),
+                              ),
+                              enableFeedback: true,
+                              side: WidgetStatePropertyAll(
+                                BorderSide(color: colorScheme.onSurface),
+                              ),
+                              backgroundColor: WidgetStatePropertyAll(
+                                Colors.transparent.withOpacity(0.04),
+                              ),
+                            ),
+                            onPressed: () => loginProcedure(
+                              provider: LoginProvider.apple,
+                            ),
+                            icon: Icon(
+                              FontAwesomeIcons.apple,
+                              color: colorScheme.onSurface,
+                            ),
+                            label: isWorking
+                                ? Semantics(
+                                    value: 'Loading',
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 32.0,
+                                      ),
+                                      child: LoadingAnimationWidget
+                                          .prograssiveDots(
+                                        color: colorScheme.onSurface,
+                                        size: 24,
+                                      ),
+                                    ),
+                                  )
+                                : Text(
+                                    "Continue with Apple",
+                                    style: TextStyle(
+                                      color: colorScheme.onSurface,
                                     ),
                                   ),
                           ),

@@ -10,7 +10,7 @@ class RemoteConfigController extends GetxController {
   final remoteConfig = FirebaseRemoteConfig.instance;
 
   @override
-  void onReady() async {
+  Future<void> onReady() async {
     super.onReady();
     await remoteConfig.setConfigSettings(
       RemoteConfigSettings(
@@ -45,5 +45,11 @@ class RemoteConfigController extends GetxController {
     }
 
     return result;
+  }
+
+  /// get latest ios version from remoteConfig
+  Future<String?> latestIosVersion() async {
+    final value = remoteConfig.getString('latest_ios_version');
+    return value == '' ? null : value;
   }
 }

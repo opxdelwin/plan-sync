@@ -81,7 +81,7 @@ class SettingsPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  auth.activeUser!.displayName ?? "username",
+                  auth.activeUser!.displayName ?? "Plan Sync Wizard",
                   style: TextStyle(
                     color: colorScheme.onSurface,
                     fontSize: 18,
@@ -240,6 +240,7 @@ class SettingsPage extends StatelessWidget {
                       color: colorScheme.onSurface),
                   onTap: () => ExternalLinks.termsAndConditions(),
                 ),
+
                 ListTile(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -260,6 +261,29 @@ class SettingsPage extends StatelessWidget {
                     color: colorScheme.onSurface,
                   ),
                   onTap: () => ExternalLinks.privacyPolicy(),
+                ),
+                ListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  enableFeedback: true,
+                  leading: Icon(
+                    Icons.delete_outline_rounded,
+                    color: colorScheme.error,
+                  ),
+                  title: Text(
+                    "Delete your account",
+                    style: TextStyle(
+                      color: colorScheme.error,
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.keyboard_arrow_right_rounded,
+                    color: colorScheme.error,
+                  ),
+                  onTap: () => PopupsWrapper.deleteAccount(
+                    context: context,
+                  ),
                 ),
                 const SizedBox(height: 80),
               ],
