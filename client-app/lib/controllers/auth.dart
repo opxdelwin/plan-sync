@@ -67,6 +67,9 @@ class Auth extends GetxController {
 
   Future<void> loginWithApple() async {
     final appleAuth = AppleAuthProvider();
+    appleAuth.addScope('email');
+    appleAuth.addScope('name');
+
     try {
       await FirebaseAuth.instance.signInWithProvider(
         appleAuth,
