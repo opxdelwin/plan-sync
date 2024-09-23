@@ -16,7 +16,9 @@ class Auth extends GetxController {
     Logger.i("login using google");
     // Trigger the authentication flow
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAccount? googleUser = await GoogleSignIn(
+        scopes: ["profile", "email"],
+      ).signIn();
 
       // Obtain the auth details from the request
       final GoogleSignInAuthentication? googleAuth =
