@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -14,16 +15,25 @@ class RemoteConfigController extends GetxController {
     super.onReady();
     await remoteConfig.setConfigSettings(
       RemoteConfigSettings(
-        fetchTimeout: const Duration(minutes: 1),
+        fetchTimeout: const Duration(seconds: 30),
         minimumFetchInterval: const Duration(minutes: kReleaseMode ? 60 : 1),
       ),
     );
+    await remoteConfig.setDefaults({
+      'hud_notice': '[]',
+      'latest_ios_version': '',
+    });
 
     // Probable solution for an internal error by remote_config
     // see https://github.com/firebase/flutterfire/issues/6196#issuecomment-927751667
-    await remoteConfig.activate();
-    await Future.delayed(const Duration(seconds: 1));
-    await remoteConfig.fetchAndActivate();
+    try {
+      await remoteConfig.activate();
+      await Future.delayed(const Duration(seconds: 1));
+      await remoteConfig.fetchAndActivate();
+    } catch (exception, stack) {
+      FirebaseCrashlytics.instance.recordError(exception, stack);
+      Logger.w("Error activating remoteConfig.");
+    }
   }
 
   /// fetches all configs from firebase, and makes models only
