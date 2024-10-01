@@ -69,7 +69,7 @@ class ShareAppSheet extends StatelessWidget {
               ExternalLinks.shareApp();
             },
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 32),
         ],
       ),
     );
