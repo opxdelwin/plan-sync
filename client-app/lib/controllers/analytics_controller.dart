@@ -41,7 +41,7 @@ class AnalyticsController extends GetxController {
   void logOpenApp() async {
     VersionController version = Get.find();
     final parameters = {
-      'app_version': version.appVersion ?? "unknown",
+      'app_version': version.clientVersion ?? "unknown",
       'primary_section': filters.primarySection ?? "null",
       'primary_semester': filters.primarySemester ?? "null",
     };

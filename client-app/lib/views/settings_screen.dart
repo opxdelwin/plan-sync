@@ -98,7 +98,7 @@ class SettingsPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Plan Sync v${versionController.appVersion} | ',
+                      'Plan Sync v${versionController.clientVersion} | ',
                       style: TextStyle(
                         color: colorScheme.onSurface.withOpacity(0.72),
                       ),

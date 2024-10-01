@@ -6,17 +6,18 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/controllers/remote_config_controller.dart';
+import 'package:plan_sync/util/app_version.dart';
 import 'package:plan_sync/util/external_links.dart';
 import 'package:plan_sync/util/logger.dart';
 
 class VersionController extends GetxController {
   late PackageInfo packageInfo;
 
-  RxString? _appVersion;
-  String? get appVersion => _appVersion?.value;
-  set appVersion(String? newVersion) {
+  RxString? _clientVersion;
+  String? get clientVersion => _clientVersion?.value;
+  set clientVersion(String? newVersion) {
     if (newVersion == null) return;
-    _appVersion = newVersion.obs;
+    _clientVersion = newVersion.obs;
     update();
   }
 
@@ -46,7 +47,7 @@ class VersionController extends GetxController {
 
   printCurrentVersion() {
     Logger.i("App version: v${packageInfo.version}");
-    appVersion = packageInfo.version;
+    clientVersion = packageInfo.version;
     appBuild = packageInfo.buildNumber;
   }
 
@@ -62,16 +63,15 @@ class VersionController extends GetxController {
       // maybe due to internet connectivity
       return false;
     }
-    appVersion ??= (await PackageInfo.fromPlatform()).version;
+    clientVersion ??= (await PackageInfo.fromPlatform()).version;
 
-    final latestVersionSplit =
-        latestValue.split('.').map((item) => int.parse(item)).toList();
-    final currVersionSplit =
-        appVersion!.split('.').map((item) => int.parse(item)).toList();
+    final latestVersion = AppVersion(latestValue);
+    final currentVersion = AppVersion(clientVersion!);
 
-    return latestVersionSplit[0] > currVersionSplit[0] ||
-        latestVersionSplit[1] > currVersionSplit[1] ||
-        latestVersionSplit[2] > currVersionSplit[2];
+    Logger.i('Latest Remote App version: ${latestVersion.parts}');
+    Logger.i('Current Client App version: ${currentVersion.parts}');
+
+    return latestVersion.isGreaterThan(currentVersion);
   }
 
   Future<bool> checkForUpdate() async {
@@ -141,14 +141,14 @@ class VersionController extends GetxController {
     final perfs = Get.find<AppPreferencesController>();
 
     final minVersion = await git.fetchMininumVersion();
-    if (minVersion == null || appVersion == null) {
+    if (minVersion == null || clientVersion == null) {
       Logger.w('min.version from remote retuned null!');
       perfs.saveIsAppBelowMinVersion(false);
       return;
     }
 
     // check major version
-    if (int.parse(appVersion!.split('.')[0]) <
+    if (int.parse(clientVersion!.split('.')[0]) <
         int.parse(minVersion.split('.')[0])) {
       Logger.e('Current App Version is unsupported with database!');
       perfs.saveIsAppBelowMinVersion(true);

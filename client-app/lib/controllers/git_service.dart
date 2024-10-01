@@ -80,15 +80,20 @@ class GitService extends GetxController {
   Map? errorDetails;
 
   @override
-  void onReady() async {
-    super.onReady();
-    filterController = Get.find();
+  void onInit() async {
     setRepositoryBranch();
     await startCachingService();
+    super.onInit();
+  }
+
+  @override
+  Future<void> onReady() async {
+    filterController = Get.find();
     await getYears();
     await getSemesters();
     await getElectiveSemesters();
     await getElectiveYears();
+    super.onReady();
   }
 
   /// Adds an interceptor to global dio instance, which is used to
@@ -735,12 +740,16 @@ class GitService extends GetxController {
             'We couldn\'t fetch requested version. Please try again later.',
       };
       return Future.error(Exception(errorDetails));
-    } catch (e) {
+    } catch (err, trace) {
       errorDetails = {
         "type": "CatchException",
         "message": "Some unknown error occoured fetching minimum version",
       };
-      return Future.error(Exception(errorDetails));
+      return Future.error(Exception({
+        'errorDetails': errorDetails,
+        'catchError': err,
+        'trace': trace,
+      }));
     }
   }
 }
