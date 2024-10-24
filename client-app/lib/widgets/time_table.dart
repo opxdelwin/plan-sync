@@ -293,19 +293,17 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                       ),
                     ),
                     const Spacer(),
-                    InkWell(
-                      onTap: () => reportError(),
-                      child: Row(
-                        children: [
-                          Icon(Icons.flag_rounded, color: colorScheme.error),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Report Error',
-                            style: TextStyle(color: colorScheme.error),
-                          ),
-                        ],
+                    TextButton.icon(
+                      onPressed: () => reportError(),
+                      label: Text(
+                        'Report Error',
+                        style: TextStyle(color: colorScheme.error),
                       ),
-                    ),
+                      icon: Icon(
+                        Icons.flag_rounded,
+                        color: colorScheme.error,
+                      ),
+                    )
                   ],
                 ),
                 const SizedBox(height: 16),

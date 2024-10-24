@@ -172,8 +172,10 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                                 Flexible(
                                   child: Row(
                                     children: [
-                                      Icon(Icons.info_outline_rounded,
-                                          color: colorScheme.tertiary),
+                                      Icon(
+                                        Icons.info_outline_rounded,
+                                        color: colorScheme.tertiary,
+                                      ),
                                       const SizedBox(width: 8),
                                       Flexible(
                                         child: Text(
@@ -188,21 +190,17 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                                   ),
                                 ),
                                 const SizedBox(width: 16),
-                                InkWell(
-                                  onTap: () => reportError(),
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.flag_rounded,
-                                          color: colorScheme.error),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        'Report Error',
-                                        style:
-                                            TextStyle(color: colorScheme.error),
-                                      ),
-                                    ],
+                                TextButton.icon(
+                                  onPressed: () => reportError(),
+                                  label: Text(
+                                    'Report Error',
+                                    style: TextStyle(color: colorScheme.error),
                                   ),
-                                ),
+                                  icon: Icon(
+                                    Icons.flag_rounded,
+                                    color: colorScheme.error,
+                                  ),
+                                )
                               ],
                             ),
                             const SizedBox(height: 16),
