@@ -175,11 +175,13 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                                       Icon(Icons.info_outline_rounded,
                                           color: colorScheme.tertiary),
                                       const SizedBox(width: 8),
-                                      Text(
-                                        "Effective from ${snapshot.data!.meta.effectiveDate}",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: colorScheme.onSurface,
+                                      Flexible(
+                                        child: Text(
+                                          "Effective from ${snapshot.data!.meta.effectiveDate}",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: colorScheme.onSurface,
+                                          ),
                                         ),
                                       ),
                                     ],
