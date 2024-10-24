@@ -35,14 +35,14 @@ class ShareAppSheet extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             size: size.width * 0.48,
             dataModuleStyle: QrDataModuleStyle(
-              color: colorScheme.onSurface.withOpacity(
-                Get.isDarkMode ? 0.92 : 1,
+              color: colorScheme.onSurface.withValues(
+                alpha: Get.isDarkMode ? 0.92 : 1,
               ),
               dataModuleShape: QrDataModuleShape.square,
             ),
             eyeStyle: QrEyeStyle(
-              color: colorScheme.onSurface.withOpacity(
-                Get.isDarkMode ? 0.92 : 1,
+              color: colorScheme.onSurface.withValues(
+                alpha: Get.isDarkMode ? 0.92 : 1,
               ),
               eyeShape: QrEyeShape.square,
             ),

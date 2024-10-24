@@ -59,7 +59,10 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
         color:
             WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
           if (states.contains(WidgetState.selected)) {
-            return Theme.of(context).colorScheme.secondary.withOpacity(0.12);
+            return Theme.of(context)
+                .colorScheme
+                .secondary
+                .withValues(alpha: 0.12);
           }
           return null;
         }),
@@ -160,8 +163,8 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
             border: TableBorder.all(
               borderRadius: BorderRadius.circular(8),
               color: Get.isDarkMode
-                  ? colorScheme.onSurfaceVariant.withOpacity(0.4)
-                  : colorScheme.secondary.withOpacity(0.6),
+                  ? colorScheme.onSurfaceVariant.withValues(alpha: 0.4)
+                  : colorScheme.secondary.withValues(alpha: 0.6),
             ),
             columns: columns,
             rows: rows,

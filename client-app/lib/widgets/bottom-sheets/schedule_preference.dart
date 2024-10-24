@@ -102,7 +102,7 @@ class SchedulePreferenceBottomSheetState
                 child: Text(
                   'We will store these, so that  next time you open Plan Sync, your classes are selected automatically!',
                   style: TextStyle(
-                    color: colorScheme.onSurface.withOpacity(0.6),
+                    color: colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ),

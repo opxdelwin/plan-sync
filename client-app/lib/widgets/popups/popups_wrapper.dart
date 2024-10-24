@@ -18,7 +18,7 @@ class PopupsWrapper {
       ),
       transitionDuration: const Duration(milliseconds: 150),
       transitionCurve: Curves.easeInOut,
-      barrierColor: colorScheme.onSurface.withOpacity(0.32),
+      barrierColor: colorScheme.onSurface.withValues(alpha: 0.32),
     );
   }
 
@@ -31,7 +31,7 @@ class PopupsWrapper {
       barrierDismissible: false,
       transitionDuration: const Duration(milliseconds: 150),
       transitionCurve: Curves.easeInOut,
-      barrierColor: colorScheme.onSurface.withOpacity(0.32),
+      barrierColor: colorScheme.onSurface.withValues(alpha: 0.32),
     );
   }
 }
