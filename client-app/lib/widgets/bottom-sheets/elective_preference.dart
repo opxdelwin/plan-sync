@@ -87,9 +87,14 @@ class ElectivePreferenceBottomSheetState
                 ),
                 trailing: Switch.adaptive(
                   value: savePreferencesOnExit,
-                  activeTrackColor: colorScheme.secondary.withOpacity(0.72),
+                  activeTrackColor: colorScheme.secondary.withValues(
+                    alpha: 0.72,
+                  ),
                   inactiveTrackColor: Colors.transparent,
-
+                  trackOutlineColor: WidgetStatePropertyAll(
+                    colorScheme.secondary.withValues(alpha: 0.24),
+                  ),
+                  trackOutlineWidth: const WidgetStatePropertyAll(1),
                   // will be fixed by https://github.com/opxdelwin/plan-sync/issues/19
                   onChanged: (value) {
                     setState(() {

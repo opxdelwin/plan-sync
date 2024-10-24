@@ -89,8 +89,14 @@ class SchedulePreferenceBottomSheetState
                 ),
                 trailing: Switch.adaptive(
                   value: savePreferencesOnExit,
-                  activeTrackColor: colorScheme.secondary.withOpacity(0.72),
+                  activeTrackColor: colorScheme.secondary.withValues(
+                    alpha: 0.72,
+                  ),
                   inactiveTrackColor: Colors.transparent,
+                  trackOutlineColor: WidgetStatePropertyAll(
+                    colorScheme.secondary.withValues(alpha: 0.24),
+                  ),
+                  trackOutlineWidth: const WidgetStatePropertyAll(1),
                   onChanged: (value) {
                     setState(() {
                       savePreferencesOnExit = value;
