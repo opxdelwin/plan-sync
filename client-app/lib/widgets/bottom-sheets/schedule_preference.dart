@@ -60,19 +60,6 @@ class SchedulePreferenceBottomSheetState
           width: double.infinity,
           child: Column(
             children: [
-              const SizedBox(height: 16),
-
-              // top drag handle
-              Container(
-                height: 8,
-                width: size.width * 0.24,
-                decoration: ShapeDecoration(
-                  color: colorScheme.onSurface,
-                  shape: const StadiumBorder(),
-                ),
-              ),
-              const SizedBox(height: 32),
-
               // preference switch
               ListTile(
                 key: appTourController.savePreferenceSwitchKey,
