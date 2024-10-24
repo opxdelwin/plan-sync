@@ -197,30 +197,6 @@ class SettingsPage extends StatelessWidget {
                     color: colorScheme.onSurfaceVariant.withValues(alpha: 0.48),
                   ),
                 ),
-                // TODO: remove around Nov
-                // ListTile(
-                //   shape: RoundedRectangleBorder(
-                //     borderRadius: BorderRadius.circular(16),
-                //   ),
-                //   enableFeedback: true,
-                //   leading: Icon(
-                //     Icons.add_circle_outline_rounded,
-                //     color: colorScheme.onSurface,
-                //   ),
-                //   title: Text(
-                //     "Contribute Time Table",
-                //     style: TextStyle(
-                //       color: colorScheme.onSurface,
-                //     ),
-                //   ),
-                //   trailing: Icon(
-                //     Icons.keyboard_arrow_right_rounded,
-                //     color: colorScheme.onSurface,
-                //   ),
-                //   onTap: () => BottomSheets.contributeTimeTable(
-                //     context: context,
-                //   ),
-                // ),
                 ListTile(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -240,7 +216,6 @@ class SettingsPage extends StatelessWidget {
                       color: colorScheme.onSurface),
                   onTap: () => ExternalLinks.termsAndConditions(),
                 ),
-
                 ListTile(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
