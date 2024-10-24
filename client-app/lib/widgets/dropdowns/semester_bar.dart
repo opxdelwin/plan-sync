@@ -49,7 +49,7 @@ class _SemesterBarState extends State<SemesterBar> {
                   ),
                 ),
                 hint: serviceController.semesters == null
-                    ? LoadingAnimationWidget.prograssiveDots(
+                    ? LoadingAnimationWidget.progressiveDots(
                         color: colorScheme.onPrimary,
                         size: 18,
                       )

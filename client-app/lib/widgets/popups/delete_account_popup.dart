@@ -83,7 +83,7 @@ class _DeleteAccountPopupState extends State<DeleteAccountPopup> {
                       ),
                     ),
                     child: isWorking
-                        ? LoadingAnimationWidget.prograssiveDots(
+                        ? LoadingAnimationWidget.progressiveDots(
                             color: colorScheme.onError,
                             size: 24,
                           )
@@ -109,7 +109,7 @@ class _DeleteAccountPopupState extends State<DeleteAccountPopup> {
                       ),
                     ),
                     child: isWorking
-                        ? LoadingAnimationWidget.prograssiveDots(
+                        ? LoadingAnimationWidget.progressiveDots(
                             color: colorScheme.onPrimary,
                             size: 24,
                           )

@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         horizontal: 32.0,
                                       ),
                                       child: LoadingAnimationWidget
-                                          .prograssiveDots(
+                                          .progressiveDots(
                                         color: colorScheme.onPrimary,
                                         size: 24,
                                       ),
@@ -173,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         horizontal: 32.0,
                                       ),
                                       child: LoadingAnimationWidget
-                                          .prograssiveDots(
+                                          .progressiveDots(
                                         color: colorScheme.onSurface,
                                         size: 24,
                                       ),

@@ -56,7 +56,7 @@ class _LogoutButtonState extends State<LogoutButton> {
             Get.isDarkMode ? colorScheme.onSurfaceVariant : colorScheme.onError,
       ),
       label: isLoggingOut
-          ? LoadingAnimationWidget.prograssiveDots(
+          ? LoadingAnimationWidget.progressiveDots(
               color: Get.isDarkMode ? Colors.white : colorScheme.onError,
               size: 24,
             )
