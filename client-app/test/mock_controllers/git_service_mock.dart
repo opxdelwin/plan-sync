@@ -21,6 +21,9 @@ enum MockGitServiceStages {
 class MockGitService extends GetxController with Mock implements GitService {
   MockGitServiceStages stage = MockGitServiceStages.success;
 
+  @override
+  Future<void> onReady() async {}
+
   RxString? _selectedElectiveYear;
   @override
   String? get selectedElectiveYear => _selectedElectiveYear?.value;

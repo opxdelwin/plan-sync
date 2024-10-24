@@ -43,10 +43,10 @@ void main() {
     },
   );
 
+  //TODO: remove in 6 months (24-April-2025)
   testWidgets(
-    'BottomSheetsWrapper.reportError returns correct widget',
+    'BottomSheetsWrapper.reportError returns correct widget (not used anymore)',
     skip: true,
-    tags: 'not used anymore',
     (WidgetTester tester) async {
       late BuildContext savedContext;
 
