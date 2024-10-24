@@ -4,8 +4,9 @@ import 'package:get/get.dart';
 import 'package:plan_sync/backend/models/timetable.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
-import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
+import 'package:plan_sync/util/enums.dart';
 import 'package:plan_sync/widgets/buttons/elective_preferences_button.dart';
+import 'package:plan_sync/widgets/popups/popups_wrapper.dart';
 import 'package:plan_sync/widgets/time_table_for_day.dart';
 
 class ElectiveScreen extends StatefulWidget {
@@ -20,7 +21,10 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
   String? sectionSemesterShortCode;
 
   void reportError() {
-    BottomSheets.reportError(context: context);
+    PopupsWrapper.reportError(
+      context: context,
+      scheduleType: ScheduleType.electives,
+    );
   }
 
   @override

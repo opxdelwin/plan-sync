@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:plan_sync/backend/models/timetable.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/util/enums.dart';
 import 'package:plan_sync/widgets/popups/popups_wrapper.dart';
 import 'package:plan_sync/widgets/time_table_for_day.dart';
 
@@ -159,6 +160,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
   void reportError() {
     PopupsWrapper.reportError(
       context: context,
+      scheduleType: ScheduleType.regular,
     );
   }
 

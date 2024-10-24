@@ -45,6 +45,8 @@ void main() {
 
   testWidgets(
     'BottomSheetsWrapper.reportError returns correct widget',
+    skip: true,
+    tags: 'not used anymore',
     (WidgetTester tester) async {
       late BuildContext savedContext;
 

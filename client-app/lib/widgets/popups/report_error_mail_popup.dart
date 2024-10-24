@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/util/enums.dart';
 import 'package:plan_sync/util/external_links.dart';
 
 class ReportErrorMailPopup extends StatelessWidget {
-  const ReportErrorMailPopup({super.key, required this.autoFill});
+  const ReportErrorMailPopup({
+    super.key,
+    required this.autoFill,
+    this.scheduleType,
+  });
 
   final bool autoFill;
+  final ScheduleType? scheduleType;
 
   Future<void> onPressed() async {
     if (!autoFill) {
@@ -23,6 +29,8 @@ class ReportErrorMailPopup extends StatelessWidget {
       course: controller.activeSemester,
       section: controller.activeSectionCode,
       weekday: filterController.weekday.key,
+      scheduleType: scheduleType,
+      scheme: controller.activeElectiveScheme,
     );
   }
 
