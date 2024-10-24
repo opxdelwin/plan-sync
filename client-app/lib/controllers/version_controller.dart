@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:in_app_update/in_app_update.dart';
@@ -9,6 +10,7 @@ import 'package:plan_sync/controllers/remote_config_controller.dart';
 import 'package:plan_sync/util/app_version.dart';
 import 'package:plan_sync/util/external_links.dart';
 import 'package:plan_sync/util/logger.dart';
+import 'package:plan_sync/widgets/popups/popups_wrapper.dart';
 
 class VersionController extends GetxController {
   late PackageInfo packageInfo;
@@ -110,7 +112,11 @@ class VersionController extends GetxController {
       Logger.i('flex update package downloaded');
 
       if (appUpdateResult == AppUpdateResult.success) {
-        await InAppUpdate.completeFlexibleUpdate();
+        await InAppUpdate.completeFlexibleUpdate().onError((err, trace) {
+          FirebaseCrashlytics.instance.recordError(err, trace);
+          PopupsWrapper.showInAppUpateFailedPopup();
+          return;
+        });
         Logger.i('flex update package installed');
       }
     }
