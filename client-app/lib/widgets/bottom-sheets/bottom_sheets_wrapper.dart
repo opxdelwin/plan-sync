@@ -14,6 +14,7 @@ class BottomSheets {
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
+      showDragHandle: true,
       backgroundColor: colorScheme.surfaceContainerHighest,
       builder: (context) => SchedulePreferenceBottomSheet(
         save: save,
@@ -53,6 +54,7 @@ class BottomSheets {
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
+      showDragHandle: true,
       backgroundColor: colorScheme.surfaceContainerHighest,
       builder: (context) => ElectivePreferenceBottomSheet(
         save: save,
@@ -70,7 +72,7 @@ class BottomSheets {
       enableDrag: true,
       useRootNavigator: true,
       backgroundColor: colorScheme.surfaceContainerHighest,
-      barrierColor: colorScheme.onSurface.withOpacity(0.16),
+      barrierColor: colorScheme.onSurface.withValues(alpha: 0.16),
       builder: (context) => const ShareAppSheet(),
     );
   }

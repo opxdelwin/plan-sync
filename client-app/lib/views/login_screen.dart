@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         horizontal: 32.0,
                                       ),
                                       child: LoadingAnimationWidget
-                                          .prograssiveDots(
+                                          .progressiveDots(
                                         color: colorScheme.onPrimary,
                                         size: 24,
                                       ),
@@ -155,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 BorderSide(color: colorScheme.onSurface),
                               ),
                               backgroundColor: WidgetStatePropertyAll(
-                                Colors.transparent.withOpacity(0.04),
+                                Colors.transparent.withValues(alpha: 0.04),
                               ),
                             ),
                             onPressed: () => loginProcedure(
@@ -173,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         horizontal: 32.0,
                                       ),
                                       child: LoadingAnimationWidget
-                                          .prograssiveDots(
+                                          .progressiveDots(
                                         color: colorScheme.onSurface,
                                         size: 24,
                                       ),
@@ -228,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.6),
+                            .withValues(alpha: 0.6),
                       ),
                       textAlign: TextAlign.center,
                     ),

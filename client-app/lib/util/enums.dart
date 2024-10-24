@@ -32,3 +32,15 @@ enum Weekday {
 
 // for login page only
 enum LoginProvider { google, apple }
+
+// to identify type of schedule
+enum ScheduleType {
+  regular(displayName: 'Regular Schedule'),
+  electives(displayName: 'Elective Schedule');
+
+  final String displayName;
+
+  const ScheduleType({
+    required this.displayName,
+  });
+}

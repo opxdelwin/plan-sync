@@ -93,7 +93,7 @@ class _TopNoticeHudState extends State<TopNoticeHud> {
                       dotHeight: 6,
                       dotWidth: 6,
                       activeDotColor: colorScheme.secondary,
-                      dotColor: colorScheme.onSurface.withOpacity(0.48),
+                      dotColor: colorScheme.onSurface.withValues(alpha: 0.48),
                       paintStyle: PaintingStyle.stroke,
                     ),
                     onDotClicked: (index) {

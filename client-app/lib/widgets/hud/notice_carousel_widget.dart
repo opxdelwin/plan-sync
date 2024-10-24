@@ -54,7 +54,7 @@ class NoticeCarouselWidget extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 8.0),
                     child: Icon(
                       Icons.cancel_outlined,
-                      color: colorScheme.onSurface.withOpacity(0.88),
+                      color: colorScheme.onSurface.withValues(alpha: 0.88),
                     ),
                   ),
                 ),

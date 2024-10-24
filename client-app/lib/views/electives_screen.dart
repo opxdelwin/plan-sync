@@ -4,8 +4,9 @@ import 'package:get/get.dart';
 import 'package:plan_sync/backend/models/timetable.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
-import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
+import 'package:plan_sync/util/enums.dart';
 import 'package:plan_sync/widgets/buttons/elective_preferences_button.dart';
+import 'package:plan_sync/widgets/popups/popups_wrapper.dart';
 import 'package:plan_sync/widgets/time_table_for_day.dart';
 
 class ElectiveScreen extends StatefulWidget {
@@ -20,7 +21,10 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
   String? sectionSemesterShortCode;
 
   void reportError() {
-    BottomSheets.reportError(context: context);
+    PopupsWrapper.reportError(
+      context: context,
+      scheduleType: ScheduleType.electives,
+    );
   }
 
   @override
@@ -168,35 +172,35 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
                                 Flexible(
                                   child: Row(
                                     children: [
-                                      Icon(Icons.info_outline_rounded,
-                                          color: colorScheme.tertiary),
+                                      Icon(
+                                        Icons.info_outline_rounded,
+                                        color: colorScheme.tertiary,
+                                      ),
                                       const SizedBox(width: 8),
-                                      Text(
-                                        "Effective from ${snapshot.data!.meta.effectiveDate}",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: colorScheme.onSurface,
+                                      Flexible(
+                                        child: Text(
+                                          "Effective from ${snapshot.data!.meta.effectiveDate}",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: colorScheme.onSurface,
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
                                 const SizedBox(width: 16),
-                                InkWell(
-                                  onTap: () => reportError(),
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.flag_rounded,
-                                          color: colorScheme.error),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        'Report Error',
-                                        style:
-                                            TextStyle(color: colorScheme.error),
-                                      ),
-                                    ],
+                                TextButton.icon(
+                                  onPressed: () => reportError(),
+                                  label: Text(
+                                    'Report Error',
+                                    style: TextStyle(color: colorScheme.error),
                                   ),
-                                ),
+                                  icon: Icon(
+                                    Icons.flag_rounded,
+                                    color: colorScheme.error,
+                                  ),
+                                )
                               ],
                             ),
                             const SizedBox(height: 16),

@@ -59,19 +59,6 @@ class ElectivePreferenceBottomSheetState
           width: double.infinity,
           child: Column(
             children: [
-              const SizedBox(height: 16),
-
-              // top drag handle
-              Container(
-                height: 8,
-                width: size.width * 0.24,
-                decoration: ShapeDecoration(
-                  color: colorScheme.onSurface,
-                  shape: const StadiumBorder(),
-                ),
-              ),
-              const SizedBox(height: 32),
-
               // preference switch
               ListTile(
                 enableFeedback: true,
@@ -87,9 +74,14 @@ class ElectivePreferenceBottomSheetState
                 ),
                 trailing: Switch.adaptive(
                   value: savePreferencesOnExit,
-                  activeTrackColor: colorScheme.secondary.withOpacity(0.72),
+                  activeTrackColor: colorScheme.secondary.withValues(
+                    alpha: 0.72,
+                  ),
                   inactiveTrackColor: Colors.transparent,
-
+                  trackOutlineColor: WidgetStatePropertyAll(
+                    colorScheme.secondary.withValues(alpha: 0.24),
+                  ),
+                  trackOutlineWidth: const WidgetStatePropertyAll(1),
                   // will be fixed by https://github.com/opxdelwin/plan-sync/issues/19
                   onChanged: (value) {
                     setState(() {
@@ -109,7 +101,7 @@ class ElectivePreferenceBottomSheetState
                 child: Text(
                   'We will store these, so that  next time you open Plan Sync, your classes are selected automatically!',
                   style: TextStyle(
-                    color: colorScheme.onSurface.withOpacity(0.6),
+                    color: colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ),

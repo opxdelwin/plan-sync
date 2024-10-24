@@ -58,7 +58,7 @@ class _BreathingStatusIndicatorState extends State<BreathingStatusIndicator>
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: widget.color.withOpacity(0.32),
+                  color: widget.color.withValues(alpha: 0.32),
                   blurRadius: 4,
                   spreadRadius: 2,
                 ),

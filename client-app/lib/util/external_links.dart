@@ -1,7 +1,7 @@
 import 'dart:io';
-
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import 'enums.dart';
 
 class ExternalLinks {
   static const appLink = "https://plansync.in";
@@ -42,6 +42,9 @@ class ExternalLinks {
     String? academicYear,
     String? course,
     String? section,
+    String? weekday,
+    String? scheme,
+    ScheduleType? scheduleType,
   }) {
     String body = """Hey Plan Sync Team,
 
@@ -50,9 +53,9 @@ I hope this message finds you well. I've come across an issue in the schedule an
 **Class Details:**
 - Academic Year: ${academicYear ?? '[Enter Academic Year]'}
 - Course Name: ${course ?? '[Enter Course Name]'}
-- Type: Normal Schedule / Electives
-- Section: ${section ?? '[Enter Section]'}
-- Day/Time: [Enter Day and/or Time]
+- Type: ${scheduleType?.displayName ?? '[Regular Schedule / Electives]'}
+${scheduleType == ScheduleType.regular ? '- ${'Section'}: ${section ?? '[Enter Section]'}' : '- ${'Scheme'}: ${scheme ?? '[Enter Scheme]'}'}
+- Day/Time: ${weekday ?? '[Enter Day and Time]'}
 
 ISSUE DESCRIPTION:
 [Describe the issue concisely and clearly. Include any relevant details.]

@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           backgroundColor:
-              colorScheme.surfaceContainerHighest.withOpacity(0.98),
+              colorScheme.surfaceContainerHighest.withValues(alpha: 0.98),
           elevation: 0.0,
           toolbarHeight: 80,
           shape: const RoundedRectangleBorder(

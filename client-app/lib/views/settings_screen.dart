@@ -91,7 +91,7 @@ class SettingsPage extends StatelessWidget {
                 Text(
                   auth.activeUser!.email ?? "connect@plansync.in",
                   style: TextStyle(
-                    color: colorScheme.onSurface.withOpacity(0.72),
+                    color: colorScheme.onSurface.withValues(alpha: 0.72),
                   ),
                 ),
                 Row(
@@ -100,13 +100,13 @@ class SettingsPage extends StatelessWidget {
                     Text(
                       'Plan Sync v${versionController.clientVersion} | ',
                       style: TextStyle(
-                        color: colorScheme.onSurface.withOpacity(0.72),
+                        color: colorScheme.onSurface.withValues(alpha: 0.72),
                       ),
                     ),
                     Text(
                       'Copy UID',
                       style: TextStyle(
-                        color: colorScheme.onSurface.withOpacity(0.72),
+                        color: colorScheme.onSurface.withValues(alpha: 0.72),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -194,33 +194,9 @@ class SettingsPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Divider(
-                    color: colorScheme.onSurfaceVariant.withOpacity(0.48),
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.48),
                   ),
                 ),
-                // TODO: remove around Nov
-                // ListTile(
-                //   shape: RoundedRectangleBorder(
-                //     borderRadius: BorderRadius.circular(16),
-                //   ),
-                //   enableFeedback: true,
-                //   leading: Icon(
-                //     Icons.add_circle_outline_rounded,
-                //     color: colorScheme.onSurface,
-                //   ),
-                //   title: Text(
-                //     "Contribute Time Table",
-                //     style: TextStyle(
-                //       color: colorScheme.onSurface,
-                //     ),
-                //   ),
-                //   trailing: Icon(
-                //     Icons.keyboard_arrow_right_rounded,
-                //     color: colorScheme.onSurface,
-                //   ),
-                //   onTap: () => BottomSheets.contributeTimeTable(
-                //     context: context,
-                //   ),
-                // ),
                 ListTile(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -240,7 +216,6 @@ class SettingsPage extends StatelessWidget {
                       color: colorScheme.onSurface),
                   onTap: () => ExternalLinks.termsAndConditions(),
                 ),
-
                 ListTile(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
