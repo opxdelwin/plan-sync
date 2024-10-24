@@ -42,6 +42,7 @@ class ExternalLinks {
     String? academicYear,
     String? course,
     String? section,
+    String? weekday,
   }) {
     String body = """Hey Plan Sync Team,
 
@@ -52,7 +53,7 @@ I hope this message finds you well. I've come across an issue in the schedule an
 - Course Name: ${course ?? '[Enter Course Name]'}
 - Type: Normal Schedule / Electives
 - Section: ${section ?? '[Enter Section]'}
-- Day/Time: [Enter Day and/or Time]
+- Day/Time: ${weekday ?? '[Enter Day and/or Time]'}
 
 ISSUE DESCRIPTION:
 [Describe the issue concisely and clearly. Include any relevant details.]

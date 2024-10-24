@@ -17,10 +17,12 @@ class ReportErrorMailPopup extends StatelessWidget {
 
     FilterController controller = Get.find();
     GitService git = Get.find();
+    FilterController filterController = Get.find();
     ExternalLinks.reportErrorViaMail(
       academicYear: git.selectedYear,
       course: controller.activeSemester,
       section: controller.activeSectionCode,
+      weekday: filterController.weekday.key,
     );
   }
 
