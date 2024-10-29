@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import 'package:plan_sync/backend/models/timetable.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/util/logger.dart';
@@ -10,8 +10,9 @@ import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:provider/provider.dart';
 
-class GitService extends GetxController {
+class GitService extends ChangeNotifier {
   late String branch;
 
   late final CacheOptions cacheOptions;
@@ -19,81 +20,81 @@ class GitService extends GetxController {
 
   // normal schedule years
   List<String>? years;
-  RxString? _selectedYear;
-  String? get selectedYear => _selectedYear?.value;
+  String? _selectedYear;
+  String? get selectedYear => _selectedYear;
   set selectedYear(String? newYear) {
     if (newYear == null || selectedYear == newYear) {
       return;
     }
-    _selectedYear = newYear.obs;
+    _selectedYear = newYear;
     filterController.activeSemester = null;
-    update();
+    notifyListeners();
     getSemesters();
   }
 
   // elective year
   List<String>? electiveYears;
 
-  RxString? _selectedElectiveYear;
-  String? get selectedElectiveYear => _selectedElectiveYear?.value;
+  String? _selectedElectiveYear;
+  String? get selectedElectiveYear => _selectedElectiveYear;
   set selectedElectiveYear(String? newYear) {
     if (newYear == null || selectedElectiveYear == newYear) {
       return;
     }
-    _selectedElectiveYear = newYear.obs;
+    _selectedElectiveYear = newYear;
     filterController.activeElectiveSemester = null;
-    update();
+    notifyListeners();
     getElectiveSemesters();
     // getElectiveSchemes();
   }
 
-  RxMap? _sections;
-  RxMap? get sections => _sections;
+  Map? _sections;
+  Map? get sections => _sections;
 
-  RxList? _semesters;
+  List? _semesters;
   List? get semesters => _semesters?.toList();
   set semesters(List? newSemesters) {
     Logger.i("setting sermestes to $newSemesters");
     if (newSemesters == null) return;
-    _semesters = newSemesters.obs;
-    update();
+    _semesters = newSemesters;
+    notifyListeners();
   }
 
-  RxList? _electivesSemesters;
+  List? _electivesSemesters;
   List? get electivesSemesters => _electivesSemesters?.toList();
   set electivesSemesters(List? newElectivesSemesters) {
     if (newElectivesSemesters == null || newElectivesSemesters.isEmpty) {
       _electivesSemesters = null;
-      update();
+      notifyListeners();
       return;
     }
-    _electivesSemesters = newElectivesSemesters.obs;
-    update();
+    _electivesSemesters = newElectivesSemesters;
+    notifyListeners();
     return;
   }
 
-  RxMap? electiveSchemes;
+  Map? electiveSchemes;
 
-  RxBool isWorking = false.obs;
+  bool isWorking = false;
   late FilterController filterController;
 
   Map? errorDetails;
 
-  @override
-  void onInit() async {
+  Future<void> onInit() async {
+    // onInit
     setRepositoryBranch();
     await startCachingService();
-    super.onInit();
+    notifyListeners();
   }
 
-  @override
-  Future<void> onReady() async {
-    filterController = Get.find();
+  Future<void> onReady(BuildContext ctx) async {
+    // onReady
+    filterController = Provider.of<FilterController>(ctx, listen: false);
     await getYears();
     await getSemesters();
     await getElectiveSemesters();
     await getElectiveYears();
-    super.onReady();
+    notifyListeners();
   }
 
   /// Adds an interceptor to global dio instance, which is used to
@@ -144,7 +145,10 @@ class GitService extends GetxController {
   ///
   Future<void> getYears() async {
     try {
-      isWorking.value ? null : isWorking.toggle();
+      if (!isWorking) {
+        isWorking = true;
+        notifyListeners();
+      }
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/sections.json";
 
@@ -176,7 +180,11 @@ class GitService extends GetxController {
       }
       Logger.i("Fetched years: $years");
       setYear();
-      !isWorking.value ? null : isWorking.toggle();
+
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
     } on DioException catch (e) {
       errorDetails = {
         "error": "DioException",
@@ -186,12 +194,18 @@ class GitService extends GetxController {
 
       Logger.i(errorDetails);
 
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
       return;
     } catch (e) {
       errorDetails = {"error": "CatchException"};
       Logger.i(e.toString());
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
       return;
     }
   }
@@ -215,7 +229,10 @@ class GitService extends GetxController {
         return;
       }
 
-      isWorking.value ? null : isWorking.toggle();
+      if (!isWorking) {
+        isWorking = true;
+        notifyListeners();
+      }
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/sections.json";
 
@@ -228,20 +245,23 @@ class GitService extends GetxController {
         final cachedSemesters =
             jsonDecode(cacheResponse.data)["$selectedYear"]?.keys;
         Logger.i("Cached Semesters: $cachedSemesters");
-        semesters = RxList.from(cachedSemesters);
-        update();
+        semesters = List.from(cachedSemesters);
+        notifyListeners();
         filterController.setPrimarySemester();
       }
 
       final response = await dio.get(url);
       if (response.headers.map['etag']?.first == cacheData?.eTag) {
         Logger.i("Semester Etag matches");
-        !isWorking.value ? null : isWorking.toggle();
+        if (isWorking) {
+          isWorking = false;
+          notifyListeners();
+        }
         return;
       }
       final data = jsonDecode(response.data) as Map<String, dynamic>;
 
-      semesters = RxList.from(data["$selectedYear"]?.keys);
+      semesters = List.from(data["$selectedYear"]?.keys);
 
       // stop execution if there are no semesters for selected year
       if (semesters!.isEmpty) {
@@ -252,12 +272,15 @@ class GitService extends GetxController {
         return;
       }
 
-      update();
+      notifyListeners();
       Logger.i("Fetched semesters: $_semesters");
 
       filterController.setPrimarySemester();
 
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
     } on DioException catch (e) {
       errorDetails = {
         "error": "DioException",
@@ -265,27 +288,36 @@ class GitService extends GetxController {
         "code": e.response?.statusCode,
       };
 
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
+
       return;
     } catch (e) {
       errorDetails = {"error": "CatchException"};
 
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
       return;
     }
   }
 
   /// Gets all the available sections for a selected semester.
-  Future<void> getSections() async {
+  Future<void> getSections(FilterController filterController) async {
     try {
-      isWorking.value ? null : isWorking.toggle();
+      if (!isWorking) {
+        isWorking = true;
+        notifyListeners();
+      }
 
-      FilterController filterController = Get.find();
       if (filterController.activeSemester == null ||
           selectedYear == null ||
           semesters == null) {
         _sections?.clear();
-        update();
+        notifyListeners();
         return;
       }
       String activeSemester = filterController.activeSemester!;
@@ -300,10 +332,10 @@ class GitService extends GetxController {
       if (cacheData != null) {
         final cachedResponse = cacheData.toResponse(options);
 
-        _sections = RxMap.from(
+        _sections = Map.from(
           jsonDecode(cachedResponse.data)["$selectedYear"][activeSemester],
         );
-        update();
+        notifyListeners();
         filterController.setPrimarySection();
         Logger.i("Cached sections: $sections");
       }
@@ -312,16 +344,22 @@ class GitService extends GetxController {
 
       if (response.headers.map['etag']?.first == cacheData?.eTag) {
         Logger.i("Sections Etag matches");
-        !isWorking.value ? null : isWorking.toggle();
+        if (isWorking) {
+          isWorking = false;
+          notifyListeners();
+        }
         return;
       }
 
       final data = jsonDecode(response.data) as Map<String, dynamic>;
-      _sections = RxMap.from(data["$selectedYear"][activeSemester]);
-      update();
+      _sections = Map.from(data["$selectedYear"][activeSemester]);
+      notifyListeners();
       filterController.setPrimarySection();
       Logger.i("Fetched sections: $sections");
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
     } on DioException catch (e) {
       errorDetails = {
         "error": "DioException",
@@ -329,19 +367,24 @@ class GitService extends GetxController {
         "code": e.response?.statusCode,
       };
 
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
       throw Future.error(errorDetails.toString());
     } catch (e) {
       errorDetails = {"error": "CatchException"};
       Logger.i(e.toString());
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
       throw Future.error(errorDetails.toString());
     }
   }
 
   /// Gets concurrent timetable for unique semester and section.
-  Stream<Timetable?> getTimeTable() async* {
-    FilterController filterController = Get.find();
+  Stream<Timetable?> getTimeTable(FilterController filterController) async* {
     final section = filterController.activeSectionCode;
     final semester = filterController.activeSemester;
 
@@ -351,7 +394,10 @@ class GitService extends GetxController {
       return;
     }
 
-    isWorking.value ? null : isWorking.toggle();
+    if (!isWorking) {
+      isWorking = true;
+      notifyListeners();
+    }
     final url =
         "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$selectedYear/$semester/$section.json";
     try {
@@ -376,7 +422,10 @@ class GitService extends GetxController {
         yield* Stream.error(response);
       }
 
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
       Logger.i("Yield Actual : ${DateTime.now().millisecondsSinceEpoch}");
 
       /// send data again only if e-tag are different
@@ -415,7 +464,10 @@ class GitService extends GetxController {
         errorDetails?['message'] = 'Please check your network connection.';
       }
 
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
       Logger.i(e.toString());
       yield* Stream.error(Exception(errorDetails));
     } catch (e) {
@@ -424,7 +476,10 @@ class GitService extends GetxController {
         "message": "Some unknown error occoured while getting schedule",
       };
 
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
       yield* Stream.error(Exception(errorDetails));
     }
   }
@@ -434,7 +489,10 @@ class GitService extends GetxController {
     try {
       electivesSemesters = null;
       electivesSemesters = null;
-      isWorking.value ? null : isWorking.toggle();
+      if (!isWorking) {
+        isWorking = true;
+        notifyListeners();
+      }
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/electives.json";
 
@@ -456,7 +514,10 @@ class GitService extends GetxController {
       if (response.headers.map['etag']?.first == cacheData?.eTag &&
           cacheData?.eTag != null) {
         Logger.i("Elective Year Etag Matches, aborting fn");
-        !isWorking.value ? null : isWorking.toggle();
+        if (isWorking) {
+          isWorking = false;
+          notifyListeners();
+        }
         return;
       }
 
@@ -472,7 +533,10 @@ class GitService extends GetxController {
       Logger.i("Fetched elective years: $electiveYears");
       await filterController.setPrimaryElectiveYear();
       getElectiveSemesters();
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
     } on DioException catch (e) {
       errorDetails = {
         "error": "DioException",
@@ -481,13 +545,19 @@ class GitService extends GetxController {
       };
 
       Logger.i(errorDetails);
-      update();
-      !isWorking.value ? null : isWorking.toggle();
+      notifyListeners();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
       return;
     } catch (e) {
       errorDetails = {"error": "CatchException"};
       Logger.i(e.toString());
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
       return;
     }
   }
@@ -498,7 +568,10 @@ class GitService extends GetxController {
       if (selectedElectiveYear == null) {
         return;
       }
-      isWorking.value ? null : isWorking.toggle();
+      if (!isWorking) {
+        isWorking = true;
+        notifyListeners();
+      }
 
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/electives.json";
@@ -509,13 +582,13 @@ class GitService extends GetxController {
       final cacheData = await cacheOptions.store?.get(key);
       if (cacheData != null) {
         final cachedResponse = cacheData.toResponse(options);
-        electivesSemesters = RxList.from(
+        electivesSemesters = List.from(
           jsonDecode(cachedResponse.data)["$selectedElectiveYear"].keys,
         );
 
         Logger.i("Cached elective semesters: $electivesSemesters");
         await filterController.setPrimaryElectiveSemester();
-        update();
+        notifyListeners();
       }
 
       final response = await dio.get(url);
@@ -524,12 +597,15 @@ class GitService extends GetxController {
       if (response.headers.map['etag']?.first == cacheData?.eTag &&
           cacheData?.eTag != null) {
         Logger.i("Elective Semester Etag Matches, aborting fn");
-        !isWorking.value ? null : isWorking.toggle();
+        if (isWorking) {
+          isWorking = false;
+          notifyListeners();
+        }
         return;
       }
 
       final data = jsonDecode(response.data) as Map<String, dynamic>;
-      electivesSemesters = RxList.from(data["$selectedElectiveYear"].keys);
+      electivesSemesters = List.from(data["$selectedElectiveYear"].keys);
       Logger.i("Fetched elective semesters: $electivesSemesters");
 
       // if no semesters are available, show snackbar
@@ -540,9 +616,12 @@ class GitService extends GetxController {
         );
       }
 
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
       await filterController.setPrimaryElectiveSemester();
-      update();
+      notifyListeners();
       return;
     } on DioException catch (e) {
       errorDetails = {
@@ -550,22 +629,32 @@ class GitService extends GetxController {
         "data": e.message,
         "code": e.response?.statusCode,
       };
-      !isWorking.value ? null : isWorking.toggle();
+
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
       return;
     } catch (e) {
       errorDetails = {"error": "CatchException"};
 
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
 
       return;
     }
   }
 
   /// Gets available schemes (usually A or B) for elective.
-  Future<void> getElectiveSchemes() async {
+  Future<void> getElectiveSchemes(FilterController filterController) async {
     try {
-      isWorking.value ? null : isWorking.toggle();
-      FilterController filterController = Get.find();
+      if (!isWorking) {
+        isWorking = true;
+        notifyListeners();
+      }
+
       if (filterController.activeElectiveSemester == null) {
         return;
       }
@@ -580,13 +669,13 @@ class GitService extends GetxController {
       final cacheData = await cacheOptions.store?.get(key);
       if (cacheData != null) {
         final cachedResponse = cacheData.toResponse(options);
-        electiveSchemes = RxMap.from(
+        electiveSchemes = Map.from(
           jsonDecode(cachedResponse.data)["$selectedElectiveYear"]
               [activeSemester],
         );
         Logger.i("cached elective schemes: $electiveSchemes");
         await filterController.setPrimaryElectiveScheme();
-        update();
+        notifyListeners();
       }
 
       final response = await dio.get(url);
@@ -595,7 +684,10 @@ class GitService extends GetxController {
       if (response.headers.map['etag']?.first == cacheData?.eTag &&
           cacheData?.eTag != null) {
         Logger.i("Elective schemes Etag Matches, aborting fn");
-        !isWorking.value ? null : isWorking.toggle();
+        if (isWorking) {
+          isWorking = false;
+          notifyListeners();
+        }
         return;
       }
 
@@ -607,7 +699,7 @@ class GitService extends GetxController {
         return;
       }
 
-      electiveSchemes = RxMap.from(
+      electiveSchemes = Map.from(
         data["$selectedElectiveYear"][activeSemester],
       );
 
@@ -621,9 +713,12 @@ class GitService extends GetxController {
       }
 
       Logger.i("Fetched elective schemes: $electiveSchemes");
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
       await filterController.setPrimaryElectiveScheme();
-      update();
+      notifyListeners();
     } on DioException catch (e) {
       errorDetails = {
         "error": "DioException",
@@ -631,13 +726,19 @@ class GitService extends GetxController {
         "code": e.response?.statusCode,
       };
 
-      !isWorking.value ? null : isWorking.toggle();
-      update();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
+      notifyListeners();
       throw Exception(e.toString());
     } catch (e) {
       errorDetails = {"error": "CatchException"};
 
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
 
       throw Exception(e.toString());
     }
@@ -645,7 +746,10 @@ class GitService extends GetxController {
 
   /// Gets concurrent elective timetable for unique semester and section.
   Stream<Timetable?> getElectives() async* {
-    isWorking.value ? null : isWorking.toggle();
+    if (!isWorking) {
+      isWorking = true;
+      notifyListeners();
+    }
 
     if (filterController.activeElectiveSchemeCode == null ||
         filterController.activeElectiveSemester == null) {
@@ -681,7 +785,10 @@ class GitService extends GetxController {
         return;
       }
 
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
       if (response.headers.map['etag']?.first != cacheData?.eTag) {
         yield Timetable.fromJson(
           json: jsonDecode(response.data),
@@ -700,7 +807,10 @@ class GitService extends GetxController {
             'We couldn\'t fetch requested timetable. Please try again later.',
       };
 
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
 
       yield* Stream.error(Exception(errorDetails));
       return;
@@ -710,7 +820,10 @@ class GitService extends GetxController {
         "message": "Some unknown error occoured while getting electives",
       };
 
-      !isWorking.value ? null : isWorking.toggle();
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
 
       yield* Stream.error(Exception(errorDetails));
       return;

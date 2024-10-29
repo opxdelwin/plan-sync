@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -11,40 +13,53 @@ import 'package:plan_sync/util/app_version.dart';
 import 'package:plan_sync/util/external_links.dart';
 import 'package:plan_sync/util/logger.dart';
 import 'package:plan_sync/widgets/popups/popups_wrapper.dart';
+import 'package:provider/provider.dart';
 
-class VersionController extends GetxController {
+class VersionController extends ChangeNotifier {
   late PackageInfo packageInfo;
 
-  RxString? _clientVersion;
-  String? get clientVersion => _clientVersion?.value;
+  String? _clientVersion;
+  String? get clientVersion => _clientVersion;
   set clientVersion(String? newVersion) {
     if (newVersion == null) return;
-    _clientVersion = newVersion.obs;
-    update();
+    _clientVersion = newVersion;
+    notifyListeners();
   }
 
-  RxString? _appBuild;
-  String? get appBuild => _appBuild?.value;
+  String? _appBuild;
+  String? get appBuild => _appBuild;
   set appBuild(String? newVersion) {
     if (newVersion == null) return;
-    _appBuild = newVersion.obs;
-    update();
+    _appBuild = newVersion;
+    notifyListeners();
   }
 
-  RxBool _isError = false.obs;
-  bool get isError => _isError.value;
+  bool _isError = false;
+  bool get isError => _isError;
   set isError(bool newValue) {
-    _isError = newValue.obs;
-    update();
+    _isError = newValue;
+    notifyListeners();
   }
 
-  @override
-  void onReady() async {
-    super.onReady();
+  bool _isUpdateAvailable = false;
+  bool get isUpdateAvailable => _isUpdateAvailable;
+  set isUpdateAvailable(bool newValue) {
+    _isUpdateAvailable = newValue;
+    notifyListeners();
+  }
+
+  Future<void> onReady(BuildContext context) async {
     packageInfo = await PackageInfo.fromPlatform();
     printCurrentVersion();
-    triggerPlayUpdate();
-    verifyMinimumVersion();
+
+    checkForUpdate(context: context).then(
+      (value) => isUpdateAvailable = value,
+    );
+
+    if (!kDebugMode) {
+      triggerPlayUpdate();
+    }
+    verifyMinimumVersion(context: context);
   }
 
   printCurrentVersion() {
@@ -57,9 +72,9 @@ class VersionController extends GetxController {
 
   /// returns true if an ios update is available,
   /// uses remote config.
-  Future<bool> checkIosUpdate() async {
+  Future<bool> checkIosUpdate({required BuildContext context}) async {
     final latestValue =
-        await Get.find<RemoteConfigController>().latestIosVersion();
+        await Provider.of<RemoteConfigController>(context).latestIosVersion();
 
     if (latestValue == null) {
       // maybe due to internet connectivity
@@ -76,16 +91,24 @@ class VersionController extends GetxController {
     return latestVersion.isGreaterThan(currentVersion);
   }
 
-  Future<bool> checkForUpdate() async {
+  Future<bool> checkForUpdate({required BuildContext context}) async {
     // handle iOS case separately
     if (Platform.isIOS) {
-      return await checkIosUpdate();
+      return await checkIosUpdate(context: context);
     }
 
     isError = false;
     try {
       final AppUpdateInfo result = await InAppUpdate.checkForUpdate();
       return result.updateAvailability == UpdateAvailability.updateAvailable;
+    } on PlatformException catch (err) {
+      if (err.message != null && err.message!.contains('ERROR_APP_NOT_OWNED')) {
+        Logger.w('App Not Owned on this Device.');
+        return false;
+      } else {
+        isError = true;
+        throw Exception("VersionController.checkForUpdate Exception, $err");
+      }
     } catch (e) {
       isError = true;
       throw Exception("VersionController.checkForUpdate Exception, $e");
@@ -142,9 +165,9 @@ class VersionController extends GetxController {
   /// This is used to ensure that a minimum app version is maintained
   /// to ensure incompatible apps do not break with live version of
   /// remote data.
-  Future<void> verifyMinimumVersion() async {
-    final git = Get.find<GitService>();
-    final perfs = Get.find<AppPreferencesController>();
+  Future<void> verifyMinimumVersion({required BuildContext context}) async {
+    final git = Provider.of<GitService>(context, listen: false);
+    final perfs = Provider.of<AppPreferencesController>(context, listen: false);
 
     final minVersion = await git.fetchMininumVersion();
     if (minVersion == null || clientVersion == null) {
@@ -158,7 +181,9 @@ class VersionController extends GetxController {
         int.parse(minVersion.split('.')[0])) {
       Logger.e('Current App Version is unsupported with database!');
       perfs.saveIsAppBelowMinVersion(true);
-      Get.context?.go('/forced_update');
+      if (context.mounted) {
+        context.go('/forced_update');
+      }
       return;
     }
 

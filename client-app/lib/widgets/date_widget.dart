@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/util/enums.dart';
+import 'package:provider/provider.dart';
 
 class DateWidget extends StatelessWidget {
   const DateWidget({super.key});
@@ -16,8 +17,8 @@ class DateWidget extends StatelessWidget {
     final days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
     final colorScheme = Theme.of(context).colorScheme;
 
-    return GetBuilder<FilterController>(
-      builder: (controller) {
+    return Consumer<FilterController>(
+      builder: (ctx, filterController, child) {
         return Container(
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
@@ -48,15 +49,17 @@ class DateWidget extends StatelessWidget {
                   const SizedBox(height: 8),
                   InkWell(
                     enableFeedback: true,
-                    onTap: () => controller.weekday = Weekday.fromIndex(index),
+                    onTap: () =>
+                        filterController.weekday = Weekday.fromIndex(index),
                     child: CircleAvatar(
-                      backgroundColor: controller.weekday.weekdayIndex == index
-                          ? colorScheme.secondary
-                          : colorScheme.surface,
+                      backgroundColor:
+                          filterController.weekday.weekdayIndex == index
+                              ? colorScheme.secondary
+                              : colorScheme.surface,
                       child: Text(
                         '${mostRecentSunday().add(Duration(days: index)).day}',
                         style: TextStyle(
-                          color: controller.weekday.weekdayIndex == index
+                          color: filterController.weekday.weekdayIndex == index
                               ? colorScheme.onSecondary
                               : colorScheme.onSurfaceVariant,
                         ),

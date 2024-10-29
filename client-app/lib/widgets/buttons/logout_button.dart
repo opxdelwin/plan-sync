@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_sync/controllers/auth.dart';
+import 'package:provider/provider.dart';
 
 class LogoutButton extends StatefulWidget {
   const LogoutButton({super.key});
@@ -17,7 +18,7 @@ class _LogoutButtonState extends State<LogoutButton> {
   @override
   void initState() {
     super.initState();
-    auth = Get.find();
+    auth = Provider.of<Auth>(context, listen: false);
   }
 
   void logout() async {

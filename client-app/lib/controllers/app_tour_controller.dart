@@ -1,13 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/util/logger.dart';
 import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
 import 'package:plan_sync/widgets/tutorials/app_target_focus.dart';
+import 'package:provider/provider.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
-class AppTourController extends GetxController {
+class AppTourController extends ChangeNotifier {
   late AppPreferencesController appPreferencesController;
 
   late GlobalKey _schedulePreferencesButtonKey;
@@ -19,10 +19,12 @@ class AppTourController extends GetxController {
   late GlobalKey _savePreferenceSwitchKey;
   GlobalKey get savePreferenceSwitchKey => _savePreferenceSwitchKey;
 
-  @override
-  void onInit() {
-    appPreferencesController = Get.find();
-    super.onInit();
+  void onInit(BuildContext context) {
+    appPreferencesController = Provider.of<AppPreferencesController>(
+      context,
+      listen: false,
+    );
+
     _schedulePreferencesButtonKey = GlobalKey();
     _sectionBarKey = GlobalKey();
     _savePreferenceSwitchKey = GlobalKey();

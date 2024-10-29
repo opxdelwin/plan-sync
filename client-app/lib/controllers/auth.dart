@@ -2,15 +2,26 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:plan_sync/controllers/analytics_controller.dart';
 import 'package:plan_sync/util/logger.dart';
 import 'package:plan_sync/util/snackbar.dart';
 
-class Auth extends GetxController {
+class Auth extends ChangeNotifier {
   final _auth = FirebaseAuth.instance;
   User? get activeUser => _auth.currentUser;
+  late List<Function> authChangeListeners;
+
+  void onInit() {
+    authChangeListeners = [];
+  }
+
+  void addUserStatusListener(Function fn) => authChangeListeners.add(fn);
+  void removeUserStatusListener(Function fn) => authChangeListeners.remove(fn);
+  void notifyAuthStatusListeners() {
+    for (var fn in authChangeListeners) {
+      fn.call();
+    }
+  }
 
   Future<void> loginWithGoogle() async {
     Logger.i("login using google");
@@ -45,9 +56,7 @@ class Auth extends GetxController {
       await FirebaseAuth.instance.signInWithCredential(credential);
       await FirebaseCrashlytics.instance.setUserIdentifier(activeUser!.uid);
 
-      AnalyticsController analytics = Get.find();
-      analytics.setUserData();
-
+      notifyAuthStatusListeners();
       return;
     } on FirebaseAuthException catch (error) {
       CustomSnackbar.error(
@@ -100,9 +109,7 @@ class Auth extends GetxController {
     }
     await FirebaseCrashlytics.instance.setUserIdentifier(activeUser!.uid);
 
-    AnalyticsController analytics = Get.find();
-    analytics.setUserData();
-
+    notifyAuthStatusListeners();
     return;
   }
 
@@ -111,6 +118,7 @@ class Auth extends GetxController {
     await _auth.signOut();
     await GoogleSignIn().signOut();
     await FirebaseCrashlytics.instance.setUserIdentifier("");
+    notifyAuthStatusListeners();
     return;
   }
 

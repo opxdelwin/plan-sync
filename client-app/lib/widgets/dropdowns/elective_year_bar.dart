@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/logger.dart';
+import 'package:provider/provider.dart';
 
 class ElectiveYearBar extends StatefulWidget {
   const ElectiveYearBar({super.key});
@@ -24,8 +25,8 @@ class _ElectiveYearBarState extends State<ElectiveYearBar> {
         width: 128,
         height: 48,
         child: DropdownButtonHideUnderline(
-          child: GetBuilder<GitService>(
-            builder: (serviceController) => DropdownButton<String>(
+          child: Consumer<GitService>(
+            builder: (ctx, serviceController, child) => DropdownButton<String>(
               isExpanded: true,
               elevation: 0,
               enableFeedback: true,

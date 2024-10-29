@@ -6,6 +6,7 @@ import 'package:plan_sync/widgets/dropdowns/elective_year_bar.dart';
 import 'package:plan_sync/util/snackbar.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class ElectivePreferenceBottomSheet extends StatefulWidget {
   const ElectivePreferenceBottomSheet({this.save = false, super.key});
@@ -30,7 +31,8 @@ class ElectivePreferenceBottomSheetState
 
   void exitBottomSheet() {
     if (savePreferencesOnExit) {
-      FilterController controller = Get.find();
+      FilterController controller =
+          Provider.of<FilterController>(context, listen: false);
       controller.storePrimaryElectiveYear();
       controller.storePrimaryElectiveSemester();
       controller.storePrimaryElectiveScheme();

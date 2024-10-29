@@ -5,6 +5,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_sync/util/enums.dart';
 import 'package:plan_sync/util/external_links.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import '../controllers/auth.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -15,8 +16,14 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  Auth auth = Get.find();
+  late Auth auth;
   bool isWorking = false;
+
+  @override
+  initState() {
+    auth = Provider.of<Auth>(context, listen: false);
+    super.initState();
+  }
 
   Future<void> loginProcedure({required LoginProvider provider}) async {
     setState(() {

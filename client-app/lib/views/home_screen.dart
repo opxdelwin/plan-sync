@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:plan_sync/controllers/app_tour_controller.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/widgets/buttons/schedule_preferences_button.dart';
 import 'package:plan_sync/widgets/date_widget.dart';
 import 'package:plan_sync/widgets/hud/top_notice_hud.dart';
+import 'package:provider/provider.dart';
 import '../widgets/time_table.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,13 +15,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  FilterController filterController = Get.find();
-  AppTourController appTourController = Get.find();
+  late FilterController filterController;
+  late AppTourController appTourController;
   String? sectionSemesterShortCode;
 
   @override
   void initState() {
     super.initState();
+    filterController = Provider.of<FilterController>(context, listen: false);
+    appTourController = Provider.of<AppTourController>(context, listen: false);
     filterController.getShortCode().then(
           (code) => setState(() {
             sectionSemesterShortCode = code;

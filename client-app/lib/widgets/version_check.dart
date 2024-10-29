@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
+import 'package:provider/provider.dart';
 
 class VersionCheckWidget extends StatefulWidget {
   const VersionCheckWidget({super.key});
@@ -15,7 +16,7 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
   @override
   void initState() {
     super.initState();
-    versionController = Get.find();
+    versionController = Provider.of<VersionController>(context, listen: false);
   }
 
   @override

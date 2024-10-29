@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/logger.dart';
+import 'package:provider/provider.dart';
 
 class SectionsBar extends StatefulWidget {
   const SectionsBar({super.key});
@@ -28,9 +29,10 @@ class _SectionsBarState extends State<SectionsBar> {
         width: 128,
         height: 48,
         child: DropdownButtonHideUnderline(
-          child: GetBuilder<GitService>(
-            builder: (serviceController) =>
-                GetBuilder<FilterController>(builder: (filterController) {
+          child: Consumer<GitService>(
+            builder: (ctx, serviceController, child) =>
+                Consumer<FilterController>(
+                    builder: (ctx, filterController, child) {
               return DropdownButton<String>(
                 isExpanded: true,
                 elevation: 0,

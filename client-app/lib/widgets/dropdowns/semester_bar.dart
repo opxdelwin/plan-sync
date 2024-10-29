@@ -4,6 +4,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/logger.dart';
+import 'package:provider/provider.dart';
 
 class SemesterBar extends StatefulWidget {
   const SemesterBar({super.key});
@@ -27,8 +28,9 @@ class _SemesterBarState extends State<SemesterBar> {
         width: 128,
         height: 48,
         child: DropdownButtonHideUnderline(
-          child: GetBuilder<GitService>(builder: (serviceController) {
-            return GetBuilder<FilterController>(builder: (filterController) {
+          child: Consumer<GitService>(builder: (ctx, serviceController, child) {
+            return Consumer<FilterController>(
+                builder: (ctx, filterController, child) {
               return DropdownButton<String>(
                 isExpanded: true,
                 elevation: 0,

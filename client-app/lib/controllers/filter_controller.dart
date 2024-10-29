@@ -1,16 +1,17 @@
-import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/enums.dart';
 import 'package:plan_sync/util/logger.dart';
 import 'package:plan_sync/util/snackbar.dart';
 import 'package:collection/collection.dart';
+import 'package:provider/provider.dart';
 
-class FilterController extends GetxController {
-  RxString? _activeSection;
-  String? get activeSection => _activeSection?.value;
+class FilterController extends ChangeNotifier {
+  String? _activeSection;
+  String? get activeSection => _activeSection;
   set activeSection(String? newSection) {
-    if (_activeSection?.value == newSection) {
+    if (_activeSection == newSection) {
       return;
     }
     if (newSection == null) {
@@ -18,19 +19,19 @@ class FilterController extends GetxController {
       _activeSection = null;
       return;
     }
-    _activeSection = newSection.obs;
+    _activeSection = newSection;
     activeSectionCode = newSection;
-    update();
+    notifyListeners();
   }
 
-  RxString? _activeSectionCode;
-  String? get activeSectionCode => _activeSectionCode?.value;
+  String? _activeSectionCode;
+  String? get activeSectionCode => _activeSectionCode;
   set activeSectionCode(String? newSectionCode) {
     String? code = service.sections?.keys
         .firstWhereOrNull((key) => service.sections![key] == newSectionCode);
-    code != null ? _activeSectionCode = code.obs : _activeSectionCode = null;
+    code != null ? _activeSectionCode = code : _activeSectionCode = null;
     Logger.i('new section code: $code');
-    update();
+    notifyListeners();
   }
 
   String? _activeSemester;
@@ -41,19 +42,19 @@ class FilterController extends GetxController {
     }
     _activeSemester = newValue;
     activeSectionCode = null;
-    service.getSections();
-    update();
+    service.getSections(this);
+    notifyListeners();
   }
 
-  RxString? _activeElectiveSemester;
-  String? get activeElectiveSemester => _activeElectiveSemester?.value;
+  String? _activeElectiveSemester;
+  String? get activeElectiveSemester => _activeElectiveSemester;
   set activeElectiveSemester(String? newValue) {
     // if (newValue == null) return;
-    _activeElectiveSemester = newValue?.obs;
+    _activeElectiveSemester = newValue;
     _activeElectiveScheme = null;
     _activeElectiveSchemeCode = null;
-    service.getElectiveSchemes();
-    update();
+    service.getElectiveSchemes(this);
+    notifyListeners();
   }
 
   String? _activeElectiveSchemeCode;
@@ -61,7 +62,7 @@ class FilterController extends GetxController {
   set activeElectiveSchemeCode(String? newValue) {
     if (newValue == null) return;
     _activeElectiveSchemeCode = newValue;
-    update();
+    notifyListeners();
   }
 
   String? _activeElectiveScheme;
@@ -69,25 +70,23 @@ class FilterController extends GetxController {
   set activeElectiveScheme(String? newValue) {
     if (newValue == null) return;
     _activeElectiveScheme = newValue;
-    update();
+    notifyListeners();
   }
 
   late Weekday _weekday;
   Weekday get weekday => _weekday;
   set weekday(Weekday newWeekday) {
     _weekday = newWeekday;
-    update();
+    notifyListeners();
   }
 
   late GitService service;
   late AppPreferencesController preferences;
 
-  @override
-  onInit() async {
-    service = Get.find();
-    preferences = Get.find();
+  void onInit(BuildContext context) {
+    service = Provider.of<GitService>(context, listen: false);
+    preferences = Provider.of<AppPreferencesController>(context, listen: false);
     _weekday = Weekday.today();
-    super.onInit();
   }
 
   /// Returns a short code for selected noraml schedule configuration
@@ -149,7 +148,7 @@ class FilterController extends GetxController {
     }
 
     Logger.i("set ${activeSectionCode!} as primary");
-    update();
+    notifyListeners();
   }
 
   /// sets the section code while runtime
@@ -191,7 +190,7 @@ class FilterController extends GetxController {
     }
 
     Logger.i("set ${activeSemester!} as primary semester");
-    update();
+    notifyListeners();
   }
 
   /// sets the semester code while runtime
@@ -233,7 +232,7 @@ class FilterController extends GetxController {
     }
 
     Logger.i("set ${service.selectedYear!} as primary year");
-    update();
+    notifyListeners();
   }
 
   /// sets the semester code while runtime
@@ -274,7 +273,7 @@ class FilterController extends GetxController {
     }
 
     Logger.i("set ${activeElectiveSchemeCode!} as primary");
-    update();
+    notifyListeners();
   }
 
   /// sets the section code while runtime
@@ -316,7 +315,7 @@ class FilterController extends GetxController {
     }
 
     Logger.i("set ${activeElectiveSemester!} as primary elective-semester");
-    update();
+    notifyListeners();
   }
 
   /// sets the semester code while runtime
@@ -357,7 +356,7 @@ class FilterController extends GetxController {
     }
 
     Logger.i("set ${service.selectedElectiveYear!} as primary year");
-    update();
+    notifyListeners();
   }
 
   /// sets the semester code while runtime

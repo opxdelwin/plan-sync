@@ -11,6 +11,7 @@ import 'package:plan_sync/util/snackbar.dart';
 import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
 import 'package:plan_sync/widgets/buttons/logout_button.dart';
 import 'package:plan_sync/widgets/popups/popups_wrapper.dart';
+import 'package:provider/provider.dart';
 import '../controllers/auth.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -20,8 +21,8 @@ class SettingsPage extends StatelessWidget {
     BottomSheets.changeSectionPreference(context: context, save: true);
   }
 
-  void copyUID() async {
-    Auth auth = Get.find();
+  void copyUID(BuildContext context) async {
+    Auth auth = Provider.of<Auth>(context, listen: false);
     final uid = auth.activeUser?.uid;
 
     if (uid == null) {
@@ -39,8 +40,9 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Auth auth = Get.find();
-    VersionController versionController = Get.find();
+    Auth auth = Provider.of<Auth>(context, listen: false);
+    VersionController versionController =
+        Provider.of<VersionController>(context, listen: false);
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -111,7 +113,7 @@ class SettingsPage extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     InkWell(
-                      onTap: copyUID,
+                      onTap: () => copyUID(context),
                       enableFeedback: true,
                       child: Icon(
                         Icons.copy,

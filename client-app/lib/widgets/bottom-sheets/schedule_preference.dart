@@ -7,6 +7,7 @@ import 'package:plan_sync/util/snackbar.dart';
 import 'package:plan_sync/widgets/dropdowns/sections_bar.dart';
 import 'package:plan_sync/widgets/dropdowns/semester_bar.dart';
 import 'package:plan_sync/widgets/dropdowns/year_bar.dart';
+import 'package:provider/provider.dart';
 
 class SchedulePreferenceBottomSheet extends StatefulWidget {
   const SchedulePreferenceBottomSheet({this.save = false, super.key});
@@ -30,7 +31,8 @@ class SchedulePreferenceBottomSheetState
 
   void exitBottomSheet() {
     if (savePreferencesOnExit) {
-      FilterController controller = Get.find();
+      FilterController controller =
+          Provider.of<FilterController>(context, listen: false);
       controller.storePrimarySemester();
       controller.storePrimarySection();
       controller.storePrimaryYear();
@@ -47,7 +49,8 @@ class SchedulePreferenceBottomSheetState
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
-    AppTourController appTourController = Get.find();
+    AppTourController appTourController =
+        Provider.of<AppTourController>(context, listen: false);
 
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),

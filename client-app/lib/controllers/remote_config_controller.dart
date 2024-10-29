@@ -1,18 +1,14 @@
 import 'dart:convert';
-
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:plan_sync/backend/models/remote_config/hud_notices_model.dart';
 import 'package:plan_sync/util/logger.dart';
 
-class RemoteConfigController extends GetxController {
+class RemoteConfigController extends ChangeNotifier {
   final remoteConfig = FirebaseRemoteConfig.instance;
 
-  @override
   Future<void> onReady() async {
-    super.onReady();
     await remoteConfig.setConfigSettings(
       RemoteConfigSettings(
         fetchTimeout: const Duration(seconds: 30),
