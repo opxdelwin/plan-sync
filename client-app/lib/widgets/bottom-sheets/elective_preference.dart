@@ -78,16 +78,16 @@ class ElectivePreferenceBottomSheetState
                 ),
                 trailing: Switch.adaptive(
                   value: savePreferencesOnExit,
-                  activeTrackColor: colorScheme.secondary.withValues(
-                    alpha: 0.88,
+                  activeTrackColor: colorScheme.secondary.withOpacity(
+                    0.88,
                   ),
                   inactiveTrackColor: Colors.transparent,
                   trackOutlineColor: WidgetStatePropertyAll(
                     savePreferencesOnExit
-                        ? colorScheme.secondary.withValues(
-                            alpha: 0.8,
+                        ? colorScheme.secondary.withOpacity(
+                            0.8,
                           )
-                        : colorScheme.primary.withValues(alpha: 0.48),
+                        : colorScheme.primary.withOpacity(0.48),
                   ),
                   trackOutlineWidth: const WidgetStatePropertyAll(1),
                   onChanged: (value) {
@@ -108,7 +108,7 @@ class ElectivePreferenceBottomSheetState
                 child: Text(
                   'We will store these, so that  next time you open Plan Sync, your classes are selected automatically!',
                   style: TextStyle(
-                    color: colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: colorScheme.onSurface.withOpacity(0.6),
                   ),
                 ),
               ),

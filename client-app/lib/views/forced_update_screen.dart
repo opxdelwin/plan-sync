@@ -39,7 +39,7 @@ class ForcedUpdateScreen extends StatelessWidget {
                   "spruce-up!",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: colorScheme.onSurface.withValues(alpha: 0.72),
+                    color: colorScheme.onSurface.withOpacity(0.72),
                   ),
                 )
               ],

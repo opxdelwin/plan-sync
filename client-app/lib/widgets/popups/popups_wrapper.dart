@@ -18,7 +18,7 @@ class PopupsWrapper {
         scheduleType: scheduleType,
       ),
       barrierDismissible: true,
-      barrierColor: colorScheme.onSurface.withValues(alpha: 0.32),
+      barrierColor: colorScheme.onSurface.withOpacity(0.32),
     );
   }
 
@@ -30,7 +30,7 @@ class PopupsWrapper {
       context: context,
       builder: (context) => const DeleteAccountPopup(),
       barrierDismissible: false,
-      barrierColor: colorScheme.onSurface.withValues(alpha: 0.32),
+      barrierColor: colorScheme.onSurface.withOpacity(0.32),
     );
   }
 

@@ -50,7 +50,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
               : colorScheme.onSurfaceVariant,
           unselectedItemColor: appTheme.isDarkMode
               ? colorScheme.onSurface
-              : colorScheme.onSurfaceVariant.withValues(alpha: 0.64),
+              : colorScheme.onSurfaceVariant.withOpacity(0.64),
           // //bubble color
           // strokeColor: colorScheme.secondary.withOpacity(0.32),
           items: <SalomonBottomBarItem>[

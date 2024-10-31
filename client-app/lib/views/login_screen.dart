@@ -164,7 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 BorderSide(color: colorScheme.onSurface),
                               ),
                               backgroundColor: WidgetStatePropertyAll(
-                                Colors.transparent.withValues(alpha: 0.04),
+                                Colors.transparent.withOpacity(0.04),
                               ),
                             ),
                             onPressed: () => loginProcedure(
@@ -237,7 +237,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withValues(alpha: 0.6),
+                            .withOpacity(0.6),
                       ),
                       textAlign: TextAlign.center,
                     ),

@@ -153,7 +153,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
 
     showAdaptiveDialog(
       context: context,
-      barrierColor: colorScheme.onSurface.withValues(alpha: 0.32),
+      barrierColor: colorScheme.onSurface.withOpacity(0.32),
       barrierDismissible: true,
       builder: (context) => dialog,
     );

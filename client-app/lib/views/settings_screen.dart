@@ -97,7 +97,7 @@ class SettingsPage extends StatelessWidget {
                 Text(
                   auth.activeUser!.email ?? "connect@plansync.in",
                   style: TextStyle(
-                    color: colorScheme.onSurface.withValues(alpha: 0.72),
+                    color: colorScheme.onSurface.withOpacity(0.72),
                   ),
                 ),
                 Row(
@@ -106,13 +106,13 @@ class SettingsPage extends StatelessWidget {
                     Text(
                       'Plan Sync v${versionController.clientVersion} | ',
                       style: TextStyle(
-                        color: colorScheme.onSurface.withValues(alpha: 0.72),
+                        color: colorScheme.onSurface.withOpacity(0.72),
                       ),
                     ),
                     Text(
                       'Copy UID',
                       style: TextStyle(
-                        color: colorScheme.onSurface.withValues(alpha: 0.72),
+                        color: colorScheme.onSurface.withOpacity(0.72),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -204,7 +204,7 @@ class SettingsPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Divider(
-                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.48),
+                    color: colorScheme.onSurfaceVariant.withOpacity(0.48),
                   ),
                 ),
                 ListTile(

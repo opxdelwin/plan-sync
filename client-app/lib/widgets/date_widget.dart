@@ -32,7 +32,7 @@ class DateWidget extends StatelessWidget {
             ),
             color: appTheme.isDarkMode
                 ? null
-                : Theme.of(context).colorScheme.primary.withValues(alpha: 0.32),
+                : Theme.of(context).colorScheme.primary.withOpacity(0.32),
           ),
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Row(

@@ -78,7 +78,7 @@ class BottomSheets {
       enableDrag: true,
       useRootNavigator: true,
       backgroundColor: colorScheme.surfaceContainerHighest,
-      barrierColor: colorScheme.onSurface.withValues(alpha: 0.16),
+      barrierColor: colorScheme.onSurface.withOpacity(0.16),
       builder: (context) => const ShareAppSheet(),
     );
   }
