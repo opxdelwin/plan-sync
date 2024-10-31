@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:plan_sync/util/logger.dart';
 import 'package:plan_sync/util/snackbar.dart';
@@ -23,7 +24,7 @@ class Auth extends ChangeNotifier {
     }
   }
 
-  Future<void> loginWithGoogle() async {
+  Future<void> loginWithGoogle(BuildContext context) async {
     Logger.i("login using google");
     // Trigger the authentication flow
     try {
@@ -42,6 +43,7 @@ class Auth extends ChangeNotifier {
         CustomSnackbar.error(
           "Authentication Error",
           "Login was cancelled by the user.",
+          context,
         );
 
         return;
@@ -62,6 +64,7 @@ class Auth extends ChangeNotifier {
       CustomSnackbar.error(
         "Authentication Error",
         "${error.code} : ${error.message}",
+        context,
       );
       logout();
       return;
@@ -69,6 +72,7 @@ class Auth extends ChangeNotifier {
       CustomSnackbar.error(
         "Authentication Error",
         "Team has been notified, try again later",
+        context,
       );
       FirebaseCrashlytics.instance.recordError(error, trace);
       logout();
@@ -76,7 +80,7 @@ class Auth extends ChangeNotifier {
     }
   }
 
-  Future<void> loginWithApple() async {
+  Future<void> loginWithApple(BuildContext context) async {
     final appleAuth = AppleAuthProvider();
     appleAuth.addScope('email');
     appleAuth.addScope('name');
@@ -90,6 +94,7 @@ class Auth extends ChangeNotifier {
         CustomSnackbar.error(
           "Authentication Error",
           "Procedure was cancelled by the user.",
+          context,
         );
       }
       return;
@@ -97,6 +102,7 @@ class Auth extends ChangeNotifier {
       CustomSnackbar.error(
         "Authentication Error",
         "Team has been notified, try again later",
+        context,
       );
       FirebaseCrashlytics.instance.recordError(error, trace);
       logout();
@@ -122,7 +128,7 @@ class Auth extends ChangeNotifier {
     return;
   }
 
-  Future<void> deleteCurrentUser() async {
+  Future<void> deleteCurrentUser(BuildContext context) async {
     final provider =
         Platform.isAndroid ? GoogleAuthProvider() : AppleAuthProvider();
 
@@ -138,6 +144,7 @@ class Auth extends ChangeNotifier {
         CustomSnackbar.error(
           "User Mismatch",
           "We we're unable to verify your account, contact us to continue deletion.",
+          context,
         );
         return;
       }
@@ -147,6 +154,7 @@ class Auth extends ChangeNotifier {
       CustomSnackbar.error(
         "Operation Failed",
         "We we're unable to verify your account, try again.",
+        context,
       );
       return;
     }
@@ -154,12 +162,14 @@ class Auth extends ChangeNotifier {
       CustomSnackbar.info(
         "Account Deleted",
         "We have sent delete request, it'll be done shortly!",
+        context,
       );
       return;
     }).onError((err, trace) async {
       CustomSnackbar.error(
         "Operation Failed",
         "We faced some error. Please try again later.",
+        context,
       );
 
       if (kReleaseMode) {

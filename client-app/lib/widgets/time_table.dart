@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:get/get.dart';
 import 'package:plan_sync/backend/models/timetable.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
@@ -152,9 +151,11 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
       ),
     );
 
-    Get.dialog(
-      dialog,
+    showAdaptiveDialog(
+      context: context,
       barrierColor: colorScheme.onSurface.withValues(alpha: 0.32),
+      barrierDismissible: true,
+      builder: (context) => dialog,
     );
   }
 

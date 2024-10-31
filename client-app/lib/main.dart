@@ -22,6 +22,7 @@ import 'package:plan_sync/views/login_screen.dart';
 import 'package:plan_sync/views/settings_screen.dart';
 import 'package:plan_sync/widgets/scaffold_with_nav_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:toastification/toastification.dart';
 import 'firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -34,6 +35,7 @@ class AppInitializer {
       Provider.of<AppTourController>(context, listen: false).onInit(context);
       Provider.of<FilterController>(context, listen: false).onInit(context);
       Provider.of<AppPreferencesController>(context, listen: false).onInit();
+      Provider.of<AppThemeController>(context, listen: false).onInit();
 
       // Then handle async operations
       Future.wait([
@@ -92,6 +94,7 @@ class AppProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => Auth()),
         ChangeNotifierProvider(create: (_) => RemoteConfigController()),
         ChangeNotifierProvider(create: (_) => VersionController()),
+        ChangeNotifierProvider(create: (_) => AppThemeController()),
       ],
       child: const MainApp(),
     );
@@ -129,36 +132,50 @@ class _MainAppState extends State<MainApp> {
       future: _initializationFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return MaterialApp(
-            theme: AppThemeController.lightTheme,
-            darkTheme: AppThemeController.darkTheme,
-            home: const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
+          return Selector<AppThemeController, ThemeMode>(
+            selector: (context, controller) => controller.themeMode,
+            builder: (context, mode, child) => MaterialApp(
+              theme: AppThemeController.lightTheme,
+              darkTheme: AppThemeController.darkTheme,
+              themeMode: mode,
+              home: const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
             ),
           );
         }
 
         if (snapshot.hasError) {
-          return MaterialApp(
-            theme: AppThemeController.lightTheme,
-            darkTheme: AppThemeController.darkTheme,
-            home: Scaffold(
-              body: Center(
-                child: Text('Error initializing app: ${snapshot.error}'),
+          return Selector<AppThemeController, ThemeMode>(
+            selector: (context, controller) => controller.themeMode,
+            builder: (context, mode, child) => MaterialApp(
+              theme: AppThemeController.lightTheme,
+              darkTheme: AppThemeController.darkTheme,
+              themeMode: mode,
+              home: Scaffold(
+                body: Center(
+                  child: Text('Error initializing app: ${snapshot.error}'),
+                ),
               ),
             ),
           );
         }
 
-        return MaterialApp.router(
-          debugShowCheckedModeBanner: kDebugMode ? true : false,
-          theme: AppThemeController.lightTheme,
-          darkTheme: AppThemeController.darkTheme,
-          routerDelegate: _router.routerDelegate,
-          routeInformationParser: _router.routeInformationParser,
-          routeInformationProvider: _router.routeInformationProvider,
+        return ToastificationWrapper(
+          child: Selector<AppThemeController, ThemeMode>(
+            builder: (context, mode, child) => MaterialApp.router(
+              debugShowCheckedModeBanner: kDebugMode ? true : false,
+              theme: AppThemeController.lightTheme,
+              darkTheme: AppThemeController.darkTheme,
+              themeMode: mode,
+              routerDelegate: _router.routerDelegate,
+              routeInformationParser: _router.routeInformationParser,
+              routeInformationProvider: _router.routeInformationProvider,
+            ),
+            selector: (context, controller) => controller.themeMode,
+          ),
         );
       },
     );

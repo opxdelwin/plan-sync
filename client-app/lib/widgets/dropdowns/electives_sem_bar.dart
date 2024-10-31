@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
@@ -68,7 +67,10 @@ class _ElectiveSemesterBarState extends State<ElectiveSemesterBar> {
                 onChanged: (String? newSelection) {
                   Logger.i("new elective semester: $newSelection");
                   filterController.activeElectiveSemester = newSelection;
-                  // serviceController.getElectiveSchemes();
+                  Provider.of<GitService>(
+                    context,
+                    listen: false,
+                  ).getElectiveSchemes(context: context);
                 },
               );
             });

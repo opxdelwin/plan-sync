@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plan_sync/controllers/app_tour_controller.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
@@ -33,12 +32,13 @@ class SchedulePreferenceBottomSheetState
     if (savePreferencesOnExit) {
       FilterController controller =
           Provider.of<FilterController>(context, listen: false);
-      controller.storePrimarySemester();
-      controller.storePrimarySection();
-      controller.storePrimaryYear();
+      controller.storePrimarySemester(context);
+      controller.storePrimarySection(context);
+      controller.storePrimaryYear(context);
       CustomSnackbar.info(
         'Primary Preferences Stored!',
         "Your timetable will be selected by default.",
+        context,
       );
     }
 
@@ -80,11 +80,15 @@ class SchedulePreferenceBottomSheetState
                 trailing: Switch.adaptive(
                   value: savePreferencesOnExit,
                   activeTrackColor: colorScheme.secondary.withValues(
-                    alpha: 0.72,
+                    alpha: 0.88,
                   ),
                   inactiveTrackColor: Colors.transparent,
                   trackOutlineColor: WidgetStatePropertyAll(
-                    colorScheme.secondary.withValues(alpha: 0.24),
+                    savePreferencesOnExit
+                        ? colorScheme.secondary.withValues(
+                            alpha: 0.8,
+                          )
+                        : colorScheme.primary.withValues(alpha: 0.48),
                   ),
                   trackOutlineWidth: const WidgetStatePropertyAll(1),
                   onChanged: (value) {

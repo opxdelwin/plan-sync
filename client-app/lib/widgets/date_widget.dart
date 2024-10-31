@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
+import 'package:plan_sync/controllers/theme_controller.dart';
 import 'package:plan_sync/util/enums.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +16,7 @@ class DateWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
     final colorScheme = Theme.of(context).colorScheme;
+    final appTheme = Provider.of<AppThemeController>(context, listen: false);
 
     return Consumer<FilterController>(
       builder: (ctx, filterController, child) {
@@ -23,13 +24,13 @@ class DateWidget extends StatelessWidget {
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              side: Get.isDarkMode
+              side: appTheme.isDarkMode
                   ? BorderSide(
                       color: Theme.of(context).colorScheme.primary,
                     )
                   : BorderSide.none,
             ),
-            color: Get.isDarkMode
+            color: appTheme.isDarkMode
                 ? null
                 : Theme.of(context).colorScheme.primary.withValues(alpha: 0.32),
           ),

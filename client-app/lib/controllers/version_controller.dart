@@ -57,7 +57,7 @@ class VersionController extends ChangeNotifier {
     );
 
     if (!kDebugMode) {
-      triggerPlayUpdate();
+      triggerPlayUpdate(context: context);
     }
     verifyMinimumVersion(context: context);
   }
@@ -73,8 +73,10 @@ class VersionController extends ChangeNotifier {
   /// returns true if an ios update is available,
   /// uses remote config.
   Future<bool> checkIosUpdate({required BuildContext context}) async {
-    final latestValue =
-        await Provider.of<RemoteConfigController>(context).latestIosVersion();
+    final latestValue = await Provider.of<RemoteConfigController>(
+      context,
+      listen: false,
+    ).latestIosVersion();
 
     if (latestValue == null) {
       // maybe due to internet connectivity
@@ -115,7 +117,9 @@ class VersionController extends ChangeNotifier {
     }
   }
 
-  Future<void> triggerPlayUpdate() async {
+  Future<void> triggerPlayUpdate({
+    required BuildContext context,
+  }) async {
     // not supported in ios, will use remote config to
     // track versions
     if (Platform.isIOS) {
@@ -137,7 +141,7 @@ class VersionController extends ChangeNotifier {
       if (appUpdateResult == AppUpdateResult.success) {
         await InAppUpdate.completeFlexibleUpdate().onError((err, trace) {
           FirebaseCrashlytics.instance.recordError(err, trace);
-          PopupsWrapper.showInAppUpateFailedPopup();
+          PopupsWrapper.showInAppUpateFailedPopup(context: context);
           return;
         });
         Logger.i('flex update package installed');

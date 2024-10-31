@@ -83,6 +83,7 @@ class ReportErrorBottomSheet extends StatelessWidget {
                     CustomSnackbar.error(
                       'GitHub reporting is disabled.',
                       'Please use email reporting for the time being.',
+                      context,
                     );
                   },
                   child: Row(

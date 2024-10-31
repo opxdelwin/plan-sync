@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/logger.dart';
 import 'package:provider/provider.dart';
@@ -57,6 +56,10 @@ class _ElectiveYearBarState extends State<ElectiveYearBar> {
                 }
                 Logger.i(newSelection);
                 serviceController.selectedElectiveYear = newSelection;
+                Provider.of<GitService>(
+                  context,
+                  listen: false,
+                ).getElectiveSemesters(context);
               },
             ),
           ),

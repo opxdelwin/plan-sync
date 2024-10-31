@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:plan_sync/controllers/analytics_controller.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
@@ -26,7 +25,11 @@ class SettingsPage extends StatelessWidget {
     final uid = auth.activeUser?.uid;
 
     if (uid == null) {
-      CustomSnackbar.error('Error', 'No UID found. Please Login again.');
+      CustomSnackbar.error(
+        'Error',
+        'No UID found. Please Login again.',
+        context,
+      );
       return;
     }
 
@@ -34,6 +37,7 @@ class SettingsPage extends StatelessWidget {
     CustomSnackbar.info(
       'Copied',
       'Your UID has been copied into the clipboard.',
+      context,
     );
     return;
   }
@@ -190,7 +194,11 @@ class SettingsPage extends StatelessWidget {
                     BottomSheets.shareAppBottomSheet(
                       context: context,
                     );
-                    Get.find<AnalyticsController>().logShareSheetOpen();
+
+                    Provider.of<AnalyticsController>(
+                      context,
+                      listen: false,
+                    ).logShareSheetOpen();
                   },
                 ),
                 Padding(

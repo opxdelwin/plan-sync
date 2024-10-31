@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
 import 'package:provider/provider.dart';
@@ -15,18 +14,9 @@ class ElectivePreferenceButton extends StatefulWidget {
 }
 
 class _ElectivePreferenceButtonState extends State<ElectivePreferenceButton> {
-  late FilterController filterController;
-  String? electiveSemesterShortCode;
-
   @override
   void initState() {
     super.initState();
-    filterController = Provider.of<FilterController>(context, listen: false);
-    filterController.getShortCode().then(
-          (code) => setState(() {
-            electiveSemesterShortCode = code;
-          }),
-        );
   }
 
   @override
@@ -41,18 +31,15 @@ class _ElectivePreferenceButtonState extends State<ElectivePreferenceButton> {
       ),
       child: Row(
         children: [
-          Consumer<FilterController>(
-            builder: (ctx, filterController, child) {
-              filterController.getElectiveShortCode().then(
-                    (code) => setState(() {
-                      electiveSemesterShortCode = code;
-                    }),
-                  );
+          Selector<FilterController, String?>(
+            builder: (ctx, electiveSemesterShortCode, child) {
               return Text(
                 electiveSemesterShortCode ?? 'Processing',
                 style: TextStyle(color: colorScheme.surface),
               );
             },
+            selector: (context, controller) =>
+                controller.getElectiveShortCode(),
           ),
           const SizedBox(width: 8),
           Icon(

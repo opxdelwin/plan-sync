@@ -53,7 +53,7 @@ class FilterController extends ChangeNotifier {
     _activeElectiveSemester = newValue;
     _activeElectiveScheme = null;
     _activeElectiveSchemeCode = null;
-    service.getElectiveSchemes(this);
+    service.getElectiveSchemes(filterController: this);
     notifyListeners();
   }
 
@@ -90,7 +90,7 @@ class FilterController extends ChangeNotifier {
   }
 
   /// Returns a short code for selected noraml schedule configuration
-  Future<String> getShortCode() async {
+  String getShortCode() {
     String? section = activeSectionCode;
     String? semester = activeSemester;
 
@@ -106,7 +106,7 @@ class FilterController extends ChangeNotifier {
   }
 
   /// Returns a short code for selected elective configuration
-  Future<String> getElectiveShortCode() async {
+  String getElectiveShortCode() {
     String? section = activeElectiveSchemeCode;
     String? semester = activeElectiveSemester;
 
@@ -125,13 +125,11 @@ class FilterController extends ChangeNotifier {
   String? get primarySection => preferences.getPrimarySectionPreference();
 
   /// saves the section code into shared-preferences
-  Future<void> storePrimarySection() async {
+  Future<void> storePrimarySection(BuildContext context) async {
     if (activeSectionCode == null) {
       Logger.i("select a section to set as primary.");
-      CustomSnackbar.error(
-        'Not Selected',
-        'Please select a section to be saved as default',
-      );
+      CustomSnackbar.error('Not Selected',
+          'Please select a section to be saved as default', context);
       return;
     }
 
@@ -143,6 +141,7 @@ class FilterController extends ChangeNotifier {
       CustomSnackbar.error(
         'Error',
         'Primary Section wasn\'t saved. Try again',
+        context,
       );
       return;
     }
@@ -168,11 +167,12 @@ class FilterController extends ChangeNotifier {
   String? get primarySemester => preferences.getPrimarySemesterPreference();
 
   /// saves the semester code into shared-preferences
-  Future<void> storePrimarySemester() async {
+  Future<void> storePrimarySemester(BuildContext context) async {
     if (activeSemester == null) {
       CustomSnackbar.error(
         'Not Selected',
         'Please select a semester to be saved as default',
+        context,
       );
       Logger.i("select a semester to be set as primary.");
       return;
@@ -185,6 +185,7 @@ class FilterController extends ChangeNotifier {
       CustomSnackbar.error(
         'Error',
         'Primary Semester wasn\'t saved. Try again',
+        context,
       );
       return;
     }
@@ -209,11 +210,12 @@ class FilterController extends ChangeNotifier {
   String? get primaryYear => preferences.getPrimaryYearPreference();
 
   /// saves the year into shared-preferences
-  Future<void> storePrimaryYear() async {
+  Future<void> storePrimaryYear(BuildContext context) async {
     if (service.selectedYear == null) {
       CustomSnackbar.error(
         'Not Selected',
         'Please select a year to be saved as default',
+        context,
       );
       Logger.i("select a year to be set as primary.");
       return;
@@ -227,6 +229,7 @@ class FilterController extends ChangeNotifier {
       CustomSnackbar.error(
         'Error',
         'Primary Year wasn\'t saved. Try again',
+        context,
       );
       return;
     }
@@ -250,12 +253,13 @@ class FilterController extends ChangeNotifier {
       preferences.getPrimaryElectiveSchemePreference();
 
   /// saves the section code into shared-preferences
-  Future<void> storePrimaryElectiveScheme() async {
+  Future<void> storePrimaryElectiveScheme(BuildContext context) async {
     if (activeElectiveSchemeCode == null) {
       Logger.i("select a section to set as primary.");
       CustomSnackbar.error(
         'Not Selected',
         'Please select a section to be saved as default',
+        context,
       );
       return Future.error('error');
     }
@@ -268,6 +272,7 @@ class FilterController extends ChangeNotifier {
       CustomSnackbar.error(
         'Error',
         'Primary Section wasn\'t saved. Try again',
+        context,
       );
       return;
     }
@@ -293,11 +298,12 @@ class FilterController extends ChangeNotifier {
       preferences.getPrimaryElectiveSemesterPreference();
 
   /// saves the semester code into shared-preferences
-  Future<void> storePrimaryElectiveSemester() async {
+  Future<void> storePrimaryElectiveSemester(BuildContext context) async {
     if (activeElectiveSemester == null) {
       CustomSnackbar.error(
         'Not Selected',
         'Please select a semester to be saved as default',
+        context,
       );
       Logger.i("select a semester to be set as primary.");
       return Future.error('error');
@@ -310,6 +316,7 @@ class FilterController extends ChangeNotifier {
       CustomSnackbar.error(
         'Error',
         'Primary Semester wasn\'t saved. Try again',
+        context,
       );
       return;
     }
@@ -333,11 +340,12 @@ class FilterController extends ChangeNotifier {
       preferences.getPrimaryElectiveYearPreference();
 
   /// saves the elective year into shared-preferences
-  Future<void> storePrimaryElectiveYear() async {
+  Future<void> storePrimaryElectiveYear(BuildContext context) async {
     if (service.selectedElectiveYear == null) {
       CustomSnackbar.error(
         'Not Selected',
         'Please select a year to be saved as default',
+        context,
       );
       Logger.i("select a year to be set as primary.");
       return Future.error('error');
@@ -351,6 +359,7 @@ class FilterController extends ChangeNotifier {
       CustomSnackbar.error(
         'Error',
         'Primary Year wasn\'t saved. Try again',
+        context,
       );
       return;
     }

@@ -17,18 +17,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late FilterController filterController;
   late AppTourController appTourController;
-  String? sectionSemesterShortCode;
 
   @override
   void initState() {
     super.initState();
     filterController = Provider.of<FilterController>(context, listen: false);
     appTourController = Provider.of<AppTourController>(context, listen: false);
-    filterController.getShortCode().then(
-          (code) => setState(() {
-            sectionSemesterShortCode = code;
-          }),
-        );
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(milliseconds: 500), () {
         // ignore: use_build_context_synchronously

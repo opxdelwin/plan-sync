@@ -29,7 +29,6 @@ class GitService extends ChangeNotifier {
     _selectedYear = newYear;
     filterController.activeSemester = null;
     notifyListeners();
-    getSemesters();
   }
 
   // elective year
@@ -44,7 +43,7 @@ class GitService extends ChangeNotifier {
     _selectedElectiveYear = newYear;
     filterController.activeElectiveSemester = null;
     notifyListeners();
-    getElectiveSemesters();
+
     // getElectiveSchemes();
   }
 
@@ -90,10 +89,10 @@ class GitService extends ChangeNotifier {
   Future<void> onReady(BuildContext ctx) async {
     // onReady
     filterController = Provider.of<FilterController>(ctx, listen: false);
-    await getYears();
-    await getSemesters();
-    await getElectiveSemesters();
-    await getElectiveYears();
+    await getYears(ctx);
+    await getSemesters(ctx);
+    await getElectiveSemesters(ctx);
+    await getElectiveYears(ctx);
     notifyListeners();
   }
 
@@ -143,7 +142,7 @@ class GitService extends ChangeNotifier {
   }
 
   ///
-  Future<void> getYears() async {
+  Future<void> getYears(BuildContext context) async {
     try {
       if (!isWorking) {
         isWorking = true;
@@ -175,7 +174,11 @@ class GitService extends ChangeNotifier {
 
       // stop execution if there are no semesters for selected year
       if (years!.isEmpty) {
-        CustomSnackbar.error('Error', 'No Years found, contact support.');
+        CustomSnackbar.error(
+          'Error',
+          'No Years found, contact support.',
+          context,
+        );
         return;
       }
       Logger.i("Fetched years: $years");
@@ -223,7 +226,7 @@ class GitService extends ChangeNotifier {
   /// Gets all the available semesters for a selected year.
   /// While startup, year is same as current year, if available on remote server.
   /// May be changed later.
-  Future<void> getSemesters() async {
+  Future<void> getSemesters(BuildContext context) async {
     try {
       if (selectedYear == null) {
         return;
@@ -268,6 +271,7 @@ class GitService extends ChangeNotifier {
         CustomSnackbar.error(
           'Error',
           'No Semesters found for year: $selectedYear',
+          context,
         );
         return;
       }
@@ -485,7 +489,7 @@ class GitService extends ChangeNotifier {
   }
 
   ///
-  Future<void> getElectiveYears() async {
+  Future<void> getElectiveYears(BuildContext context) async {
     try {
       electivesSemesters = null;
       electivesSemesters = null;
@@ -506,7 +510,8 @@ class GitService extends ChangeNotifier {
         electiveYears = List.from(jsonDecode(cachedResponse.data).keys);
         Logger.i("Cached elective years: $electiveYears");
         await filterController.setPrimaryElectiveYear();
-        getElectiveSemesters();
+
+        getElectiveSemesters(context);
       }
 
       final response = await dio.get(url);
@@ -527,12 +532,17 @@ class GitService extends ChangeNotifier {
 
       // stop execution if there are no semesters for selected year
       if (electiveYears!.isEmpty) {
-        CustomSnackbar.error('Error', 'No Years found, contact support.');
+        CustomSnackbar.error(
+          'Error',
+          'No Years found, contact support.',
+          context,
+        );
         return;
       }
       Logger.i("Fetched elective years: $electiveYears");
       await filterController.setPrimaryElectiveYear();
-      getElectiveSemesters();
+
+      getElectiveSemesters(context);
       if (isWorking) {
         isWorking = false;
         notifyListeners();
@@ -563,7 +573,7 @@ class GitService extends ChangeNotifier {
   }
 
   /// Gets available semesters for elective.
-  Future<void> getElectiveSemesters() async {
+  Future<void> getElectiveSemesters(BuildContext context) async {
     try {
       if (selectedElectiveYear == null) {
         return;
@@ -613,6 +623,7 @@ class GitService extends ChangeNotifier {
         CustomSnackbar.error(
           "Error",
           "No semesters are available for the selected year.",
+          context,
         );
       }
 
@@ -648,18 +659,28 @@ class GitService extends ChangeNotifier {
   }
 
   /// Gets available schemes (usually A or B) for elective.
-  Future<void> getElectiveSchemes(FilterController filterController) async {
+  Future<void> getElectiveSchemes({
+    BuildContext? context,
+    FilterController? filterController,
+  }) async {
+    assert(context != null || filterController != null);
+    final controller = filterController ??
+        Provider.of<FilterController>(
+          context!,
+          listen: false,
+        );
+
     try {
       if (!isWorking) {
         isWorking = true;
         notifyListeners();
       }
 
-      if (filterController.activeElectiveSemester == null) {
+      if (controller.activeElectiveSemester == null) {
         return;
       }
 
-      String activeSemester = filterController.activeElectiveSemester!;
+      String activeSemester = controller.activeElectiveSemester!;
       final url =
           "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/electives.json";
 
@@ -674,7 +695,7 @@ class GitService extends ChangeNotifier {
               [activeSemester],
         );
         Logger.i("cached elective schemes: $electiveSchemes");
-        await filterController.setPrimaryElectiveScheme();
+        await controller.setPrimaryElectiveScheme();
         notifyListeners();
       }
 
@@ -695,7 +716,7 @@ class GitService extends ChangeNotifier {
 
       if (data["$selectedElectiveYear"][activeSemester] == null) {
         electiveSchemes = null;
-        filterController.activeElectiveScheme = null;
+        controller.activeElectiveScheme = null;
         return;
       }
 
@@ -704,10 +725,11 @@ class GitService extends ChangeNotifier {
       );
 
       // if no schemes are available, show snackbar
-      if (electiveSchemes == null) {
+      if (electiveSchemes == null && context != null) {
         CustomSnackbar.error(
           "Error",
           "No schemes available for the selected semester.",
+          context,
         );
         return;
       }
@@ -717,7 +739,7 @@ class GitService extends ChangeNotifier {
         isWorking = false;
         notifyListeners();
       }
-      await filterController.setPrimaryElectiveScheme();
+      await controller.setPrimaryElectiveScheme();
       notifyListeners();
     } on DioException catch (e) {
       errorDetails = {

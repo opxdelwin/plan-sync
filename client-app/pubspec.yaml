@@ -39,6 +39,7 @@ dependencies:
   salomon_bottom_bar: ^3.3.2
   font_awesome_flutter: ^10.5.0
   get: ^4.6.5
+  toastification: ^2.3.0
   provider: ^6.1.2
   firebase_core: ^2.15.1
   firebase_auth: ^4.9.0

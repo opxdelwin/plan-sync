@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:plan_sync/controllers/theme_controller.dart';
 import 'package:plan_sync/util/enums.dart';
 import 'package:plan_sync/util/external_links.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -33,12 +33,12 @@ class _LoginScreenState extends State<LoginScreen> {
     switch (provider) {
       case LoginProvider.google:
         {
-          await auth.loginWithGoogle();
+          await auth.loginWithGoogle(context);
           break;
         }
       case LoginProvider.apple:
         {
-          await auth.loginWithApple();
+          await auth.loginWithApple(context);
           break;
         }
     }
@@ -53,6 +53,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
+    final appTheme = Provider.of<AppThemeController>(context, listen: false);
+
     return Scaffold(
         backgroundColor: colorScheme.surface,
         body: Center(
@@ -60,9 +62,9 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               //background doodle
               Opacity(
-                opacity: Get.isDarkMode ? 1.0 : 0.24,
+                opacity: appTheme.isDarkMode ? 1.0 : 0.24,
                 child: SvgPicture.asset(
-                  Get.isDarkMode
+                  appTheme.isDarkMode
                       ? 'assets/login/background-dark.svg'
                       : 'assets/login/background-light.svg',
                   fit: BoxFit.cover,
@@ -215,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: SizedBox(
                           height: 48,
                           child: Image.asset(
-                            Get.isDarkMode
+                            appTheme.isDarkMode
                                 ? 'assets/logo-no-background-dark.png'
                                 : 'assets/logo-no-background-light.png',
                             semanticLabel: 'Cardlink',

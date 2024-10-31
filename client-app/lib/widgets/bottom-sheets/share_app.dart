@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
-import 'package:plan_sync/controllers/analytics_controller.dart';
+import 'package:plan_sync/controllers/theme_controller.dart';
 import 'package:plan_sync/util/external_links.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class ShareAppSheet extends StatelessWidget {
@@ -12,6 +12,8 @@ class ShareAppSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final colorScheme = Theme.of(context).colorScheme;
+    final appTheme = Provider.of<AppThemeController>(context, listen: false);
+
     return Padding(
       padding: EdgeInsets.only(
         left: size.width * 0.04,
@@ -36,13 +38,13 @@ class ShareAppSheet extends StatelessWidget {
             size: size.width * 0.48,
             dataModuleStyle: QrDataModuleStyle(
               color: colorScheme.onSurface.withValues(
-                alpha: Get.isDarkMode ? 0.92 : 1,
+                alpha: appTheme.isDarkMode ? 0.92 : 1,
               ),
               dataModuleShape: QrDataModuleShape.square,
             ),
             eyeStyle: QrEyeStyle(
               color: colorScheme.onSurface.withValues(
-                alpha: Get.isDarkMode ? 0.92 : 1,
+                alpha: appTheme.isDarkMode ? 0.92 : 1,
               ),
               eyeShape: QrEyeShape.square,
             ),
@@ -65,7 +67,6 @@ class ShareAppSheet extends StatelessWidget {
             title: const Text("Share via other apps"),
             trailing: const Icon(Icons.keyboard_arrow_right_rounded),
             onTap: () {
-              Get.find<AnalyticsController>().logShareViaExternalApps();
               ExternalLinks.shareApp();
             },
           ),
