@@ -19,6 +19,9 @@ class AppTourController extends ChangeNotifier {
   late GlobalKey _savePreferenceSwitchKey;
   GlobalKey get savePreferenceSwitchKey => _savePreferenceSwitchKey;
 
+  late GlobalKey _doneButtonKey;
+  GlobalKey get doneButtonKey => _doneButtonKey;
+
   void onInit(BuildContext context) {
     appPreferencesController = Provider.of<AppPreferencesController>(
       context,
@@ -27,6 +30,7 @@ class AppTourController extends ChangeNotifier {
 
     _schedulePreferencesButtonKey = GlobalKey();
     _sectionBarKey = GlobalKey();
+    _doneButtonKey = GlobalKey();
     _savePreferenceSwitchKey = GlobalKey();
   }
 
@@ -70,7 +74,9 @@ class AppTourController extends ChangeNotifier {
   }
 
   Future<void> onClickHandler(
-      TargetFocus target, TapDownDetails tapDownDetails) async {
+    TargetFocus target,
+    TapDownDetails tapDownDetails,
+  ) async {
     if (target.identify == schedulePreferencesButtonKey.hashCode) {
       Logger.i('key match with schedule button');
 
@@ -79,6 +85,21 @@ class AppTourController extends ChangeNotifier {
         context: schedulePreferencesButtonKey.currentContext!,
       );
     }
+
+    // need to scroll when previous target was clicked on.
+    if (target.identify == sectionBarKey.hashCode) {
+      if (doneButtonKey.currentContext == null) {
+        Logger.w('Done Button GK context is null.');
+        return;
+      }
+      await Future.delayed(const Duration(milliseconds: 250));
+      await Scrollable.ensureVisible(
+        doneButtonKey.currentContext!,
+        alignment: 1, // 1 being bottom should be visible, I believe
+        duration: const Duration(milliseconds: 250),
+      );
+    }
+
     return;
   }
 
@@ -109,6 +130,12 @@ class AppTourController extends ChangeNotifier {
       ),
     );
 
+    targets.add(
+      AppTargetFocus.doneButton(
+        colorScheme: colorScheme,
+        buttonKey: doneButtonKey,
+      ),
+    );
     return targets;
   }
 

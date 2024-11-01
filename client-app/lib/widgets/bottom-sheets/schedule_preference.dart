@@ -188,6 +188,7 @@ class SchedulePreferenceBottomSheetState
 
               // save and exit button
               ElevatedButton(
+                key: appTourController.doneButtonKey,
                 style: ButtonStyle(
                   backgroundColor:
                       WidgetStatePropertyAll(colorScheme.secondary),
