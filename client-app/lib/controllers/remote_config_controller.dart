@@ -37,7 +37,7 @@ class RemoteConfigController extends ChangeNotifier {
 
   /// fetches all configs from firebase, and makes models only
   /// for notices shown in-app
-  Future<List<HudNoticeModel>> getNotices() async {
+  List<HudNoticeModel> getNotices() {
     final val = remoteConfig.getString('hud_notice');
 
     // data comes as a string
@@ -57,7 +57,7 @@ class RemoteConfigController extends ChangeNotifier {
   }
 
   /// get latest ios version from remoteConfig
-  Future<String?> latestIosVersion() async {
+  String? latestIosVersion() {
     final value = remoteConfig.getString('latest_ios_version');
     return value == '' ? null : value;
   }
