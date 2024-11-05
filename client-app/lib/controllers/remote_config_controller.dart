@@ -18,6 +18,9 @@ class RemoteConfigController extends ChangeNotifier {
     await remoteConfig.setDefaults({
       'hud_notice': '[]',
       'latest_ios_version': '',
+      // TODO: Remove this temporary easter egg
+      // ( The Sigma Male Loading Indicator )
+      'can_show_sigma_status_indicator': false,
     });
 
     // Probable solution for an internal error by remote_config
@@ -57,5 +60,11 @@ class RemoteConfigController extends ChangeNotifier {
   Future<String?> latestIosVersion() async {
     final value = remoteConfig.getString('latest_ios_version');
     return value == '' ? null : value;
+  }
+
+  // TODO: Remove this temporary easter egg
+  // ( The Sigma Male Loading Indicator )
+  bool canShowSigmaEmoji() {
+    return remoteConfig.getBool('can_show_sigma_status_indicator');
   }
 }
