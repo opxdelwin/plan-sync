@@ -73,7 +73,7 @@ class VersionController extends ChangeNotifier {
   /// returns true if an ios update is available,
   /// uses remote config.
   Future<bool> checkIosUpdate({required BuildContext context}) async {
-    final latestValue = await Provider.of<RemoteConfigController>(
+    final latestValue = Provider.of<RemoteConfigController>(
       context,
       listen: false,
     ).latestIosVersion();
