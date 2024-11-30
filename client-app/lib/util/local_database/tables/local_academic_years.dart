@@ -35,7 +35,6 @@ class LocalAcademicYears {
 
   static Future<void> clearAll(Database db) async {
     Logger.w('Clearing sqflite academic_years table!');
-    await createTable(db);
     await db.rawDelete('delete from academic_years;');
     return;
   }

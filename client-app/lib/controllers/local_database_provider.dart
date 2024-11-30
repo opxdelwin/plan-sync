@@ -2,7 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:plan_sync/backend/models/supabase_models/academic_years.dart';
 import 'package:plan_sync/controllers/auth.dart';
-import 'package:plan_sync/util/local_database/local_academic_years.dart';
+import 'package:plan_sync/util/local_database/db_wrapper.dart';
+import 'package:plan_sync/util/local_database/tables/local_academic_years.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -27,9 +28,9 @@ class LocalDatabaseProvider extends ChangeNotifier {
       return;
     }
 
-    localDb = await openDatabase('qwjbe.db');
+    localDb = await openDatabase('plansync-local-db.db');
+    await LocalDatabaseWrapper.createAllTables(localDb!);
     notifyListeners();
-    // localDb = await openDatabase('${auth.activeUser!.uid}.db');
   }
 
   void close() async {
@@ -44,7 +45,6 @@ class LocalDatabaseProvider extends ChangeNotifier {
       return [];
     }
 
-    await LocalAcademicYears.createTable(localDb!);
     return await LocalAcademicYears.queryAll(localDb!);
   }
 
