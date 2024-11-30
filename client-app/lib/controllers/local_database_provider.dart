@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:plan_sync/backend/models/supabase_models/academic_years.dart';
+import 'package:plan_sync/backend/supabase_models/academic_years.dart';
 import 'package:plan_sync/controllers/auth.dart';
 import 'package:plan_sync/util/local_database/db_wrapper.dart';
 import 'package:plan_sync/util/local_database/tables/local_academic_years.dart';

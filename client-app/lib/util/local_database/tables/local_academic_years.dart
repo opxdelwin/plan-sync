@@ -1,4 +1,4 @@
-import 'package:plan_sync/backend/models/supabase_models/academic_years.dart';
+import 'package:plan_sync/backend/supabase_models/academic_years.dart';
 import 'package:plan_sync/util/logger.dart';
 import 'package:sqflite/sqflite.dart';
 
