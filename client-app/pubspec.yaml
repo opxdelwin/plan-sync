@@ -75,6 +75,8 @@ dependencies:
   smooth_page_indicator: ^1.2.0+3
   qr_flutter: ^4.1.0
   internet_connection_checker_plus: ^2.5.1
+  sqflite: ^2.4.1
+  supabase_flutter: ^2.8.1
 
 icons_launcher:
   image_path: "assets/favicon.png"

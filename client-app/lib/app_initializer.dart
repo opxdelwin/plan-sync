@@ -8,6 +8,8 @@ import 'package:plan_sync/controllers/auth.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/controllers/remote_config_controller.dart';
+import 'package:plan_sync/controllers/local_database_provider.dart';
+import 'package:plan_sync/controllers/supabase_provider.dart';
 import 'package:plan_sync/controllers/theme_controller.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +22,11 @@ class AppInitializer {
       await Provider.of<GitService>(context, listen: false).onInit();
       Provider.of<AppTourController>(context, listen: false).onInit(context);
       Provider.of<FilterController>(context, listen: false).onInit(context);
+      Provider.of<SupabaseProvider>(context, listen: false).onInit();
       Provider.of<AppPreferencesController>(context, listen: false).onInit();
       Provider.of<AppThemeController>(context, listen: false).onInit();
+      await Provider.of<LocalDatabaseProvider>(context, listen: false)
+          .setupDatabase(context);
 
       // Then handle async operations
       Future.wait([

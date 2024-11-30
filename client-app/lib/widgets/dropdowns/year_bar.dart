@@ -47,7 +47,7 @@ class _YearBarState extends State<YearBar> {
                       menuMaxHeight: 376,
                       items: serviceController.years
                           ?.map((year) => buildMenuItem(
-                                year,
+                                year.year,
                                 colorScheme.surface,
                               ))
                           .toList(),

@@ -12,7 +12,9 @@ import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/controllers/auth.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/controllers/local_database_provider.dart';
 import 'package:plan_sync/controllers/remote_config_controller.dart';
+import 'package:plan_sync/controllers/supabase_provider.dart';
 import 'package:plan_sync/controllers/theme_controller.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
 import 'package:plan_sync/router_refresh_stream.dart';
@@ -23,6 +25,7 @@ import 'package:plan_sync/views/login_screen.dart';
 import 'package:plan_sync/views/settings_screen.dart';
 import 'package:plan_sync/widgets/scaffold_with_nav_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:toastification/toastification.dart';
 import 'firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -33,6 +36,11 @@ Future<void> main() async {
 
   await dotenv.load(fileName: 'env/.prod.env');
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await Supabase.initialize(
+    url: dotenv.get('SUPABASE_URL'),
+    anonKey: dotenv.get('SUPABASE_ANON_KEY'),
+  );
 
   if (kReleaseMode) {
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
@@ -60,6 +68,8 @@ class AppProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AppPreferencesController()),
         ChangeNotifierProvider(create: (_) => AppTourController()),
         ChangeNotifierProvider(create: (_) => Auth()),
+        ChangeNotifierProvider(create: (_) => SupabaseProvider()),
+        ChangeNotifierProvider(create: (_) => LocalDatabaseProvider()),
         ChangeNotifierProvider(create: (_) => RemoteConfigController()),
         ChangeNotifierProvider(create: (_) => VersionController()),
         ChangeNotifierProvider(create: (_) => AppThemeController()),

@@ -2,8 +2,12 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:plan_sync/backend/models/supabase_models/academic_years.dart';
 import 'package:plan_sync/backend/models/timetable.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
+import 'package:plan_sync/controllers/local_database_provider.dart';
+import 'package:plan_sync/controllers/supabase_provider.dart';
+import 'package:plan_sync/util/hashing.dart';
 import 'package:plan_sync/util/logger.dart';
 import 'package:plan_sync/util/snackbar.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
@@ -19,7 +23,7 @@ class GitService extends ChangeNotifier {
   late final Dio dio;
 
   // normal schedule years
-  List<String>? years;
+  List<AcademicYear>? years;
   String? _selectedYear;
   String? get selectedYear => _selectedYear;
   set selectedYear(String? newYear) {
@@ -148,29 +152,28 @@ class GitService extends ChangeNotifier {
         isWorking = true;
         notifyListeners();
       }
-      final url =
-          "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/sections.json";
 
-      final options = RequestOptions(path: url);
-      final key = CacheOptions.defaultCacheKeyBuilder(options);
+      final localDatabase =
+          Provider.of<LocalDatabaseProvider>(context, listen: false);
+      final supabaseProvider =
+          Provider.of<SupabaseProvider>(context, listen: false);
 
-      final cacheData = await cacheOptions.store?.get(key);
-      if (cacheData != null) {
-        final cacheResponse = cacheData.toResponse(options);
-        final cachedYears = jsonDecode(cacheResponse.data).keys;
-        Logger.i("Cached Years: $cachedYears");
-        years = List.from(cachedYears);
+      final cacheData = await localDatabase.getYearsFromLocal();
+      if (cacheData.isNotEmpty) {
+        Logger.i("Cached Years: $cacheData");
+        years = List.from(cacheData);
         setYear();
       }
 
-      final response = await dio.get(url);
-      // stop if the etags match for both cached and newly fetched
-      if (response.headers.map['etag']?.first == cacheData?.eTag) {
+      final response = await supabaseProvider.getYearsFromRemote();
+
+      // stop if the hash matches for both cached and newly fetched
+      if (genSortedHash(cacheData) == genSortedHash(response)) {
+        Logger.w('Normal Schedulw Year is cached.');
         return;
       }
-      final data = jsonDecode(response.data) as Map<String, dynamic>;
 
-      years = List.from(data.keys);
+      years = response;
 
       // stop execution if there are no semesters for selected year
       if (years!.isEmpty) {
@@ -183,6 +186,9 @@ class GitService extends ChangeNotifier {
       }
       Logger.i("Fetched years: $years");
       setYear();
+
+      // save data to sqflite
+      localDatabase.insertYearsToLocal(response);
 
       if (isWorking) {
         isWorking = false;

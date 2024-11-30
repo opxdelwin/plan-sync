@@ -244,7 +244,8 @@ class FilterController extends ChangeNotifier {
     final String? primaryYear = preferences.getPrimaryYearPreference();
     Logger.i("primary year: $primaryYear");
 
-    if (service.years?.contains(primaryYear) != false && primaryYear != null) {
+    if (service.years?.any((item) => item.year == primaryYear) != false &&
+        primaryYear != null) {
       service.selectedYear = primaryYear;
     }
   }
