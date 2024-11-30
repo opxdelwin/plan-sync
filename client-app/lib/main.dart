@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:plan_sync/app_initializer.dart';
 import 'package:plan_sync/controllers/analytics_controller.dart';
 import 'package:plan_sync/controllers/app_tour_controller.dart';
 import 'package:plan_sync/controllers/app_preferences_controller.dart';
@@ -25,39 +26,6 @@ import 'package:provider/provider.dart';
 import 'package:toastification/toastification.dart';
 import 'firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-class AppInitializer {
-  static Future<void> initializeApp(BuildContext context) async {
-    try {
-      // First initialize sync operations
-      Provider.of<Auth>(context, listen: false).onInit();
-      await Provider.of<GitService>(context, listen: false).onInit();
-      Provider.of<AppTourController>(context, listen: false).onInit(context);
-      Provider.of<FilterController>(context, listen: false).onInit(context);
-      Provider.of<AppPreferencesController>(context, listen: false).onInit();
-      Provider.of<AppThemeController>(context, listen: false).onInit();
-
-      // Then handle async operations
-      Future.wait([
-        Provider.of<VersionController>(context, listen: false).onReady(context),
-        Provider.of<GitService>(context, listen: false).onReady(context),
-        Provider.of<RemoteConfigController>(context, listen: false).onReady(),
-      ]);
-
-      // Handle operations that depend on other initializations
-      final auth = Provider.of<Auth>(context, listen: false);
-      final analytics =
-          Provider.of<AnalyticsController>(context, listen: false);
-      await analytics.onReady(context);
-      auth.addUserStatusListener(() => analytics.setUserData());
-    } catch (e, stackTrace) {
-      if (kReleaseMode) {
-        FirebaseCrashlytics.instance.recordError(e, stackTrace);
-      }
-      rethrow;
-    }
-  }
-}
 
 Future<void> main() async {
   final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
