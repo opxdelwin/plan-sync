@@ -1,18 +1,14 @@
 import 'dart:convert';
-
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:plan_sync/backend/models/remote_config/hud_notices_model.dart';
 import 'package:plan_sync/util/logger.dart';
 
-class RemoteConfigController extends GetxController {
+class RemoteConfigController extends ChangeNotifier {
   final remoteConfig = FirebaseRemoteConfig.instance;
 
-  @override
   Future<void> onReady() async {
-    super.onReady();
     await remoteConfig.setConfigSettings(
       RemoteConfigSettings(
         fetchTimeout: const Duration(seconds: 30),
@@ -22,6 +18,9 @@ class RemoteConfigController extends GetxController {
     await remoteConfig.setDefaults({
       'hud_notice': '[]',
       'latest_ios_version': '',
+      // TODO: Remove this temporary easter egg
+      // ( The Sigma Male Loading Indicator )
+      'can_show_sigma_status_indicator': false,
     });
 
     // Probable solution for an internal error by remote_config
@@ -38,7 +37,7 @@ class RemoteConfigController extends GetxController {
 
   /// fetches all configs from firebase, and makes models only
   /// for notices shown in-app
-  Future<List<HudNoticeModel>> getNotices() async {
+  List<HudNoticeModel> getNotices() {
     final val = remoteConfig.getString('hud_notice');
 
     // data comes as a string
@@ -58,8 +57,14 @@ class RemoteConfigController extends GetxController {
   }
 
   /// get latest ios version from remoteConfig
-  Future<String?> latestIosVersion() async {
+  String? latestIosVersion() {
     final value = remoteConfig.getString('latest_ios_version');
     return value == '' ? null : value;
+  }
+
+  // TODO: Remove this temporary easter egg
+  // ( The Sigma Male Loading Indicator )
+  bool canShowSigmaEmoji() {
+    return remoteConfig.getBool('can_show_sigma_status_indicator');
   }
 }

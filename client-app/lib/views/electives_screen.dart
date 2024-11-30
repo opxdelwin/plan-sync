@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:get/get.dart';
 import 'package:plan_sync/backend/models/timetable.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
@@ -8,6 +7,7 @@ import 'package:plan_sync/util/enums.dart';
 import 'package:plan_sync/widgets/buttons/elective_preferences_button.dart';
 import 'package:plan_sync/widgets/popups/popups_wrapper.dart';
 import 'package:plan_sync/widgets/time_table_for_day.dart';
+import 'package:provider/provider.dart';
 
 class ElectiveScreen extends StatefulWidget {
   const ElectiveScreen({super.key});
@@ -17,7 +17,7 @@ class ElectiveScreen extends StatefulWidget {
 }
 
 class _ElectiveScreenState extends State<ElectiveScreen> {
-  FilterController filterController = Get.find();
+  late FilterController filterController;
   String? sectionSemesterShortCode;
 
   void reportError() {
@@ -25,6 +25,12 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
       context: context,
       scheduleType: ScheduleType.electives,
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    filterController = Provider.of<FilterController>(context, listen: false);
   }
 
   @override
@@ -60,8 +66,10 @@ class _ElectiveScreenState extends State<ElectiveScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 24),
-                GetBuilder<FilterController>(builder: (filterController) {
-                  GitService service = Get.find();
+                Consumer<FilterController>(
+                    builder: (ctx, filterController, child) {
+                  GitService service =
+                      Provider.of<GitService>(context, listen: false);
                   return StreamBuilder(
                     key: ValueKey(filterController.getElectiveShortCode()),
                     stream: service.getElectives(),

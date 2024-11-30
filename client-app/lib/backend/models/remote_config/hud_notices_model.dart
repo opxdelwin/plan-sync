@@ -1,6 +1,7 @@
-import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import 'package:plan_sync/backend/models/remote_config/hud_notices_action_model.dart';
 import 'package:plan_sync/controllers/app_preferences_controller.dart';
+import 'package:provider/provider.dart';
 
 class HudNoticeModel {
   final int id;
@@ -27,11 +28,13 @@ class HudNoticeModel {
       );
 
   // helper functions
-  bool shouldShow() {
-    return Get.find<AppPreferencesController>().shouldShowNotice(id);
+  bool shouldShow(BuildContext context) {
+    return Provider.of<AppPreferencesController>(context, listen: false)
+        .shouldShowNotice(id);
   }
 
-  Future<void> dismissNotice() async {
-    return await Get.find<AppPreferencesController>().dismissNotice(id);
+  Future<void> dismissNotice(BuildContext context) async {
+    return await Provider.of<AppPreferencesController>(context, listen: false)
+        .dismissNotice(id);
   }
 }

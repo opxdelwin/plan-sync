@@ -39,6 +39,8 @@ dependencies:
   salomon_bottom_bar: ^3.3.2
   font_awesome_flutter: ^10.5.0
   get: ^4.6.5
+  toastification: ^2.3.0
+  provider: ^6.1.2
   firebase_core: ^2.15.1
   firebase_auth: ^4.9.0
   google_sign_in: ^6.1.5
@@ -61,7 +63,7 @@ dependencies:
   dio_cache_interceptor_hive_store: ^3.2.2
   path_provider: ^2.1.1
   hive: ^2.2.3
-  tutorial_coach_mark: ^1.2.11
+  tutorial_coach_mark: ^1.2.12
   mockito: ^5.4.4
   firebase_auth_mocks: ^0.13.0
   google_sign_in_mocks: ^0.3.0

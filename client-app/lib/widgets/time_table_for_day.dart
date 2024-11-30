@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:plan_sync/backend/models/timetable.dart';
+import 'package:plan_sync/controllers/theme_controller.dart';
+import 'package:plan_sync/util/extensions.dart';
 import 'package:plan_sync/widgets/no_schedule_widget.dart';
 import 'package:plan_sync/widgets/indicators/schedule_freshness_indicator.dart';
 import 'package:plan_sync/widgets/subject_tile.dart';
+import 'package:provider/provider.dart';
 
 class TimeTableForDay extends StatefulWidget {
   const TimeTableForDay({super.key, required this.data, required this.day});
@@ -59,10 +61,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
         color:
             WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
           if (states.contains(WidgetState.selected)) {
-            return Theme.of(context)
-                .colorScheme
-                .secondary
-                .withValues(alpha: 0.12);
+            return Theme.of(context).colorScheme.secondary.withOpacity(0.12);
           }
           return null;
         }),
@@ -82,10 +81,11 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+
     if (widget.data.meta.type == "norm-class") {
       return _buildForTimetable(colorScheme);
     } else {
-      return _buildForElectives(colorScheme);
+      return _buildForElectives(colorScheme, context);
     }
   }
 
@@ -101,7 +101,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
           child: Row(
             children: [
               Text(
-                widget.day.capitalizeFirst!,
+                widget.day.capitalizeFirst(),
                 style: TextStyle(
                   color: colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.bold,
@@ -136,7 +136,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
     );
   }
 
-  Column _buildForElectives(ColorScheme colorScheme) {
+  Column _buildForElectives(ColorScheme colorScheme, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -145,7 +145,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
           child: Row(
             children: [
               Text(
-                widget.day.capitalizeFirst!,
+                widget.day.capitalizeFirst(),
                 style: TextStyle(
                   color: colorScheme.onSurface,
                   letterSpacing: 0.6,
@@ -162,9 +162,10 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
             dividerThickness: 0.5,
             border: TableBorder.all(
               borderRadius: BorderRadius.circular(8),
-              color: Get.isDarkMode
-                  ? colorScheme.onSurfaceVariant.withValues(alpha: 0.4)
-                  : colorScheme.secondary.withValues(alpha: 0.6),
+              color: Provider.of<AppThemeController>(context, listen: false)
+                      .isDarkMode
+                  ? colorScheme.onSurfaceVariant.withOpacity(0.4)
+                  : colorScheme.secondary.withOpacity(0.6),
             ),
             columns: columns,
             rows: rows,

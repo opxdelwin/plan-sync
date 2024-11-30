@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/logger.dart';
+import 'package:provider/provider.dart';
 
 class YearBar extends StatefulWidget {
   const YearBar({super.key});
@@ -24,39 +24,44 @@ class _YearBarState extends State<YearBar> {
         width: 128,
         height: 48,
         child: DropdownButtonHideUnderline(
-          child: GetBuilder<GitService>(
-              builder: (serviceController) => DropdownButton<String>(
-                  isExpanded: true,
-                  elevation: 0,
-                  enableFeedback: true,
-                  style: TextStyle(color: colorScheme.onSurface),
-                  icon: Icon(
-                    Icons.arrow_drop_down,
-                    color: colorScheme.surface,
-                  ),
-                  value: serviceController.selectedYear?.toString(),
-                  dropdownColor: colorScheme.onSurface,
-                  hint: Text(
-                    "Year",
-                    style: TextStyle(
-                      color: colorScheme.surface,
-                      fontSize: 16,
-                    ),
-                  ),
-                  menuMaxHeight: 376,
-                  items: serviceController.years
-                      ?.map((year) => buildMenuItem(
-                            year,
-                            colorScheme.surface,
-                          ))
-                      .toList(),
-                  onChanged: (String? newSelection) {
-                    if (newSelection == null) {
-                      return;
-                    }
-                    Logger.i(newSelection);
-                    serviceController.selectedYear = newSelection;
-                  })),
+          child: Consumer<GitService>(
+              builder: (ctx, serviceController, child) =>
+                  DropdownButton<String>(
+                      isExpanded: true,
+                      elevation: 0,
+                      enableFeedback: true,
+                      style: TextStyle(color: colorScheme.onSurface),
+                      icon: Icon(
+                        Icons.arrow_drop_down,
+                        color: colorScheme.surface,
+                      ),
+                      value: serviceController.selectedYear?.toString(),
+                      dropdownColor: colorScheme.onSurface,
+                      hint: Text(
+                        "Year",
+                        style: TextStyle(
+                          color: colorScheme.surface,
+                          fontSize: 16,
+                        ),
+                      ),
+                      menuMaxHeight: 376,
+                      items: serviceController.years
+                          ?.map((year) => buildMenuItem(
+                                year,
+                                colorScheme.surface,
+                              ))
+                          .toList(),
+                      onChanged: (String? newSelection) {
+                        if (newSelection == null) {
+                          return;
+                        }
+                        Logger.i(newSelection);
+                        serviceController.selectedYear = newSelection;
+                        Provider.of<GitService>(
+                          ctx,
+                          listen: false,
+                        ).getSemesters(ctx);
+                      })),
         ),
       ),
     );

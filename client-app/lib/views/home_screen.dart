@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:plan_sync/controllers/app_tour_controller.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/widgets/buttons/schedule_preferences_button.dart';
 import 'package:plan_sync/widgets/date_widget.dart';
 import 'package:plan_sync/widgets/hud/top_notice_hud.dart';
+import 'package:provider/provider.dart';
 import '../widgets/time_table.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,18 +15,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  FilterController filterController = Get.find();
-  AppTourController appTourController = Get.find();
-  String? sectionSemesterShortCode;
+  late FilterController filterController;
+  late AppTourController appTourController;
 
   @override
   void initState() {
     super.initState();
-    filterController.getShortCode().then(
-          (code) => setState(() {
-            sectionSemesterShortCode = code;
-          }),
-        );
+    filterController = Provider.of<FilterController>(context, listen: false);
+    appTourController = Provider.of<AppTourController>(context, listen: false);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(milliseconds: 500), () {
         // ignore: use_build_context_synchronously
@@ -43,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           backgroundColor:
-              colorScheme.surfaceContainerHighest.withValues(alpha: 0.98),
+              colorScheme.surfaceContainerHighest.withOpacity(0.98),
           elevation: 0.0,
           toolbarHeight: 80,
           shape: const RoundedRectangleBorder(

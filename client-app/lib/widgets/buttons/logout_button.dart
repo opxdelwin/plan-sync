@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_sync/controllers/auth.dart';
+import 'package:plan_sync/controllers/theme_controller.dart';
+import 'package:provider/provider.dart';
 
 class LogoutButton extends StatefulWidget {
   const LogoutButton({super.key});
@@ -17,7 +18,7 @@ class _LogoutButtonState extends State<LogoutButton> {
   @override
   void initState() {
     super.initState();
-    auth = Get.find();
+    auth = Provider.of<Auth>(context, listen: false);
   }
 
   void logout() async {
@@ -35,9 +36,11 @@ class _LogoutButtonState extends State<LogoutButton> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final appTheme = Provider.of<AppThemeController>(context, listen: false);
+
     return ElevatedButton.icon(
       style: ButtonStyle(
-        side: Get.isDarkMode
+        side: appTheme.isDarkMode
             ? WidgetStatePropertyAll(
                 BorderSide(
                   color: colorScheme.error,
@@ -45,25 +48,26 @@ class _LogoutButtonState extends State<LogoutButton> {
               )
             : null,
         elevation: const WidgetStatePropertyAll(0.0),
-        backgroundColor: Get.isDarkMode
+        backgroundColor: appTheme.isDarkMode
             ? const WidgetStatePropertyAll(Colors.transparent)
             : WidgetStatePropertyAll(colorScheme.error),
       ),
       onPressed: logout,
       icon: Icon(
         Icons.logout,
-        color:
-            Get.isDarkMode ? colorScheme.onSurfaceVariant : colorScheme.onError,
+        color: appTheme.isDarkMode
+            ? colorScheme.onSurfaceVariant
+            : colorScheme.onError,
       ),
       label: isLoggingOut
           ? LoadingAnimationWidget.progressiveDots(
-              color: Get.isDarkMode ? Colors.white : colorScheme.onError,
+              color: appTheme.isDarkMode ? Colors.white : colorScheme.onError,
               size: 24,
             )
           : Text(
               "Logout",
               style: TextStyle(
-                color: Get.isDarkMode ? Colors.white : colorScheme.onError,
+                color: appTheme.isDarkMode ? Colors.white : colorScheme.onError,
               ),
             ),
     );

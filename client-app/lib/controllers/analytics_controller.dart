@@ -1,24 +1,23 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import 'package:plan_sync/controllers/auth.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
 import 'package:plan_sync/util/logger.dart';
+import 'package:provider/provider.dart';
 
-class AnalyticsController extends GetxController {
+class AnalyticsController extends ChangeNotifier {
   late FirebaseAnalytics _analytics;
   late Auth auth;
   late FilterController filters;
 
-  @override
-  void onReady() async {
-    super.onReady();
-    filters = Get.find();
-    auth = Get.find();
+  Future<void> onReady(BuildContext context) async {
+    filters = Provider.of<FilterController>(context, listen: false);
+    auth = Provider.of<Auth>(context, listen: false);
     Logger.i("Analytics controller ready");
     _analytics = FirebaseAnalytics.instance;
     await setUserData();
-    Future.delayed(const Duration(seconds: 2), () => logOpenApp());
+    Future.delayed(const Duration(seconds: 2), () => logOpenApp(context));
   }
 
   Future<void> setUserData() async {
@@ -38,8 +37,9 @@ class AnalyticsController extends GetxController {
     Logger.i("user property reported in analytics.");
   }
 
-  void logOpenApp() async {
-    VersionController version = Get.find();
+  void logOpenApp(BuildContext context) async {
+    VersionController version =
+        Provider.of<VersionController>(context, listen: false);
     final parameters = {
       'app_version': version.clientVersion ?? "unknown",
       'primary_section': filters.primarySection ?? "null",

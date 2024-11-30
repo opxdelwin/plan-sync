@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
+import 'package:provider/provider.dart';
 
 /// Usually on the home screen used to select
 /// required time table.
@@ -14,17 +14,9 @@ class ElectivePreferenceButton extends StatefulWidget {
 }
 
 class _ElectivePreferenceButtonState extends State<ElectivePreferenceButton> {
-  FilterController filterController = Get.find();
-  String? electiveSemesterShortCode;
-
   @override
   void initState() {
     super.initState();
-    filterController.getShortCode().then(
-          (code) => setState(() {
-            electiveSemesterShortCode = code;
-          }),
-        );
   }
 
   @override
@@ -39,18 +31,15 @@ class _ElectivePreferenceButtonState extends State<ElectivePreferenceButton> {
       ),
       child: Row(
         children: [
-          GetBuilder<FilterController>(
-            builder: (filterController) {
-              filterController.getElectiveShortCode().then(
-                    (code) => setState(() {
-                      electiveSemesterShortCode = code;
-                    }),
-                  );
+          Selector<FilterController, String?>(
+            builder: (ctx, electiveSemesterShortCode, child) {
               return Text(
                 electiveSemesterShortCode ?? 'Processing',
                 style: TextStyle(color: colorScheme.surface),
               );
             },
+            selector: (context, controller) =>
+                controller.getElectiveShortCode(),
           ),
           const SizedBox(width: 8),
           Icon(

@@ -1,7 +1,8 @@
+import 'package:plan_sync/controllers/theme_controller.dart';
+import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 
 class ScaffoldWithNavBar extends StatelessWidget {
@@ -16,6 +17,8 @@ class ScaffoldWithNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final appTheme = Provider.of<AppThemeController>(context, listen: false);
+
     return Scaffold(
       extendBody: true,
       body: navigationShell,
@@ -38,15 +41,16 @@ class ScaffoldWithNavBar extends StatelessWidget {
           itemShape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
           ),
-          backgroundColor:
-              Get.isDarkMode ? colorScheme.surface : const Color(0xffafddb9),
+          backgroundColor: appTheme.isDarkMode
+              ? colorScheme.surface
+              : const Color(0xffafddb9),
           // borderRadius: const Radius.circular(8),
-          selectedItemColor: Get.isDarkMode
+          selectedItemColor: appTheme.isDarkMode
               ? colorScheme.primary
               : colorScheme.onSurfaceVariant,
-          unselectedItemColor: Get.isDarkMode
+          unselectedItemColor: appTheme.isDarkMode
               ? colorScheme.onSurface
-              : colorScheme.onSurfaceVariant.withValues(alpha: 0.64),
+              : colorScheme.onSurfaceVariant.withOpacity(0.64),
           // //bubble color
           // strokeColor: colorScheme.secondary.withOpacity(0.32),
           items: <SalomonBottomBarItem>[
@@ -55,7 +59,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
               title: Text(
                 'Schedule',
                 style: TextStyle(
-                  color: Get.isDarkMode
+                  color: appTheme.isDarkMode
                       ? colorScheme.onSurface
                       : colorScheme.onSurfaceVariant,
                 ),
@@ -66,7 +70,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
                 title: Text(
                   'Electives',
                   style: TextStyle(
-                    color: Get.isDarkMode
+                    color: appTheme.isDarkMode
                         ? colorScheme.onSurface
                         : colorScheme.onSurfaceVariant,
                   ),
@@ -76,7 +80,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
                 title: Text(
                   'Settings',
                   style: TextStyle(
-                    color: Get.isDarkMode
+                    color: appTheme.isDarkMode
                         ? colorScheme.onSurface
                         : colorScheme.onSurfaceVariant,
                   ),

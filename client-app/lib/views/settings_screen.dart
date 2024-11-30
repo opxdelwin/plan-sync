@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:plan_sync/controllers/analytics_controller.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
@@ -11,6 +10,7 @@ import 'package:plan_sync/util/snackbar.dart';
 import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
 import 'package:plan_sync/widgets/buttons/logout_button.dart';
 import 'package:plan_sync/widgets/popups/popups_wrapper.dart';
+import 'package:provider/provider.dart';
 import '../controllers/auth.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -20,12 +20,16 @@ class SettingsPage extends StatelessWidget {
     BottomSheets.changeSectionPreference(context: context, save: true);
   }
 
-  void copyUID() async {
-    Auth auth = Get.find();
+  void copyUID(BuildContext context) async {
+    Auth auth = Provider.of<Auth>(context, listen: false);
     final uid = auth.activeUser?.uid;
 
     if (uid == null) {
-      CustomSnackbar.error('Error', 'No UID found. Please Login again.');
+      CustomSnackbar.error(
+        'Error',
+        'No UID found. Please Login again.',
+        context,
+      );
       return;
     }
 
@@ -33,14 +37,16 @@ class SettingsPage extends StatelessWidget {
     CustomSnackbar.info(
       'Copied',
       'Your UID has been copied into the clipboard.',
+      context,
     );
     return;
   }
 
   @override
   Widget build(BuildContext context) {
-    Auth auth = Get.find();
-    VersionController versionController = Get.find();
+    Auth auth = Provider.of<Auth>(context, listen: false);
+    VersionController versionController =
+        Provider.of<VersionController>(context, listen: false);
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -91,7 +97,7 @@ class SettingsPage extends StatelessWidget {
                 Text(
                   auth.activeUser!.email ?? "connect@plansync.in",
                   style: TextStyle(
-                    color: colorScheme.onSurface.withValues(alpha: 0.72),
+                    color: colorScheme.onSurface.withOpacity(0.72),
                   ),
                 ),
                 Row(
@@ -100,18 +106,18 @@ class SettingsPage extends StatelessWidget {
                     Text(
                       'Plan Sync v${versionController.clientVersion} | ',
                       style: TextStyle(
-                        color: colorScheme.onSurface.withValues(alpha: 0.72),
+                        color: colorScheme.onSurface.withOpacity(0.72),
                       ),
                     ),
                     Text(
                       'Copy UID',
                       style: TextStyle(
-                        color: colorScheme.onSurface.withValues(alpha: 0.72),
+                        color: colorScheme.onSurface.withOpacity(0.72),
                       ),
                     ),
                     const SizedBox(width: 8),
                     InkWell(
-                      onTap: copyUID,
+                      onTap: () => copyUID(context),
                       enableFeedback: true,
                       child: Icon(
                         Icons.copy,
@@ -188,13 +194,17 @@ class SettingsPage extends StatelessWidget {
                     BottomSheets.shareAppBottomSheet(
                       context: context,
                     );
-                    Get.find<AnalyticsController>().logShareSheetOpen();
+
+                    Provider.of<AnalyticsController>(
+                      context,
+                      listen: false,
+                    ).logShareSheetOpen();
                   },
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Divider(
-                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.48),
+                    color: colorScheme.onSurfaceVariant.withOpacity(0.48),
                   ),
                 ),
                 ListTile(

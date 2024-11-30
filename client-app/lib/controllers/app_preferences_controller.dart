@@ -1,14 +1,12 @@
 import 'dart:convert';
-import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AppPreferencesController extends GetxController {
+class AppPreferencesController extends ChangeNotifier {
   late SharedPreferences perfs;
 
-  @override
   Future<void> onInit() async {
     perfs = await SharedPreferences.getInstance();
-    super.onInit();
   }
 
   String? getPrimarySectionPreference() => perfs.getString('primary-section');

@@ -5,7 +5,7 @@ import 'package:plan_sync/widgets/dropdowns/electives_sem_bar.dart';
 import 'package:plan_sync/widgets/dropdowns/elective_year_bar.dart';
 import 'package:plan_sync/util/snackbar.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class ElectivePreferenceBottomSheet extends StatefulWidget {
   const ElectivePreferenceBottomSheet({this.save = false, super.key});
@@ -30,13 +30,17 @@ class ElectivePreferenceBottomSheetState
 
   void exitBottomSheet() {
     if (savePreferencesOnExit) {
-      FilterController controller = Get.find();
-      controller.storePrimaryElectiveYear();
-      controller.storePrimaryElectiveSemester();
-      controller.storePrimaryElectiveScheme();
+      FilterController controller = Provider.of<FilterController>(
+        context,
+        listen: false,
+      );
+      controller.storePrimaryElectiveYear(context);
+      controller.storePrimaryElectiveSemester(context);
+      controller.storePrimaryElectiveScheme(context);
       CustomSnackbar.info(
         'Primary Preferences Stored!',
         "Your timetable will be selected by default.",
+        context,
       );
     }
 
@@ -74,15 +78,18 @@ class ElectivePreferenceBottomSheetState
                 ),
                 trailing: Switch.adaptive(
                   value: savePreferencesOnExit,
-                  activeTrackColor: colorScheme.secondary.withValues(
-                    alpha: 0.72,
+                  activeTrackColor: colorScheme.secondary.withOpacity(
+                    0.88,
                   ),
                   inactiveTrackColor: Colors.transparent,
                   trackOutlineColor: WidgetStatePropertyAll(
-                    colorScheme.secondary.withValues(alpha: 0.24),
+                    savePreferencesOnExit
+                        ? colorScheme.secondary.withOpacity(
+                            0.8,
+                          )
+                        : colorScheme.primary.withOpacity(0.48),
                   ),
                   trackOutlineWidth: const WidgetStatePropertyAll(1),
-                  // will be fixed by https://github.com/opxdelwin/plan-sync/issues/19
                   onChanged: (value) {
                     setState(() {
                       savePreferencesOnExit = value;
@@ -101,7 +108,7 @@ class ElectivePreferenceBottomSheetState
                 child: Text(
                   'We will store these, so that  next time you open Plan Sync, your classes are selected automatically!',
                   style: TextStyle(
-                    color: colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: colorScheme.onSurface.withOpacity(0.6),
                   ),
                 ),
               ),

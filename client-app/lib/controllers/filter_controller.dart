@@ -1,16 +1,17 @@
-import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/enums.dart';
 import 'package:plan_sync/util/logger.dart';
 import 'package:plan_sync/util/snackbar.dart';
 import 'package:collection/collection.dart';
+import 'package:provider/provider.dart';
 
-class FilterController extends GetxController {
-  RxString? _activeSection;
-  String? get activeSection => _activeSection?.value;
+class FilterController extends ChangeNotifier {
+  String? _activeSection;
+  String? get activeSection => _activeSection;
   set activeSection(String? newSection) {
-    if (_activeSection?.value == newSection) {
+    if (_activeSection == newSection) {
       return;
     }
     if (newSection == null) {
@@ -18,19 +19,19 @@ class FilterController extends GetxController {
       _activeSection = null;
       return;
     }
-    _activeSection = newSection.obs;
+    _activeSection = newSection;
     activeSectionCode = newSection;
-    update();
+    notifyListeners();
   }
 
-  RxString? _activeSectionCode;
-  String? get activeSectionCode => _activeSectionCode?.value;
+  String? _activeSectionCode;
+  String? get activeSectionCode => _activeSectionCode;
   set activeSectionCode(String? newSectionCode) {
     String? code = service.sections?.keys
         .firstWhereOrNull((key) => service.sections![key] == newSectionCode);
-    code != null ? _activeSectionCode = code.obs : _activeSectionCode = null;
+    code != null ? _activeSectionCode = code : _activeSectionCode = null;
     Logger.i('new section code: $code');
-    update();
+    notifyListeners();
   }
 
   String? _activeSemester;
@@ -41,19 +42,19 @@ class FilterController extends GetxController {
     }
     _activeSemester = newValue;
     activeSectionCode = null;
-    service.getSections();
-    update();
+    service.getSections(this);
+    notifyListeners();
   }
 
-  RxString? _activeElectiveSemester;
-  String? get activeElectiveSemester => _activeElectiveSemester?.value;
+  String? _activeElectiveSemester;
+  String? get activeElectiveSemester => _activeElectiveSemester;
   set activeElectiveSemester(String? newValue) {
     // if (newValue == null) return;
-    _activeElectiveSemester = newValue?.obs;
+    _activeElectiveSemester = newValue;
     _activeElectiveScheme = null;
     _activeElectiveSchemeCode = null;
-    service.getElectiveSchemes();
-    update();
+    service.getElectiveSchemes(filterController: this);
+    notifyListeners();
   }
 
   String? _activeElectiveSchemeCode;
@@ -61,7 +62,7 @@ class FilterController extends GetxController {
   set activeElectiveSchemeCode(String? newValue) {
     if (newValue == null) return;
     _activeElectiveSchemeCode = newValue;
-    update();
+    notifyListeners();
   }
 
   String? _activeElectiveScheme;
@@ -69,29 +70,27 @@ class FilterController extends GetxController {
   set activeElectiveScheme(String? newValue) {
     if (newValue == null) return;
     _activeElectiveScheme = newValue;
-    update();
+    notifyListeners();
   }
 
   late Weekday _weekday;
   Weekday get weekday => _weekday;
   set weekday(Weekday newWeekday) {
     _weekday = newWeekday;
-    update();
+    notifyListeners();
   }
 
   late GitService service;
   late AppPreferencesController preferences;
 
-  @override
-  onInit() async {
-    service = Get.find();
-    preferences = Get.find();
+  void onInit(BuildContext context) {
+    service = Provider.of<GitService>(context, listen: false);
+    preferences = Provider.of<AppPreferencesController>(context, listen: false);
     _weekday = Weekday.today();
-    super.onInit();
   }
 
   /// Returns a short code for selected noraml schedule configuration
-  Future<String> getShortCode() async {
+  String getShortCode() {
     String? section = activeSectionCode;
     String? semester = activeSemester;
 
@@ -107,7 +106,7 @@ class FilterController extends GetxController {
   }
 
   /// Returns a short code for selected elective configuration
-  Future<String> getElectiveShortCode() async {
+  String getElectiveShortCode() {
     String? section = activeElectiveSchemeCode;
     String? semester = activeElectiveSemester;
 
@@ -126,13 +125,11 @@ class FilterController extends GetxController {
   String? get primarySection => preferences.getPrimarySectionPreference();
 
   /// saves the section code into shared-preferences
-  Future<void> storePrimarySection() async {
+  Future<void> storePrimarySection(BuildContext context) async {
     if (activeSectionCode == null) {
       Logger.i("select a section to set as primary.");
-      CustomSnackbar.error(
-        'Not Selected',
-        'Please select a section to be saved as default',
-      );
+      CustomSnackbar.error('Not Selected',
+          'Please select a section to be saved as default', context);
       return;
     }
 
@@ -144,12 +141,13 @@ class FilterController extends GetxController {
       CustomSnackbar.error(
         'Error',
         'Primary Section wasn\'t saved. Try again',
+        context,
       );
       return;
     }
 
     Logger.i("set ${activeSectionCode!} as primary");
-    update();
+    notifyListeners();
   }
 
   /// sets the section code while runtime
@@ -169,11 +167,12 @@ class FilterController extends GetxController {
   String? get primarySemester => preferences.getPrimarySemesterPreference();
 
   /// saves the semester code into shared-preferences
-  Future<void> storePrimarySemester() async {
+  Future<void> storePrimarySemester(BuildContext context) async {
     if (activeSemester == null) {
       CustomSnackbar.error(
         'Not Selected',
         'Please select a semester to be saved as default',
+        context,
       );
       Logger.i("select a semester to be set as primary.");
       return;
@@ -186,12 +185,13 @@ class FilterController extends GetxController {
       CustomSnackbar.error(
         'Error',
         'Primary Semester wasn\'t saved. Try again',
+        context,
       );
       return;
     }
 
     Logger.i("set ${activeSemester!} as primary semester");
-    update();
+    notifyListeners();
   }
 
   /// sets the semester code while runtime
@@ -210,11 +210,12 @@ class FilterController extends GetxController {
   String? get primaryYear => preferences.getPrimaryYearPreference();
 
   /// saves the year into shared-preferences
-  Future<void> storePrimaryYear() async {
+  Future<void> storePrimaryYear(BuildContext context) async {
     if (service.selectedYear == null) {
       CustomSnackbar.error(
         'Not Selected',
         'Please select a year to be saved as default',
+        context,
       );
       Logger.i("select a year to be set as primary.");
       return;
@@ -228,12 +229,13 @@ class FilterController extends GetxController {
       CustomSnackbar.error(
         'Error',
         'Primary Year wasn\'t saved. Try again',
+        context,
       );
       return;
     }
 
     Logger.i("set ${service.selectedYear!} as primary year");
-    update();
+    notifyListeners();
   }
 
   /// sets the semester code while runtime
@@ -251,12 +253,13 @@ class FilterController extends GetxController {
       preferences.getPrimaryElectiveSchemePreference();
 
   /// saves the section code into shared-preferences
-  Future<void> storePrimaryElectiveScheme() async {
+  Future<void> storePrimaryElectiveScheme(BuildContext context) async {
     if (activeElectiveSchemeCode == null) {
       Logger.i("select a section to set as primary.");
       CustomSnackbar.error(
         'Not Selected',
         'Please select a section to be saved as default',
+        context,
       );
       return Future.error('error');
     }
@@ -269,12 +272,13 @@ class FilterController extends GetxController {
       CustomSnackbar.error(
         'Error',
         'Primary Section wasn\'t saved. Try again',
+        context,
       );
       return;
     }
 
     Logger.i("set ${activeElectiveSchemeCode!} as primary");
-    update();
+    notifyListeners();
   }
 
   /// sets the section code while runtime
@@ -294,11 +298,12 @@ class FilterController extends GetxController {
       preferences.getPrimaryElectiveSemesterPreference();
 
   /// saves the semester code into shared-preferences
-  Future<void> storePrimaryElectiveSemester() async {
+  Future<void> storePrimaryElectiveSemester(BuildContext context) async {
     if (activeElectiveSemester == null) {
       CustomSnackbar.error(
         'Not Selected',
         'Please select a semester to be saved as default',
+        context,
       );
       Logger.i("select a semester to be set as primary.");
       return Future.error('error');
@@ -311,12 +316,13 @@ class FilterController extends GetxController {
       CustomSnackbar.error(
         'Error',
         'Primary Semester wasn\'t saved. Try again',
+        context,
       );
       return;
     }
 
     Logger.i("set ${activeElectiveSemester!} as primary elective-semester");
-    update();
+    notifyListeners();
   }
 
   /// sets the semester code while runtime
@@ -334,11 +340,12 @@ class FilterController extends GetxController {
       preferences.getPrimaryElectiveYearPreference();
 
   /// saves the elective year into shared-preferences
-  Future<void> storePrimaryElectiveYear() async {
+  Future<void> storePrimaryElectiveYear(BuildContext context) async {
     if (service.selectedElectiveYear == null) {
       CustomSnackbar.error(
         'Not Selected',
         'Please select a year to be saved as default',
+        context,
       );
       Logger.i("select a year to be set as primary.");
       return Future.error('error');
@@ -352,12 +359,13 @@ class FilterController extends GetxController {
       CustomSnackbar.error(
         'Error',
         'Primary Year wasn\'t saved. Try again',
+        context,
       );
       return;
     }
 
     Logger.i("set ${service.selectedElectiveYear!} as primary year");
-    update();
+    notifyListeners();
   }
 
   /// sets the semester code while runtime
