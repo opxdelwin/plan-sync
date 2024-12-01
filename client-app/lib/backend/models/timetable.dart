@@ -2,6 +2,9 @@ import 'package:plan_sync/backend/models/timetable_meta.dart';
 import 'package:plan_sync/backend/models/timetable_schedule_entry.dart';
 import 'dart:convert';
 
+import 'package:plan_sync/backend/supabase_models/student_schedule.dart';
+import 'package:plan_sync/util/extensions.dart';
+
 class Timetable {
   final TimetableMeta meta;
   final Map<String, List<ScheduleEntry>> data;
@@ -13,13 +16,15 @@ class Timetable {
     this.isFresh = true,
   });
 
+  //TODO: (fixme) This should no longer be used.
+  // migrate after electives are migrated to supabase
   factory Timetable.fromJson({
-    required Map<String, dynamic> json,
+    required Map json,
     bool isFresh = true,
   }) {
     return Timetable(
       isFresh: isFresh,
-      meta: TimetableMeta.fromJson(json['meta']),
+      meta: TimetableMeta(),
       data: (json['data'] as Map<String, dynamic>).map(
         (key, value) => MapEntry(
           key,
@@ -29,6 +34,17 @@ class Timetable {
         ),
       ),
     );
+  }
+
+  factory Timetable.fromStudentScheduleModel({
+    required List<StudentSchedule> scheduleList,
+    bool isFresh = true,
+  }) {
+    //TODO: Figure out a way to add existing
+    // metadata to the timetable, as supabase
+    // isn't configured with the metadata.
+
+    return scheduleList.toTimetable(isFresh: isFresh);
   }
 
   Map<String, dynamic> toJson() {

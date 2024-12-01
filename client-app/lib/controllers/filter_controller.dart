@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:plan_sync/backend/supabase_models/branches.dart';
+import 'package:plan_sync/backend/supabase_models/programs.dart';
+import 'package:plan_sync/backend/supabase_models/section.dart';
+import 'package:plan_sync/backend/supabase_models/semesters.dart';
 import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/enums.dart';
@@ -8,41 +12,60 @@ import 'package:collection/collection.dart';
 import 'package:provider/provider.dart';
 
 class FilterController extends ChangeNotifier {
-  String? _activeSection;
-  String? get activeSection => _activeSection;
-  set activeSection(String? newSection) {
+  // program selection
+  Program? _selectedProgram;
+  Program? get selectedProgram => _selectedProgram;
+  set selectedProgram(Program? newProgram) {
+    if (newProgram == null || selectedProgram == newProgram) {
+      return;
+    }
+    _selectedProgram = newProgram;
+    notifyListeners();
+  }
+
+  // branch selection
+  Branches? _selectedBranch;
+  Branches? get selectedBranch => _selectedBranch;
+  set selectedBranch(Branches? newBranch) {
+    if (selectedBranch == newBranch) {
+      return;
+    }
+    _selectedBranch = newBranch;
+    if (_selectedBranch == null) {
+      service.semesters = null;
+      service.sections = null;
+    }
+    notifyListeners();
+  }
+
+  Section? _activeSection;
+  Section? get activeSection => _activeSection;
+  set activeSection(Section? newSection) {
     if (_activeSection == newSection) {
       return;
     }
-    if (newSection == null) {
-      activeSectionCode = null;
-      _activeSection = null;
-      return;
-    }
+
     _activeSection = newSection;
-    activeSectionCode = newSection;
     notifyListeners();
   }
 
-  String? _activeSectionCode;
-  String? get activeSectionCode => _activeSectionCode;
-  set activeSectionCode(String? newSectionCode) {
-    String? code = service.sections?.keys
-        .firstWhereOrNull((key) => service.sections![key] == newSectionCode);
-    code != null ? _activeSectionCode = code : _activeSectionCode = null;
-    Logger.i('new section code: $code');
-    notifyListeners();
-  }
+  // String? _activeSectionCode;
+  // String? get activeSectionCode => _activeSectionCode;
+  // set activeSectionCode(String? newSectionCode) {
+  //   String? code = service.sections?
+  //       .firstWhereOrNull((key) => service.sections![key] == newSectionCode);
+  //   code != null ? _activeSectionCode = code : _activeSectionCode = null;
+  //   Logger.i('new section code: $code');
+  //   notifyListeners();
+  // }
 
-  String? _activeSemester;
-  String? get activeSemester => _activeSemester;
-  set activeSemester(String? newValue) {
+  Semesters? _activeSemester;
+  Semesters? get activeSemester => _activeSemester;
+  set activeSemester(Semesters? newValue) {
     if (activeSemester == newValue) {
       return;
     }
     _activeSemester = newValue;
-    activeSectionCode = null;
-    service.getSections(this);
     notifyListeners();
   }
 
@@ -91,18 +114,18 @@ class FilterController extends ChangeNotifier {
 
   /// Returns a short code for selected noraml schedule configuration
   String getShortCode() {
-    String? section = activeSectionCode;
-    String? semester = activeSemester;
+    Section? section = activeSection;
+    Semesters? semester = activeSemester;
 
     if (section == null && semester == null) {
       return 'Select Sections';
     } else if (section == null && semester != null) {
-      return semester;
+      return semester.semesterName;
     } else if (semester == null && section != null) {
-      return section;
+      return section.sectionName;
     }
 
-    return '$section | $semester'.toUpperCase();
+    return '${section!.sectionName} | ${semester!.semesterName}'.toUpperCase();
   }
 
   /// Returns a short code for selected elective configuration
@@ -121,20 +144,109 @@ class FilterController extends ChangeNotifier {
     return '$section | $semester'.toUpperCase();
   }
 
+  Future<void> setPrimaryProgram() async {
+    final String? programPerf = await preferences.getPrimaryProgramPreference();
+    Logger.i("primary program: $programPerf");
+
+    if (programPerf == null) {
+      return;
+    }
+
+    final program = service.programs?.firstWhereOrNull(
+      (item) => item.name == programPerf,
+    );
+    selectedProgram = program;
+    notifyListeners();
+  }
+
+  /// saves the year into shared-preferences
+  Future<void> storePrimaryProgram(BuildContext context) async {
+    if (selectedProgram == null) {
+      CustomSnackbar.error(
+        'Not Selected',
+        'Please select a program to be saved as default',
+        context,
+      );
+      Logger.i("select a program to be set as primary.");
+      return;
+    }
+    final res = await preferences.savePrimaryProgramPreference(
+      selectedProgram!.name,
+    );
+
+    if (res == false) {
+      Logger.i("Could not save preference");
+      CustomSnackbar.error(
+        'Error',
+        'Primary Program wasn\'t saved. Try again',
+        context,
+      );
+      return;
+    }
+
+    Logger.i("set ${selectedProgram!.name} as primary program");
+    notifyListeners();
+  }
+
+  Future<void> setPrimaryBranch() async {
+    final String? branchPerf = await preferences.getPrimaryBranchPreference();
+    Logger.i("primary branch: $branchPerf");
+
+    if (branchPerf == null) {
+      return;
+    }
+
+    final branch = service.branches?.firstWhereOrNull(
+      (item) => item.branchName == branchPerf,
+    );
+    selectedBranch = branch;
+    notifyListeners();
+  }
+
+  /// saves the year into shared-preferences
+  Future<void> storePrimaryBranch(BuildContext context) async {
+    if (selectedBranch == null) {
+      CustomSnackbar.error(
+        'Not Selected',
+        'Please select a branch to be saved as default',
+        context,
+      );
+      Logger.i("select a branch to be set as primary.");
+      return;
+    }
+    final res = await preferences.savePrimaryBranchPreference(
+      selectedBranch!.branchName,
+    );
+
+    if (res == false) {
+      Logger.i("Could not save preference");
+      CustomSnackbar.error(
+        'Error',
+        'Primary Branch wasn\'t saved. Try again',
+        context,
+      );
+      return;
+    }
+
+    Logger.i("set ${selectedBranch!.branchName} as primary branch");
+    notifyListeners();
+  }
+
   /// returns primary section from shared-preferences
   String? get primarySection => preferences.getPrimarySectionPreference();
 
   /// saves the section code into shared-preferences
   Future<void> storePrimarySection(BuildContext context) async {
-    if (activeSectionCode == null) {
+    if (activeSection == null) {
       Logger.i("select a section to set as primary.");
       CustomSnackbar.error('Not Selected',
           'Please select a section to be saved as default', context);
       return;
     }
 
-    final res =
-        await preferences.savePrimarySectionPreference(activeSectionCode!);
+    final res = await preferences.savePrimarySectionPreference(
+      activeSection!.sectionName,
+    );
 
     if (res == false) {
       Logger.i("Could not save preference");
@@ -146,7 +258,7 @@ class FilterController extends ChangeNotifier {
       return;
     }
 
-    Logger.i("set ${activeSectionCode!} as primary");
+    Logger.i("set ${activeSection!.sectionName} as primary");
     notifyListeners();
   }
 
@@ -156,11 +268,12 @@ class FilterController extends ChangeNotifier {
     final String? primarySection = preferences.getPrimarySectionPreference();
     Logger.i("primary section: $primarySection");
 
-    if (primarySection != null &&
-        service.sections!.containsKey(primarySection) &&
-        service.sections != null) {
-      activeSection = service.sections![primarySection];
+    if (primarySection != null) {
+      activeSection = service.sections?.firstWhereOrNull(
+        (item) => item.sectionName == primarySection,
+      );
     }
+    notifyListeners();
   }
 
   /// returns primary semester from shared-preferences
@@ -177,8 +290,8 @@ class FilterController extends ChangeNotifier {
       Logger.i("select a semester to be set as primary.");
       return;
     }
-    final res =
-        await preferences.savePrimarySemesterPreference(activeSemester!);
+    final res = await preferences
+        .savePrimarySemesterPreference(activeSemester!.semesterName);
 
     if (res == false) {
       Logger.i("Could not save preference");
@@ -190,20 +303,20 @@ class FilterController extends ChangeNotifier {
       return;
     }
 
-    Logger.i("set ${activeSemester!} as primary semester");
+    Logger.i("set ${activeSemester!.semesterName} as primary semester");
     notifyListeners();
   }
 
   /// sets the semester code while runtime
-  void setPrimarySemester() {
+  void setPrimarySemester(BuildContext context) {
     // activeSemester = null;
     final String? primarySemester = preferences.getPrimarySemesterPreference();
     Logger.i("primary semester: $primarySemester");
 
-    if (service.semesters?.contains(primarySemester) != false &&
-        primarySemester != null) {
-      activeSemester = primarySemester;
-    }
+    activeSemester = service.semesters?.firstWhereOrNull(
+      (item) => item.semesterName == primarySemester,
+    );
+    service.getSections(context);
   }
 
   /// returns primary semester from shared-preferences

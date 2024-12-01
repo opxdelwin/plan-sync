@@ -26,8 +26,8 @@ class ReportErrorMailPopup extends StatelessWidget {
     GitService git = Provider.of<GitService>(context, listen: false);
     ExternalLinks.reportErrorViaMail(
       academicYear: git.selectedYear,
-      course: controller.activeSemester,
-      section: controller.activeSectionCode,
+      course: controller.activeSemester?.semesterName,
+      section: controller.activeSection?.sectionName,
       weekday: controller.weekday.key,
       scheduleType: scheduleType,
       scheme: controller.activeElectiveScheme,

@@ -24,4 +24,9 @@ class ScheduleEntry {
       'time': time,
     };
   }
+
+  @override
+  String toString() {
+    return 'ScheduleEntry(subject: $subject, room: $room, time: $time)';
+  }
 }

@@ -18,12 +18,12 @@ class TimeTableForDay extends StatefulWidget {
 
 class _TimeTableForDayState extends State<TimeTableForDay> {
   final days = [
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday"
+    "MONDAY",
+    "TUESDAY",
+    "WEDNESDAY",
+    "THURSDAY",
+    "FRIDAY",
+    "SATURDAY"
   ];
   List<DataColumn> columns = [];
   List<DataRow> rows = [];

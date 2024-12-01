@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plan_sync/backend/supabase_models/section.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/logger.dart';
@@ -32,7 +33,7 @@ class _SectionsBarState extends State<SectionsBar> {
             builder: (ctx, serviceController, child) =>
                 Consumer<FilterController>(
                     builder: (ctx, filterController, child) {
-              return DropdownButton<String>(
+              return DropdownButton<Section>(
                 isExpanded: true,
                 elevation: 0,
                 enableFeedback: true,
@@ -44,7 +45,9 @@ class _SectionsBarState extends State<SectionsBar> {
                 value: filterController.activeSection,
                 dropdownColor: colorScheme.onSurface,
                 disabledHint: Text(
-                  "Select Semester First",
+                  serviceController.sections?.isEmpty == true
+                      ? "No Sections Found"
+                      : "Select Semester First",
                   style: TextStyle(
                     color: colorScheme.surface,
                     fontSize: 16,
@@ -58,16 +61,15 @@ class _SectionsBarState extends State<SectionsBar> {
                   ),
                 ),
                 menuMaxHeight: 376,
-                items: serviceController.sections?.keys
-                    .toList()
-                    .map((e) => buildMenuItem(
-                          serviceController.sections?[e],
+                items: serviceController.sections
+                    ?.map((e) => buildMenuItem(
+                          e,
                           colorScheme.surface,
                         ))
                     .toList(),
                 onChanged: filterController.activeSemester == null
                     ? null
-                    : (String? newSelection) {
+                    : (Section? newSelection) {
                         Logger.i('new section selected: $newSelection');
                         filterController.activeSection = newSelection;
                       },
@@ -80,11 +82,11 @@ class _SectionsBarState extends State<SectionsBar> {
   }
 }
 
-DropdownMenuItem<String> buildMenuItem(String section, Color color) {
+DropdownMenuItem<Section> buildMenuItem(Section section, Color color) {
   return DropdownMenuItem(
     value: section,
     child: Text(
-      section,
+      section.sectionName,
       style: TextStyle(color: color),
     ),
   );

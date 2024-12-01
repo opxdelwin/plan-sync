@@ -2,8 +2,12 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:plan_sync/backend/models/supabase_models/academic_years.dart';
+import 'package:plan_sync/backend/supabase_models/academic_years.dart';
 import 'package:plan_sync/backend/models/timetable.dart';
+import 'package:plan_sync/backend/supabase_models/branches.dart';
+import 'package:plan_sync/backend/supabase_models/programs.dart';
+import 'package:plan_sync/backend/supabase_models/section.dart';
+import 'package:plan_sync/backend/supabase_models/semesters.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/local_database_provider.dart';
 import 'package:plan_sync/controllers/supabase_provider.dart';
@@ -13,7 +17,6 @@ import 'package:plan_sync/util/snackbar.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:provider/provider.dart';
 
 class GitService extends ChangeNotifier {
@@ -21,6 +24,27 @@ class GitService extends ChangeNotifier {
 
   late final CacheOptions cacheOptions;
   late final Dio dio;
+
+  List<Program>? _programs;
+  List<Program>? get programs => _programs;
+  set programs(List<Program>? newPrograms) {
+    _programs = newPrograms;
+    branches = null;
+    notifyListeners();
+    filterController.setPrimaryProgram();
+    return;
+  }
+
+  List<Branches>? _branches;
+  List<Branches>? get branches => _branches;
+  set branches(List<Branches>? newBranches) {
+    _branches = newBranches;
+    semesters = null;
+    notifyListeners();
+    filterController.selectedBranch = null;
+    filterController.setPrimaryBranch();
+    return;
+  }
 
   // normal schedule years
   List<AcademicYear>? years;
@@ -51,14 +75,26 @@ class GitService extends ChangeNotifier {
     // getElectiveSchemes();
   }
 
-  Map? _sections;
-  Map? get sections => _sections;
+  List<Section>? _sections;
+  List<Section>? get sections => _sections;
+  set sections(List<Section>? newSections) {
+    _sections = newSections;
+    if (_sections == null) {
+      filterController.activeSection = null;
+    }
+    notifyListeners();
+    filterController.setPrimarySection();
+    return;
+  }
 
-  List? _semesters;
-  List? get semesters => _semesters?.toList();
-  set semesters(List? newSemesters) {
+  List<Semesters>? _semesters;
+  List<Semesters>? get semesters => _semesters?.toList();
+  set semesters(List<Semesters>? newSemesters) {
     Logger.i("setting sermestes to $newSemesters");
-    if (newSemesters == null) return;
+    if (newSemesters == null) {
+      filterController.activeSemester = null;
+      return;
+    }
     _semesters = newSemesters;
     notifyListeners();
   }
@@ -93,6 +129,7 @@ class GitService extends ChangeNotifier {
   Future<void> onReady(BuildContext ctx) async {
     // onReady
     filterController = Provider.of<FilterController>(ctx, listen: false);
+    await getProgram(ctx);
     await getYears(ctx);
     await getSemesters(ctx);
     await getElectiveSemesters(ctx);
@@ -143,6 +180,173 @@ class GitService extends ChangeNotifier {
       branch = 'dev';
     }
     return;
+  }
+
+  /// Select from public.programs
+  Future<void> getProgram(BuildContext context) async {
+    try {
+      if (!isWorking) {
+        isWorking = true;
+        notifyListeners();
+      }
+
+      final localDatabase =
+          Provider.of<LocalDatabaseProvider>(context, listen: false);
+      final supabaseProvider =
+          Provider.of<SupabaseProvider>(context, listen: false);
+
+      final cacheData = await localDatabase.getProgramsFromLocal();
+      if (cacheData.isNotEmpty) {
+        Logger.i("Cached Academic Programs: $cacheData");
+        programs = cacheData;
+        filterController.setPrimaryProgram();
+        notifyListeners();
+      }
+
+      final response = await supabaseProvider.getProgramsFromRemote();
+
+      // stop if the hash matches for both cached and newly fetched
+      if (genSortedHash(cacheData) == genSortedHash(response)) {
+        Logger.w('Academic Program is cached.');
+        await getBranch(context);
+        return;
+      }
+
+      programs = response;
+
+      // stop execution if there are no semesters for selected year
+      if (programs!.isEmpty) {
+        CustomSnackbar.error(
+          'Error',
+          'No Programs found, contact support.',
+          context,
+        );
+        return;
+      }
+      Logger.i("Fetched Programs: $programs");
+      notifyListeners();
+      setYear();
+
+      // save data to sqflite
+      localDatabase.insertProgramsToLocal(response);
+
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
+    } on DioException catch (e) {
+      errorDetails = {
+        "error": "DioException",
+        "data": e.message,
+        "code": e.response?.statusCode,
+      };
+
+      Logger.i(errorDetails);
+
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
+      return;
+    } catch (e) {
+      errorDetails = {"error": "CatchException @ Fetching Programs"};
+      Logger.i(e.toString());
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
+      return;
+    }
+  }
+
+  /// Select from public.branch
+  Future<void> getBranch(BuildContext context) async {
+    try {
+      // Program must be selected to fetch branches
+      if (filterController.selectedProgram == null) {
+        return;
+      }
+
+      if (!isWorking) {
+        isWorking = true;
+        notifyListeners();
+      }
+
+      final localDatabase =
+          Provider.of<LocalDatabaseProvider>(context, listen: false);
+      final supabaseProvider =
+          Provider.of<SupabaseProvider>(context, listen: false);
+
+      final cacheData = await localDatabase.getBranchesFromLocal(
+        programName: filterController.selectedProgram!.name,
+      );
+      if (cacheData.isNotEmpty) {
+        Logger.i("Cached Branches: $cacheData");
+        branches = cacheData;
+        await filterController.setPrimaryBranch();
+
+        semesters = null;
+        filterController.activeSemester = null;
+        await getSemesters(context);
+        notifyListeners();
+      }
+
+      final response = await supabaseProvider.getBranchesFromRemote(
+        programName: filterController.selectedProgram!.name,
+      );
+
+      // stop if the hash matches for both cached and newly fetched
+      if (genSortedHash(cacheData) == genSortedHash(response)) {
+        Logger.w(
+          'Program (${filterController.selectedProgram!.name}) Branches are cached.',
+        );
+        return;
+      }
+
+      branches = response;
+
+      // stop execution if there are no semesters for selected year
+      if (years!.isEmpty) {
+        CustomSnackbar.error(
+          'Error',
+          'No Years found, contact support.',
+          context,
+        );
+        return;
+      }
+      Logger.i("Fetched years: $years");
+      setYear();
+
+      // save data to sqflite
+      localDatabase.insertBranchesToLocal(response);
+
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
+    } on DioException catch (e) {
+      errorDetails = {
+        "error": "DioException",
+        "data": e.message,
+        "code": e.response?.statusCode,
+      };
+
+      Logger.i(errorDetails);
+
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
+      return;
+    } catch (e) {
+      errorDetails = {"error": "CatchException"};
+      Logger.i(e.toString());
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
+      return;
+    }
   }
 
   ///
@@ -234,7 +438,14 @@ class GitService extends ChangeNotifier {
   /// May be changed later.
   Future<void> getSemesters(BuildContext context) async {
     try {
-      if (selectedYear == null) {
+      // both program and academic year must be selected
+      if (selectedYear == null ||
+          filterController.selectedProgram == null ||
+          filterController.selectedBranch == null) {
+        semesters = [];
+        filterController.activeSemester = null;
+        getSections(context);
+        notifyListeners();
         return;
       }
 
@@ -242,35 +453,54 @@ class GitService extends ChangeNotifier {
         isWorking = true;
         notifyListeners();
       }
-      final url =
-          "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/sections.json";
 
-      final options = RequestOptions(path: url);
-      final key = CacheOptions.defaultCacheKeyBuilder(options);
+      final localDatabase = Provider.of<LocalDatabaseProvider>(
+        context,
+        listen: false,
+      );
+      final supabaseProvider = Provider.of<SupabaseProvider>(
+        context,
+        listen: false,
+      );
 
-      final cacheData = await cacheOptions.store?.get(key);
-      if (cacheData != null) {
-        final cacheResponse = cacheData.toResponse(options);
-        final cachedSemesters =
-            jsonDecode(cacheResponse.data)["$selectedYear"]?.keys;
-        Logger.i("Cached Semesters: $cachedSemesters");
-        semesters = List.from(cachedSemesters);
+      final cacheData = await localDatabase.getSemestersFromLocal(
+          programName: filterController.selectedProgram!.name,
+          academicYear: selectedYear!,
+          branchName: filterController.selectedBranch!.branchName);
+      if (cacheData.isNotEmpty) {
+        Logger.i("Cached Semesters: $cacheData");
+        semesters = cacheData;
+        filterController.setPrimarySemester(context);
+
+        sections = null;
+        getSections(context);
         notifyListeners();
-        filterController.setPrimarySemester();
       }
 
-      final response = await dio.get(url);
-      if (response.headers.map['etag']?.first == cacheData?.eTag) {
-        Logger.i("Semester Etag matches");
+      final response = await supabaseProvider.getSemestersFromRemote(
+        programName: filterController.selectedProgram!.name,
+        academicYear: selectedYear!,
+        branchName: filterController.selectedBranch!.branchName,
+      );
+
+      if (genSortedHash(cacheData) == genSortedHash(response)) {
+        Logger.i("Semester cache hash matches");
         if (isWorking) {
           isWorking = false;
           notifyListeners();
         }
         return;
       }
-      final data = jsonDecode(response.data) as Map<String, dynamic>;
 
-      semesters = List.from(data["$selectedYear"]?.keys);
+      semesters = response;
+
+      // save new resposne as cache
+      localDatabase.insertSemestersToLocal(
+        response,
+        programName: filterController.selectedProgram!.name,
+        academicYear: selectedYear!,
+        branchName: filterController.selectedBranch!.branchName,
+      );
 
       // stop execution if there are no semesters for selected year
       if (semesters!.isEmpty) {
@@ -285,7 +515,7 @@ class GitService extends ChangeNotifier {
       notifyListeners();
       Logger.i("Fetched semesters: $_semesters");
 
-      filterController.setPrimarySemester();
+      filterController.setPrimarySemester(context);
 
       if (isWorking) {
         isWorking = false;
@@ -305,7 +535,7 @@ class GitService extends ChangeNotifier {
 
       return;
     } catch (e) {
-      errorDetails = {"error": "CatchException"};
+      errorDetails = {"error": "CatchException @ Fetching Semesters"};
 
       if (isWorking) {
         isWorking = false;
@@ -316,44 +546,56 @@ class GitService extends ChangeNotifier {
   }
 
   /// Gets all the available sections for a selected semester.
-  Future<void> getSections(FilterController filterController) async {
+  Future<void> getSections(BuildContext context) async {
     try {
+      if (filterController.activeSemester == null ||
+          selectedYear == null ||
+          filterController.selectedBranch == null ||
+          filterController.selectedProgram == null) {
+        sections = null;
+        filterController.activeSection = null;
+        notifyListeners();
+        return;
+      }
+
       if (!isWorking) {
         isWorking = true;
         notifyListeners();
       }
 
-      if (filterController.activeSemester == null ||
-          selectedYear == null ||
-          semesters == null) {
-        _sections?.clear();
+      Semesters activeSemester = filterController.activeSemester!;
+      final localDatabase = Provider.of<LocalDatabaseProvider>(
+        context,
+        listen: false,
+      );
+      final supabaseProvider = Provider.of<SupabaseProvider>(
+        context,
+        listen: false,
+      );
+
+      final cacheData = await localDatabase.getSectionsFromLocal(
+        programName: filterController.selectedProgram!.name,
+        academicYear: selectedYear!,
+        branch: filterController.selectedBranch!.branchName,
+        semester: activeSemester.semesterName,
+      );
+
+      if (cacheData.isNotEmpty) {
+        sections = cacheData;
+        await filterController.setPrimarySection();
         notifyListeners();
-        return;
-      }
-      String activeSemester = filterController.activeSemester!;
-
-      final url =
-          "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/sections.json";
-
-      final options = RequestOptions(path: url);
-      final key = CacheOptions.defaultCacheKeyBuilder(options);
-
-      final cacheData = await cacheOptions.store?.get(key);
-      if (cacheData != null) {
-        final cachedResponse = cacheData.toResponse(options);
-
-        _sections = Map.from(
-          jsonDecode(cachedResponse.data)["$selectedYear"][activeSemester],
-        );
-        notifyListeners();
-        filterController.setPrimarySection();
         Logger.i("Cached sections: $sections");
       }
 
-      final response = await dio.get(url);
+      final response = await supabaseProvider.getSectionsFromRemote(
+        programName: filterController.selectedProgram!.name,
+        academicYear: selectedYear!,
+        branch: filterController.selectedBranch!.branchName,
+        semester: activeSemester.semesterName,
+      );
 
-      if (response.headers.map['etag']?.first == cacheData?.eTag) {
-        Logger.i("Sections Etag matches");
+      if (genSortedHash(cacheData) == genSortedHash(response)) {
+        Logger.i("Sections cache hash matches");
         if (isWorking) {
           isWorking = false;
           notifyListeners();
@@ -361,10 +603,15 @@ class GitService extends ChangeNotifier {
         return;
       }
 
-      final data = jsonDecode(response.data) as Map<String, dynamic>;
-      _sections = Map.from(data["$selectedYear"][activeSemester]);
-      notifyListeners();
-      filterController.setPrimarySection();
+      await localDatabase.insertSectionsToLocal(
+        response,
+        programName: filterController.selectedProgram!.name,
+        academicYear: selectedYear!,
+        branch: filterController.selectedBranch!.branchName,
+        semester: activeSemester.semesterName,
+      );
+
+      sections = response;
       Logger.i("Fetched sections: $sections");
       if (isWorking) {
         isWorking = false;
@@ -383,7 +630,7 @@ class GitService extends ChangeNotifier {
       }
       throw Future.error(errorDetails.toString());
     } catch (e) {
-      errorDetails = {"error": "CatchException"};
+      errorDetails = {"error": "CatchException @ Fetching Sections"};
       Logger.i(e.toString());
       if (isWorking) {
         isWorking = false;
@@ -394,8 +641,8 @@ class GitService extends ChangeNotifier {
   }
 
   /// Gets concurrent timetable for unique semester and section.
-  Stream<Timetable?> getTimeTable(FilterController filterController) async* {
-    final section = filterController.activeSectionCode;
+  Stream<Timetable?> getTimeTable(BuildContext context) async* {
+    final section = filterController.activeSection?.sectionName;
     final semester = filterController.activeSemester;
 
     if (section == null || semester == null || selectedYear == null) {
@@ -408,29 +655,47 @@ class GitService extends ChangeNotifier {
       isWorking = true;
       notifyListeners();
     }
-    final url =
-        "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$selectedYear/$semester/$section.json";
     try {
-      final options = RequestOptions(path: url);
-      final key = CacheOptions.defaultCacheKeyBuilder(options);
+      final localDatabase = Provider.of<LocalDatabaseProvider>(
+        context,
+        listen: false,
+      );
+      final supabaseProvider = Provider.of<SupabaseProvider>(
+        context,
+        listen: false,
+      );
 
-      final cache = await cacheOptions.store?.get(key);
+      final cache = await localDatabase.getStudentScheduleFromLocal(
+        programName: filterController.selectedProgram!.name,
+        academicYear: selectedYear!,
+        branch: filterController.selectedBranch!.branchName,
+        semester: semester.semesterName,
+        section: section,
+      );
 
-      if (cache != null) {
-        final cachedResponse = cache.toResponse(options);
-        Logger.i("Yield Cache : ${DateTime.now().millisecondsSinceEpoch}");
+      if (cache.isNotEmpty) {
+        Logger.i(
+          "Yield Schedule Cache : ${DateTime.now().millisecondsSinceEpoch}",
+        );
 
-        yield Timetable.fromJson(
-          json: jsonDecode(cachedResponse.data),
+        yield Timetable.fromStudentScheduleModel(
+          scheduleList: cache,
           isFresh: false,
         );
       }
 
-      final response = await dio.get(url);
+      final response = await supabaseProvider.getStudentSchedulesFromRemote(
+        programName: filterController.selectedProgram!.name,
+        academicYear: selectedYear!,
+        branch: filterController.selectedBranch!.branchName,
+        semester: semester.semesterName,
+        section: section,
+      );
 
-      if (response.statusCode! >= 400) {
-        yield* Stream.error(response);
-      }
+      // TODO: (fixme) handle error condition
+      // if (response! >= 400) {
+      //   yield* Stream.error(response);
+      // }
 
       if (isWorking) {
         isWorking = false;
@@ -439,27 +704,31 @@ class GitService extends ChangeNotifier {
       Logger.i("Yield Actual : ${DateTime.now().millisecondsSinceEpoch}");
 
       /// send data again only if e-tag are different
-      if (response.headers.map['etag']?.first != cache?.eTag) {
+      if (genSortedHash(cache) != genSortedHash(response)) {
         Logger.i("Received Schedule with different ETag");
 
-        yield Timetable.fromJson(
-          json: jsonDecode(response.data),
+        localDatabase.insertStudentScheduleToLocal(
+          response,
+          programName: filterController.selectedProgram!.name,
+          academicYear: selectedYear!,
+          branch: filterController.selectedBranch!.branchName,
+          semester: semester.semesterName,
+          section: section,
+        );
+
+        yield Timetable.fromStudentScheduleModel(
+          scheduleList: response,
           isFresh: true,
         );
         yield* const Stream.empty();
       } else {
         Logger.i('ETag matches');
 
-        // as Dio may respond from the cache itself, we can check if the
-        // device has active network connection to judge if the response
-        // is really from the server..
-        final connectionAvailable =
-            await InternetConnection().hasInternetAccess;
-
-        yield Timetable.fromJson(
-          json: jsonDecode(cache!.toResponse(options).data),
-          isFresh: connectionAvailable,
+        yield Timetable.fromStudentScheduleModel(
+          scheduleList: cache,
+          isFresh: true,
         );
+        yield* const Stream.empty();
       }
     } on DioException catch (e) {
       errorDetails = {
@@ -483,6 +752,7 @@ class GitService extends ChangeNotifier {
     } catch (e) {
       errorDetails = {
         "type": "CatchException",
+        "error": e.toString(),
         "message": "Some unknown error occoured while getting schedule",
       };
 

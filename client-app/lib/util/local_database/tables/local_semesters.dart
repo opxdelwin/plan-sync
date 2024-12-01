@@ -1,3 +1,4 @@
+import 'package:plan_sync/backend/supabase_models/semesters.dart';
 import 'package:sqflite/sqflite.dart';
 
 class LocalSemesters {
@@ -23,6 +24,93 @@ class LocalSemesters {
         FOREIGN KEY (branch_name, program_name) REFERENCES branches (branch_name, program) ON UPDATE CASCADE ON DELETE CASCADE
     );
     """);
+    return;
+  }
+
+  static Future<List<Semesters>> queryAll(
+    Database db, {
+    String? programName,
+    String? academicYear,
+    String? branchName,
+  }) async {
+    String whereClause = '';
+    List<String> whereArgs = [];
+
+    if (programName != null) {
+      whereClause += 'program_name = ?';
+      whereArgs.add(programName);
+    }
+
+    if (academicYear != null) {
+      if (whereClause.isNotEmpty) whereClause += ' AND ';
+      whereClause += 'academic_year = ?';
+      whereArgs.add(academicYear);
+    }
+
+    if (branchName != null) {
+      if (whereClause.isNotEmpty) whereClause += ' AND ';
+      whereClause += 'branch_name = ?';
+      whereArgs.add(branchName);
+    }
+
+    String sql = 'SELECT * FROM semesters';
+    if (whereClause.isNotEmpty) {
+      sql += ' WHERE $whereClause';
+    }
+    // order by clause
+    sql += ' ORDER BY created_at desc';
+
+    final response = await db.rawQuery(sql, whereArgs);
+
+    List<Semesters> semesters =
+        response.map((e) => Semesters.fromJson(e)).toList();
+    return semesters;
+  }
+
+  static Future<void> clearAll(
+    Database db, {
+    String? programName,
+    String? academicYear,
+    String? branchName,
+  }) async {
+    String whereClause = '';
+    List<String> whereArgs = [];
+
+    if (programName != null) {
+      whereClause += 'program_name = ?';
+      whereArgs.add(programName);
+    }
+
+    if (academicYear != null) {
+      if (whereClause.isNotEmpty) whereClause += ' AND ';
+      whereClause += 'academic_year = ?';
+      whereArgs.add(academicYear);
+    }
+
+    if (branchName != null) {
+      if (whereClause.isNotEmpty) whereClause += ' AND ';
+      whereClause += 'branch_name = ?';
+      whereArgs.add(branchName);
+    }
+
+    await db.delete(
+      'semesters',
+      where: whereClause.isNotEmpty ? whereClause : null,
+      whereArgs: whereArgs.isNotEmpty ? whereArgs : null,
+    );
+  }
+
+  static Future<void> insertAll(
+    Database db,
+    List items,
+  ) async {
+    for (var item in items) {
+      await db.insert(
+        'semesters',
+        item,
+        conflictAlgorithm: ConflictAlgorithm.ignore,
+      );
+    }
     return;
   }
 }

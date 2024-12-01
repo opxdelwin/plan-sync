@@ -25,12 +25,13 @@ class _ScheduleFreshnessIndicatorState
     if (widget.isFresh && showIndicator) {
       // Remove after 2s, as opacity animation
       // is 1.5s
-      Future.delayed(
-        const Duration(seconds: 2),
-        () => setState(() {
+      Future.delayed(const Duration(seconds: 2), () {
+        if (!mounted) return;
+
+        setState(() {
           showIndicator = false;
-        }),
-      );
+        });
+      });
     }
     final colorScheme = Theme.of(context).colorScheme;
     return AnimatedOpacity(

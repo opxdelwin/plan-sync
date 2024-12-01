@@ -24,6 +24,18 @@ class AppPreferencesController extends ChangeNotifier {
   Future<bool> savePrimaryYearPreference(String data) async =>
       await perfs.setString('primary-year', data);
 
+  Future<bool> savePrimaryProgramPreference(String data) async =>
+      await perfs.setString('primary-program', data);
+
+  Future<String?> getPrimaryProgramPreference() async =>
+      perfs.getString('primary-program');
+
+  Future<bool> savePrimaryBranchPreference(String data) async =>
+      await perfs.setString('primary-branch', data);
+
+  Future<String?> getPrimaryBranchPreference() async =>
+      perfs.getString('primary-branch');
+
   // In app tutorial
   /// Returns `true` if tutorial has already been completed.
   bool? getTutorialStatus() => perfs.getBool('app-tutorial-status');

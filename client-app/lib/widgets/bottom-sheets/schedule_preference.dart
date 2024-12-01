@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:plan_sync/controllers/app_tour_controller.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/util/snackbar.dart';
+import 'package:plan_sync/widgets/dropdowns/branch_bar.dart';
+import 'package:plan_sync/widgets/dropdowns/program_bar.dart';
 import 'package:plan_sync/widgets/dropdowns/sections_bar.dart';
 import 'package:plan_sync/widgets/dropdowns/semester_bar.dart';
 import 'package:plan_sync/widgets/dropdowns/year_bar.dart';
@@ -32,9 +34,12 @@ class SchedulePreferenceBottomSheetState
     if (savePreferencesOnExit) {
       FilterController controller =
           Provider.of<FilterController>(context, listen: false);
+
+      controller.storePrimaryProgram(context);
+      controller.storePrimaryYear(context);
+      controller.storePrimaryBranch(context);
       controller.storePrimarySemester(context);
       controller.storePrimarySection(context);
-      controller.storePrimaryYear(context);
       CustomSnackbar.info(
         'Primary Preferences Stored!',
         "Your timetable will be selected by default.",
@@ -128,12 +133,7 @@ class SchedulePreferenceBottomSheetState
                     color: colorScheme.onSurface,
                   ),
                 ),
-                trailing: Text(
-                  'BTech.',
-                  style: TextStyle(
-                    color: colorScheme.onSurface,
-                  ),
-                ),
+                trailing: const ProgramBar(),
               ),
 
               // year selection
@@ -152,6 +152,21 @@ class SchedulePreferenceBottomSheetState
                 trailing: const YearBar(),
               ),
 
+              // semester selection
+              ListTile(
+                enableFeedback: true,
+                leading: Icon(
+                  Icons.book_rounded,
+                  color: colorScheme.onSurface,
+                ),
+                title: Text(
+                  'Branch',
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                trailing: const BranchBar(),
+              ),
               // semester selection
               ListTile(
                 enableFeedback: true,

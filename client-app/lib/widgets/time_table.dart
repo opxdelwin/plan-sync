@@ -176,7 +176,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
 
       return StreamBuilder(
         key: ValueKey(filterController.getShortCode()),
-        stream: serviceController.getTimeTable(filterController),
+        stream: serviceController.getTimeTable(context),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Column(

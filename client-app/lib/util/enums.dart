@@ -1,11 +1,11 @@
 enum Weekday {
-  sunday(weekdayIndex: 0, key: 'sunday'),
-  monday(weekdayIndex: 1, key: 'monday'),
-  tuesday(weekdayIndex: 2, key: 'tuesday'),
-  wednesday(weekdayIndex: 3, key: 'wednesday'),
-  thursday(weekdayIndex: 4, key: 'thursday'),
-  friday(weekdayIndex: 5, key: 'friday'),
-  saturday(weekdayIndex: 6, key: 'saturday');
+  sunday(weekdayIndex: 0, key: 'SUNDAY'),
+  monday(weekdayIndex: 1, key: 'MONDAY'),
+  tuesday(weekdayIndex: 2, key: 'TUESDAY'),
+  wednesday(weekdayIndex: 3, key: 'WEDNESDAY'),
+  thursday(weekdayIndex: 4, key: 'THURSDAY'),
+  friday(weekdayIndex: 5, key: 'FRIDAY'),
+  saturday(weekdayIndex: 6, key: 'SATURDAY');
 
   final int weekdayIndex;
   final String key;

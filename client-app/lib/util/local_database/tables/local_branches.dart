@@ -1,3 +1,4 @@
+import 'package:plan_sync/backend/supabase_models/branches.dart';
 import 'package:sqflite/sqflite.dart';
 
 class LocalBranches {
@@ -17,6 +18,65 @@ class LocalBranches {
         FOREIGN KEY (program) REFERENCES programs (name) ON UPDATE CASCADE ON DELETE CASCADE
     );
 """);
+    return;
+  }
+
+  static Future<List<Branches>> queryAll(
+    Database db, {
+    String? programName,
+  }) async {
+    String whereClause = '';
+    List<String> whereArgs = [];
+
+    if (programName != null) {
+      whereClause += 'program = ?';
+      whereArgs.add(programName);
+    }
+
+    String sql = 'SELECT * FROM branches';
+    if (whereClause.isNotEmpty) {
+      sql += ' WHERE $whereClause';
+    }
+    // order by clause
+    sql += ' ORDER BY branch_name asc';
+
+    final response = await db.rawQuery(sql, whereArgs);
+
+    List<Branches> branches =
+        response.map((e) => Branches.fromJson(e)).toList();
+    return branches;
+  }
+
+  static Future<void> clearAll(
+    Database db, {
+    String? programName,
+  }) async {
+    String whereClause = '';
+    List<String> whereArgs = [];
+
+    if (programName != null) {
+      whereClause += 'program_name = ?';
+      whereArgs.add(programName);
+    }
+
+    await db.delete(
+      'branches',
+      where: whereClause.isNotEmpty ? whereClause : null,
+      whereArgs: whereArgs.isNotEmpty ? whereArgs : null,
+    );
+  }
+
+  static Future<void> insertAll(
+    Database db,
+    List items,
+  ) async {
+    for (var item in items) {
+      await db.insert(
+        'branches',
+        item,
+        conflictAlgorithm: ConflictAlgorithm.ignore,
+      );
+    }
     return;
   }
 }

@@ -1,3 +1,4 @@
+import 'package:plan_sync/backend/supabase_models/section.dart';
 import 'package:sqflite/sqflite.dart';
 
 class LocalSection {
@@ -15,7 +16,11 @@ class LocalSection {
           authority TEXT, -- Authority (nullable)
           
           -- Composite unique constraints
-          UNIQUE (branch, semester_name, program, academic_year, authority), -- Composite unique constraint
+
+          -- Removed on unique condition as postgres can enforce
+          -- multiple unique conditions on overlapping columns,
+          -- but SQLite can't.
+          
           UNIQUE (section_name, branch, semester_name, program, academic_year, authority), -- Composite unique constraint
           
           -- Foreign key constraint
@@ -34,6 +39,92 @@ class LocalSection {
           ) ON UPDATE CASCADE ON DELETE CASCADE
       );
   """);
+    return;
+  }
+
+  /// Query all items from the table based on the given parameters.
+  static Future<List<Section>> queryAll(
+    Database db, {
+    String? program,
+    String? branch,
+    String? semester,
+    String? academicYear,
+  }) async {
+    String query = 'SELECT * FROM section WHERE 1=1';
+    List<String> params = [];
+
+    if (program != null) {
+      query += ' AND program = ?';
+      params.add(program);
+    }
+    if (branch != null) {
+      query += ' AND branch = ?';
+      params.add(branch);
+    }
+    if (semester != null) {
+      query += ' AND semester_name = ?';
+      params.add(semester);
+    }
+    if (academicYear != null) {
+      query += ' AND academic_year = ?';
+      params.add(academicYear);
+    }
+
+    query += ' ORDER BY section_name DESC';
+
+    final response = await db.rawQuery(query, params);
+    List<Section> output = [];
+    for (var item in response) {
+      output.add(Section.fromJson(item));
+    }
+    return output;
+  }
+
+  /// Delete all items from the table based on the given parameters.
+  static Future<void> clearAll(
+    Database db, {
+    String? program,
+    String? branch,
+    String? semester,
+    String? academicYear,
+  }) async {
+    String query = 'DELETE FROM section WHERE 1=1';
+    List<dynamic> params = [];
+
+    if (program != null) {
+      query += ' AND program = ?';
+      params.add(program);
+    }
+    if (branch != null) {
+      query += ' AND branch = ?';
+      params.add(branch);
+    }
+    if (semester != null) {
+      query += ' AND semester_name = ?';
+      params.add(semester);
+    }
+    if (academicYear != null) {
+      query += ' AND academic_year = ?';
+      params.add(academicYear);
+    }
+
+    await db.rawDelete(query, params);
+    return;
+  }
+
+  /// Insert all items into the table.
+  /// This is a batch insert operation.
+  static Future<void> insertAll(
+    Database db,
+    List items,
+  ) async {
+    for (var item in items) {
+      await db.insert(
+        'section',
+        item,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
     return;
   }
 }
