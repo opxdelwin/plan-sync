@@ -17,10 +17,18 @@ class SupabaseProvider extends ChangeNotifier {
   }
 
   /// Fetch available academic years from supabase.
-  Future<List<AcademicYear>> getYearsFromRemote() async {
+  Future<List<AcademicYear>?> getYearsFromRemote({
+    bool exitIfNoInternet = false,
+  }) async {
     if (insatnce == null) {
       Logger.e('getYearsFromRemote called without a valid supabase instance');
-      return [];
+      return null;
+    }
+
+    bool hasInternet = await hasInternetConnection();
+
+    if (!hasInternet && exitIfNoInternet) {
+      return null;
     }
 
     await waitForInternetConnectivity();
@@ -38,11 +46,20 @@ class SupabaseProvider extends ChangeNotifier {
   }
 
   /// Fetch available programs from supabase.
-  Future<List<Program>> getProgramsFromRemote() async {
+  Future<List<Program>?> getProgramsFromRemote({
+    bool exitIfNoInternet = false,
+  }) async {
     if (insatnce == null) {
       Logger.e(
-          'getProgramsFromRemote called without a valid supabase instance');
-      return [];
+        'getProgramsFromRemote called without a valid supabase instance',
+      );
+      return null;
+    }
+
+    bool hasInternet = await hasInternetConnection();
+
+    if (!hasInternet && exitIfNoInternet) {
+      return null;
     }
 
     await waitForInternetConnectivity();
@@ -60,13 +77,20 @@ class SupabaseProvider extends ChangeNotifier {
   }
 
   /// Fetch available programs from supabase.
-  Future<List<Branches>> getBranchesFromRemote({
+  Future<List<Branches>?> getBranchesFromRemote({
     required String programName,
+    bool exitIfNoInternet = false,
   }) async {
     if (insatnce == null) {
       Logger.e(
           'getProgramsFromRemote called without a valid supabase instance');
-      return [];
+      return null;
+    }
+
+    bool hasInternet = await hasInternetConnection();
+
+    if (!hasInternet && exitIfNoInternet) {
+      return null;
     }
 
     await waitForInternetConnectivity();
@@ -86,15 +110,22 @@ class SupabaseProvider extends ChangeNotifier {
 
   /// Fetch available semesters from supabase.
   /// [programName] and [academicYear] are required to filter the semesters.
-  Future<List<Semesters>> getSemestersFromRemote({
+  Future<List<Semesters>?> getSemestersFromRemote({
     required String programName,
     required String academicYear,
     required String branchName,
+    bool exitIfNoInternet = false,
   }) async {
     if (insatnce == null) {
       Logger.e(
           'getSemestersFromRemote called without a valid supabase instance');
-      return [];
+      return null;
+    }
+
+    bool hasInternet = await hasInternetConnection();
+
+    if (!hasInternet && exitIfNoInternet) {
+      return null;
     }
 
     await waitForInternetConnectivity();
@@ -114,16 +145,23 @@ class SupabaseProvider extends ChangeNotifier {
     return output;
   }
 
-  Future<List<Section>> getSectionsFromRemote({
+  Future<List<Section>?> getSectionsFromRemote({
     required String programName,
     required String academicYear,
     required String branch,
     required String semester,
+    bool exitIfNoInternet = false,
   }) async {
     if (insatnce == null) {
       Logger.e(
           'getSectionsFromRemote called without a valid supabase instance');
-      return [];
+      return null;
+    }
+
+    bool hasInternet = await hasInternetConnection();
+
+    if (!hasInternet && exitIfNoInternet) {
+      return null;
     }
 
     await waitForInternetConnectivity();
@@ -144,18 +182,25 @@ class SupabaseProvider extends ChangeNotifier {
     return output;
   }
 
-  Future<List<StudentSchedule>> getStudentSchedulesFromRemote({
+  Future<List<StudentSchedule>?> getStudentSchedulesFromRemote({
     required String programName,
     required String academicYear,
     required String branch,
     required String semester,
     required String section,
+    bool exitIfNoInternet = false,
   }) async {
     if (insatnce == null) {
       Logger.e(
         'getSchedulesFromRemote called without a valid supabase instance',
       );
-      return [];
+      return null;
+    }
+
+    bool hasInternet = await hasInternetConnection();
+
+    if (!hasInternet && exitIfNoInternet) {
+      return null;
     }
 
     await waitForInternetConnectivity();

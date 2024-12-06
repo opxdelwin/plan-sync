@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:plan_sync/backend/supabase_models/student_schedule.dart';
 import 'package:sqflite/sqflite.dart';
 

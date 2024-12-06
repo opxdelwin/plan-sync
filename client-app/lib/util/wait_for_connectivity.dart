@@ -14,3 +14,8 @@ Future<void> waitForInternetConnectivity() async {
     }
   }
 }
+
+Future<bool> hasInternetConnection() async {
+  final conn = await Connectivity().checkConnectivity();
+  return conn.contains(ConnectivityResult.none);
+}

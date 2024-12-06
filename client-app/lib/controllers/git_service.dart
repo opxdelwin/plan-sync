@@ -203,7 +203,15 @@ class GitService extends ChangeNotifier {
         notifyListeners();
       }
 
-      final response = await supabaseProvider.getProgramsFromRemote();
+      final response = await supabaseProvider.getProgramsFromRemote(
+        exitIfNoInternet: true,
+      );
+
+      // Terminate if the device is offline
+      if (response == null) {
+        Logger.e('log: stopping after getProgram');
+        return;
+      }
 
       // stop if the hash matches for both cached and newly fetched
       if (genSortedHash(cacheData) == genSortedHash(response)) {
@@ -293,7 +301,14 @@ class GitService extends ChangeNotifier {
 
       final response = await supabaseProvider.getBranchesFromRemote(
         programName: filterController.selectedProgram!.name,
+        exitIfNoInternet: true,
       );
+
+      // Terminate if the device is offline
+      if (response == null) {
+        Logger.e('log: stopping after getBranch');
+        return;
+      }
 
       // stop if the hash matches for both cached and newly fetched
       if (genSortedHash(cacheData) == genSortedHash(response)) {
@@ -369,7 +384,14 @@ class GitService extends ChangeNotifier {
         setYear();
       }
 
-      final response = await supabaseProvider.getYearsFromRemote();
+      final response = await supabaseProvider.getYearsFromRemote(
+        exitIfNoInternet: true,
+      );
+      // Terminate if the device is offline
+      if (response == null) {
+        Logger.e('log: stopping after getYears');
+        return;
+      }
 
       // stop if the hash matches for both cached and newly fetched
       if (genSortedHash(cacheData) == genSortedHash(response)) {
@@ -481,7 +503,13 @@ class GitService extends ChangeNotifier {
         programName: filterController.selectedProgram!.name,
         academicYear: selectedYear!,
         branchName: filterController.selectedBranch!.branchName,
+        exitIfNoInternet: true,
       );
+      // Terminate if the device is offline
+      if (response == null) {
+        Logger.e('log: stopping after getSemesters');
+        return;
+      }
 
       if (genSortedHash(cacheData) == genSortedHash(response)) {
         Logger.i("Semester cache hash matches");
@@ -592,7 +620,14 @@ class GitService extends ChangeNotifier {
         academicYear: selectedYear!,
         branch: filterController.selectedBranch!.branchName,
         semester: activeSemester.semesterName,
+        exitIfNoInternet: true,
       );
+      // Terminate if the device is offline
+      if (response == null) {
+        Logger.e('log: stopping after getSections');
+
+        return;
+      }
 
       if (genSortedHash(cacheData) == genSortedHash(response)) {
         Logger.i("Sections cache hash matches");
@@ -691,11 +726,11 @@ class GitService extends ChangeNotifier {
         semester: semester.semesterName,
         section: section,
       );
-
-      // TODO: (fixme) handle error condition
-      // if (response! >= 400) {
-      //   yield* Stream.error(response);
-      // }
+      // Terminate if the device is offline / or data is null
+      if (response == null) {
+        Logger.e('log: getTimeTable remote response is null');
+        return;
+      }
 
       if (isWorking) {
         isWorking = false;
