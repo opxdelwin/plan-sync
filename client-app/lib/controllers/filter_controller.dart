@@ -352,7 +352,7 @@ class FilterController extends ChangeNotifier {
   }
 
   /// sets the semester code while runtime
-  Future<void> setPrimaryYear() async {
+  void setPrimaryYear() {
     // activeSemester = null;
     final String? primaryYear = preferences.getPrimaryYearPreference();
     Logger.i("primary year: $primaryYear");

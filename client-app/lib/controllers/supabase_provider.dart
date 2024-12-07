@@ -99,7 +99,7 @@ class SupabaseProvider extends ChangeNotifier {
         .from('branches')
         .select()
         .eq('program', programName)
-        .order('branch_name');
+        .order('branch_name', ascending: true);
 
     List<Branches> output = [];
     for (var year in remoteResponse) {
@@ -136,7 +136,7 @@ class SupabaseProvider extends ChangeNotifier {
         .eq('program_name', programName)
         .eq('academic_year', academicYear)
         .eq('branch_name', branchName)
-        .order('created_at');
+        .order('semester_name', ascending: true);
 
     List<Semesters> output = [];
     for (var semester in remoteResponse) {
@@ -173,7 +173,7 @@ class SupabaseProvider extends ChangeNotifier {
         .eq('academic_year', academicYear)
         .eq('branch', branch)
         .eq('semester_name', semester)
-        .order('section_name');
+        .order('section_name', ascending: true);
 
     List<Section> output = [];
     for (var section in remoteResponse) {

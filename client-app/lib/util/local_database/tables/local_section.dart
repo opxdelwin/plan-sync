@@ -70,7 +70,7 @@ class LocalSection {
       params.add(academicYear);
     }
 
-    query += ' ORDER BY section_name DESC';
+    query += ' ORDER BY section_name ASC';
 
     final response = await db.rawQuery(query, params);
     List<Section> output = [];

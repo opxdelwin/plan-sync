@@ -210,6 +210,7 @@ class GitService extends ChangeNotifier {
       // Terminate if the device is offline
       if (response == null) {
         Logger.e('log: stopping after getProgram');
+        await getBranch(context);
         return;
       }
 
@@ -271,7 +272,7 @@ class GitService extends ChangeNotifier {
   Future<void> getBranch(BuildContext context) async {
     try {
       // Program must be selected to fetch branches
-      if (filterController.selectedProgram == null) {
+      if (filterController.selectedProgram == null || selectedYear == null) {
         return;
       }
 
@@ -390,12 +391,14 @@ class GitService extends ChangeNotifier {
       // Terminate if the device is offline
       if (response == null) {
         Logger.e('log: stopping after getYears');
+        getBranch(context);
         return;
       }
 
       // stop if the hash matches for both cached and newly fetched
       if (genSortedHash(cacheData) == genSortedHash(response)) {
         Logger.w('Normal Schedulw Year is cached.');
+        getBranch(context);
         return;
       }
 

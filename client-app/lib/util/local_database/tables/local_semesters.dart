@@ -58,7 +58,7 @@ class LocalSemesters {
       sql += ' WHERE $whereClause';
     }
     // order by clause
-    sql += ' ORDER BY created_at desc';
+    sql += ' ORDER BY semester_name asc';
 
     final response = await db.rawQuery(sql, whereArgs);
 
