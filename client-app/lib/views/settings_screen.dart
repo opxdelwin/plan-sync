@@ -13,15 +13,30 @@ import 'package:plan_sync/widgets/popups/popups_wrapper.dart';
 import 'package:provider/provider.dart';
 import '../controllers/auth.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
   void setPrimarySections(BuildContext context) {
     BottomSheets.changeSectionPreference(context: context, save: true);
   }
 
+  late Auth auth;
+  late VersionController versionController;
+  bool isPunActivated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    auth = Provider.of<Auth>(context, listen: false);
+    versionController = Provider.of<VersionController>(context, listen: false);
+  }
+
   void copyUID(BuildContext context) async {
-    Auth auth = Provider.of<Auth>(context, listen: false);
     final uid = auth.activeUser?.uid;
 
     if (uid == null) {
@@ -44,10 +59,17 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Auth auth = Provider.of<Auth>(context, listen: false);
-    VersionController versionController =
-        Provider.of<VersionController>(context, listen: false);
     final colorScheme = Theme.of(context).colorScheme;
+
+    final userImage = CachedNetworkImageProvider(
+      auth.activeUser?.photoURL ?? DEFAULT_USER_IMAGE,
+      cacheKey: auth.activeUser?.uid ?? 'DEFAULT_USER_IMAGE',
+    );
+
+    const chillGuyImage = CachedNetworkImageProvider(
+      CHILL_GUY_IMAGE,
+      cacheKey: 'CHILL_GUY_IMAGE',
+    );
 
     return Scaffold(
         appBar: AppBar(
@@ -78,12 +100,20 @@ class SettingsPage extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 16),
-                CircleAvatar(
-                  radius: 64,
-                  backgroundImage: CachedNetworkImageProvider(
-                    auth.activeUser!.photoURL ?? DEFAULT_USER_IMAGE,
+
+                // TODO: maybe remove this pun?
+                GestureDetector(
+                  onLongPress: () => setState(() {
+                    isPunActivated = !isPunActivated;
+                  }),
+                  child: CircleAvatar(
+                    radius: 64,
+                    // main image
+                    foregroundImage: isPunActivated ? chillGuyImage : userImage,
+                    // fallback image
+                    backgroundImage: const AssetImage('assets/favicon.png'),
+                    backgroundColor: colorScheme.surface,
                   ),
-                  backgroundColor: colorScheme.surface,
                 ),
                 const SizedBox(height: 24),
                 Text(
