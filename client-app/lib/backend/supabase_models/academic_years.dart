@@ -26,4 +26,9 @@ class AcademicYear {
       'year': year,
     };
   }
+
+  @override
+  String toString() {
+    return 'AcademicYear{id: $id, createdAt: $createdAt, year: $year}';
+  }
 }
