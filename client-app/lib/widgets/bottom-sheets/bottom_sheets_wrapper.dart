@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:plan_sync/controllers/analytics_controller.dart';
 import 'package:plan_sync/widgets/bottom-sheets/contribute_schedule.dart';
 import 'package:plan_sync/widgets/bottom-sheets/elective_preference.dart';
 import 'package:plan_sync/widgets/bottom-sheets/report_error.dart';
 import 'package:plan_sync/widgets/bottom-sheets/schedule_preference.dart';
 import 'package:plan_sync/widgets/bottom-sheets/share_app.dart';
+import 'package:provider/provider.dart';
 
 class BottomSheets {
   static changeSectionPreference({
@@ -14,6 +16,7 @@ class BottomSheets {
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
+      showDragHandle: true,
       backgroundColor: colorScheme.surfaceContainerHighest,
       builder: (context) => SchedulePreferenceBottomSheet(
         save: save,
@@ -53,6 +56,7 @@ class BottomSheets {
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
+      showDragHandle: true,
       backgroundColor: colorScheme.surfaceContainerHighest,
       builder: (context) => ElectivePreferenceBottomSheet(
         save: save,
@@ -64,6 +68,10 @@ class BottomSheets {
     required BuildContext context,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
+    Provider.of<AnalyticsController>(
+      context,
+      listen: false,
+    ).logShareViaExternalApps();
     showModalBottomSheet(
       context: context,
       showDragHandle: true,

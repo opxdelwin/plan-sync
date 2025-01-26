@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-class AppThemeController extends GetxController {
+class AppThemeController extends ChangeNotifier {
   static final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     primaryColor: const Color(0xFF34A853), // Vibrant green
@@ -46,8 +45,8 @@ class AppThemeController extends GetxController {
       onPrimary: Color(0xFF121212),
       secondary: Color.fromARGB(255, 21, 80, 174), // A slightly darker green
       onSecondary: Color(0xFFE0E0E0),
-      error: Color(0xFFFF5252),
-      onError: Color(0xFF121212),
+      error: Color(0xFFEA4335),
+      onError: Color(0xFFFFFFFF),
       surface: Color(0xFF1E1E1E),
       onSurface: Color.fromARGB(255, 240, 240, 240),
       surfaceContainerHighest:
@@ -79,8 +78,40 @@ class AppThemeController extends GetxController {
     ),
   );
 
+  ThemeMode themeMode = ThemeMode.system;
+
+  bool get isDarkMode => themeMode == ThemeMode.dark;
+
+  void onInit() {
+    initThemeMode();
+
+    // listen to system theme changes, and notify app listeners
+    WidgetsBinding.instance.platformDispatcher.onPlatformBrightnessChanged =
+        () {
+      initThemeMode();
+      notifyListeners();
+    };
+  }
+
+  void initThemeMode() {
+    final brightness =
+        WidgetsBinding.instance.platformDispatcher.platformBrightness;
+
+    if (brightness == Brightness.light) {
+      themeMode = ThemeMode.light;
+    } else {
+      themeMode = ThemeMode.dark;
+    }
+  }
+
   /// toggles theme
-  static toggleTheme() {
-    Get.changeTheme(Get.isDarkMode ? lightTheme : darkTheme);
+  void toggleTheme() {
+    if (themeMode == ThemeMode.dark) {
+      themeMode = ThemeMode.light;
+    } else {
+      themeMode = ThemeMode.dark;
+    }
+
+    notifyListeners();
   }
 }

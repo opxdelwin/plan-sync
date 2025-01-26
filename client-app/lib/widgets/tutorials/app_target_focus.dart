@@ -84,6 +84,47 @@ class AppTargetFocus {
     );
   }
 
+  static doneButton({
+    required ColorScheme colorScheme,
+    required GlobalKey buttonKey,
+  }) {
+    return TargetFocus(
+      identify: buttonKey.hashCode,
+      keyTarget: buttonKey,
+      shape: ShapeLightFocus.RRect,
+      radius: 24,
+      contents: [
+        TargetContent(
+          align: ContentAlign.top,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                "Save it all",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.surface,
+                  fontSize: 20.0,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Text(
+                  "This would be your last step to academic success!",
+                  style: TextStyle(
+                    color: colorScheme.surface,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 48),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   static savePreferenceSwitch({
     required ColorScheme colorScheme,
     required GlobalKey buttonKey,

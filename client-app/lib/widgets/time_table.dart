@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:get/get.dart';
 import 'package:plan_sync/backend/models/timetable.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/util/enums.dart';
 import 'package:plan_sync/widgets/popups/popups_wrapper.dart';
 import 'package:plan_sync/widgets/time_table_for_day.dart';
+import 'package:provider/provider.dart';
 
 class TimeTableWidget extends StatefulWidget {
   const TimeTableWidget({super.key});
@@ -150,15 +151,18 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
       ),
     );
 
-    Get.dialog(
-      dialog,
+    showAdaptiveDialog(
+      context: context,
       barrierColor: colorScheme.onSurface.withOpacity(0.32),
+      barrierDismissible: true,
+      builder: (context) => dialog,
     );
   }
 
   void reportError() {
     PopupsWrapper.reportError(
       context: context,
+      scheduleType: ScheduleType.regular,
     );
   }
 
@@ -166,12 +170,13 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return GetBuilder<FilterController>(builder: (filterController) {
-      GitService serviceController = Get.find();
+    return Consumer<FilterController>(builder: (ctx, filterController, child) {
+      GitService serviceController =
+          Provider.of<GitService>(context, listen: false);
 
       return StreamBuilder(
         key: ValueKey(filterController.getShortCode()),
-        stream: serviceController.getTimeTable(),
+        stream: serviceController.getTimeTable(filterController),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Column(
@@ -291,19 +296,17 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                       ),
                     ),
                     const Spacer(),
-                    InkWell(
-                      onTap: () => reportError(),
-                      child: Row(
-                        children: [
-                          Icon(Icons.flag_rounded, color: colorScheme.error),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Report Error',
-                            style: TextStyle(color: colorScheme.error),
-                          ),
-                        ],
+                    TextButton.icon(
+                      onPressed: () => reportError(),
+                      label: Text(
+                        'Report Error',
+                        style: TextStyle(color: colorScheme.error),
                       ),
-                    ),
+                      icon: Icon(
+                        Icons.flag_rounded,
+                        color: colorScheme.error,
+                      ),
+                    )
                   ],
                 ),
                 const SizedBox(height: 16),

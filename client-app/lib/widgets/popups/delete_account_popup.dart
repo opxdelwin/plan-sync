@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_sync/controllers/auth.dart';
+import 'package:provider/provider.dart';
 
 class DeleteAccountPopup extends StatefulWidget {
   const DeleteAccountPopup({super.key});
@@ -15,6 +15,7 @@ class _DeleteAccountPopupState extends State<DeleteAccountPopup> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+
     return Dialog(
       backgroundColor: colorScheme.surface,
       elevation: 0.0,
@@ -64,7 +65,10 @@ class _DeleteAccountPopupState extends State<DeleteAccountPopup> {
                             setState(() {
                               isWorking = true;
                             });
-                            await Get.find<Auth>().deleteCurrentUser();
+
+                            await Provider.of<Auth>(context, listen: false)
+                                .deleteCurrentUser(context);
+
                             setState(() {
                               isWorking = false;
                             });
@@ -83,7 +87,7 @@ class _DeleteAccountPopupState extends State<DeleteAccountPopup> {
                       ),
                     ),
                     child: isWorking
-                        ? LoadingAnimationWidget.prograssiveDots(
+                        ? LoadingAnimationWidget.progressiveDots(
                             color: colorScheme.onError,
                             size: 24,
                           )
@@ -109,7 +113,7 @@ class _DeleteAccountPopupState extends State<DeleteAccountPopup> {
                       ),
                     ),
                     child: isWorking
-                        ? LoadingAnimationWidget.prograssiveDots(
+                        ? LoadingAnimationWidget.progressiveDots(
                             color: colorScheme.onPrimary,
                             size: 24,
                           )

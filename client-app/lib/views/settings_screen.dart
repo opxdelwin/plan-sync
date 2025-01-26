@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:plan_sync/controllers/analytics_controller.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
@@ -11,21 +10,41 @@ import 'package:plan_sync/util/snackbar.dart';
 import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
 import 'package:plan_sync/widgets/buttons/logout_button.dart';
 import 'package:plan_sync/widgets/popups/popups_wrapper.dart';
+import 'package:provider/provider.dart';
 import '../controllers/auth.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
   void setPrimarySections(BuildContext context) {
     BottomSheets.changeSectionPreference(context: context, save: true);
   }
 
-  void copyUID() async {
-    Auth auth = Get.find();
+  late Auth auth;
+  late VersionController versionController;
+  bool isPunActivated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    auth = Provider.of<Auth>(context, listen: false);
+    versionController = Provider.of<VersionController>(context, listen: false);
+  }
+
+  void copyUID(BuildContext context) async {
     final uid = auth.activeUser?.uid;
 
     if (uid == null) {
-      CustomSnackbar.error('Error', 'No UID found. Please Login again.');
+      CustomSnackbar.error(
+        'Error',
+        'No UID found. Please Login again.',
+        context,
+      );
       return;
     }
 
@@ -33,15 +52,24 @@ class SettingsPage extends StatelessWidget {
     CustomSnackbar.info(
       'Copied',
       'Your UID has been copied into the clipboard.',
+      context,
     );
     return;
   }
 
   @override
   Widget build(BuildContext context) {
-    Auth auth = Get.find();
-    VersionController versionController = Get.find();
     final colorScheme = Theme.of(context).colorScheme;
+
+    final userImage = CachedNetworkImageProvider(
+      auth.activeUser?.photoURL ?? DEFAULT_USER_IMAGE,
+      cacheKey: auth.activeUser?.uid ?? 'DEFAULT_USER_IMAGE',
+    );
+
+    const chillGuyImage = CachedNetworkImageProvider(
+      CHILL_GUY_IMAGE,
+      cacheKey: 'CHILL_GUY_IMAGE',
+    );
 
     return Scaffold(
         appBar: AppBar(
@@ -72,12 +100,20 @@ class SettingsPage extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 16),
-                CircleAvatar(
-                  radius: 64,
-                  backgroundImage: CachedNetworkImageProvider(
-                    auth.activeUser!.photoURL ?? DEFAULT_USER_IMAGE,
+
+                // TODO: maybe remove this pun?
+                GestureDetector(
+                  onLongPress: () => setState(() {
+                    isPunActivated = !isPunActivated;
+                  }),
+                  child: CircleAvatar(
+                    radius: 64,
+                    // main image
+                    foregroundImage: isPunActivated ? chillGuyImage : userImage,
+                    // fallback image
+                    backgroundImage: const AssetImage('assets/favicon.png'),
+                    backgroundColor: colorScheme.surface,
                   ),
-                  backgroundColor: colorScheme.surface,
                 ),
                 const SizedBox(height: 24),
                 Text(
@@ -111,7 +147,7 @@ class SettingsPage extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     InkWell(
-                      onTap: copyUID,
+                      onTap: () => copyUID(context),
                       enableFeedback: true,
                       child: Icon(
                         Icons.copy,
@@ -188,7 +224,11 @@ class SettingsPage extends StatelessWidget {
                     BottomSheets.shareAppBottomSheet(
                       context: context,
                     );
-                    Get.find<AnalyticsController>().logShareSheetOpen();
+
+                    Provider.of<AnalyticsController>(
+                      context,
+                      listen: false,
+                    ).logShareSheetOpen();
                   },
                 ),
                 Padding(
@@ -197,30 +237,6 @@ class SettingsPage extends StatelessWidget {
                     color: colorScheme.onSurfaceVariant.withOpacity(0.48),
                   ),
                 ),
-                // TODO: remove around Nov
-                // ListTile(
-                //   shape: RoundedRectangleBorder(
-                //     borderRadius: BorderRadius.circular(16),
-                //   ),
-                //   enableFeedback: true,
-                //   leading: Icon(
-                //     Icons.add_circle_outline_rounded,
-                //     color: colorScheme.onSurface,
-                //   ),
-                //   title: Text(
-                //     "Contribute Time Table",
-                //     style: TextStyle(
-                //       color: colorScheme.onSurface,
-                //     ),
-                //   ),
-                //   trailing: Icon(
-                //     Icons.keyboard_arrow_right_rounded,
-                //     color: colorScheme.onSurface,
-                //   ),
-                //   onTap: () => BottomSheets.contributeTimeTable(
-                //     context: context,
-                //   ),
-                // ),
                 ListTile(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -240,7 +256,6 @@ class SettingsPage extends StatelessWidget {
                       color: colorScheme.onSurface),
                   onTap: () => ExternalLinks.termsAndConditions(),
                 ),
-
                 ListTile(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),

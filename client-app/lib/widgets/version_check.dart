@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:plan_sync/controllers/theme_controller.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
+import 'package:provider/provider.dart';
 
 class VersionCheckWidget extends StatefulWidget {
   const VersionCheckWidget({super.key});
@@ -15,12 +16,13 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
   @override
   void initState() {
     super.initState();
-    versionController = Get.find();
+    versionController = Provider.of<VersionController>(context, listen: false);
   }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final appTheme = Provider.of<AppThemeController>(context, listen: false);
 
     return Container(
       padding: const EdgeInsets.only(
@@ -32,13 +34,13 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
       decoration: ShapeDecoration(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
-          side: Get.isDarkMode
+          side: appTheme.isDarkMode
               ? BorderSide.none
               : BorderSide(
                   color: colorScheme.onSurfaceVariant,
                 ),
         ),
-        color: Get.isDarkMode
+        color: appTheme.isDarkMode
             ? colorScheme.surface
             : colorScheme.surfaceContainerHighest,
       ),
@@ -49,7 +51,7 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
             title: Text(
               "Update Available",
               style: TextStyle(
-                  color: Get.isDarkMode
+                  color: appTheme.isDarkMode
                       ? colorScheme.onSurface
                       : colorScheme.onSurfaceVariant),
             ),
@@ -57,7 +59,7 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
               "A new version of Plan Sync is available "
               "with bug fixes and performance improvements. Tap to download and install.",
               style: TextStyle(
-                  color: Get.isDarkMode
+                  color: appTheme.isDarkMode
                       ? colorScheme.onSurface
                       : colorScheme.onSurfaceVariant),
             ),

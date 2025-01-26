@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:plan_sync/backend/models/remote_config/hud_notices_model.dart';
+import 'package:plan_sync/controllers/theme_controller.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NoticeCarouselWidget extends StatelessWidget {
   const NoticeCarouselWidget({
@@ -15,19 +18,20 @@ class NoticeCarouselWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final appTheme = Provider.of<AppThemeController>(context, listen: false);
 
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: ShapeDecoration(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
-          side: Get.isDarkMode
+          side: appTheme.isDarkMode
               ? BorderSide.none
               : BorderSide(
                   color: colorScheme.onSurfaceVariant,
                 ),
         ),
-        color: Get.isDarkMode
+        color: appTheme.isDarkMode
             ? colorScheme.surface
             : colorScheme.surfaceContainerHighest,
       ),
@@ -42,7 +46,7 @@ class NoticeCarouselWidget extends StatelessWidget {
                   child: Text(
                     notice.title,
                     style: TextStyle(
-                      color: Get.isDarkMode
+                      color: appTheme.isDarkMode
                           ? colorScheme.onSurface
                           : colorScheme.onSurfaceVariant,
                     ),
@@ -63,7 +67,7 @@ class NoticeCarouselWidget extends StatelessWidget {
             subtitle: Text(
               notice.description,
               style: TextStyle(
-                color: Get.isDarkMode
+                color: appTheme.isDarkMode
                     ? colorScheme.onSurface
                     : colorScheme.onSurfaceVariant,
               ),
@@ -72,6 +76,46 @@ class NoticeCarouselWidget extends StatelessWidget {
               Icons.notifications_active_outlined,
             ),
           ),
+          if (notice.action != null)
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () => launchUrl(
+                  Uri.parse(
+                    Platform.isAndroid
+                        ? notice.action!.androidUrl
+                        : notice.action!.iosUrl,
+                  ),
+                ),
+                style: ButtonStyle(
+                  padding: const WidgetStatePropertyAll(
+                    EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  backgroundColor: WidgetStatePropertyAll(
+                    appTheme.isDarkMode
+                        ? Colors.transparent
+                        : colorScheme.primaryContainer,
+                  ),
+                  shape: WidgetStatePropertyAll(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        side: BorderSide(
+                          color: appTheme.isDarkMode
+                              ? colorScheme.primaryContainer
+                              : Colors.transparent,
+                        )),
+                  ),
+                ),
+                child: Text(
+                  notice.action!.label,
+                  style: TextStyle(
+                    color: appTheme.isDarkMode
+                        ? colorScheme.onSurface
+                        : colorScheme.onPrimaryContainer,
+                  ),
+                ),
+              ),
+            )
         ],
       ),
     );

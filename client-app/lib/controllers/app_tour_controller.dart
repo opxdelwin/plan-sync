@@ -1,13 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/util/logger.dart';
 import 'package:plan_sync/widgets/bottom-sheets/bottom_sheets_wrapper.dart';
 import 'package:plan_sync/widgets/tutorials/app_target_focus.dart';
+import 'package:provider/provider.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
-class AppTourController extends GetxController {
+class AppTourController extends ChangeNotifier {
   late AppPreferencesController appPreferencesController;
 
   late GlobalKey _schedulePreferencesButtonKey;
@@ -19,12 +19,18 @@ class AppTourController extends GetxController {
   late GlobalKey _savePreferenceSwitchKey;
   GlobalKey get savePreferenceSwitchKey => _savePreferenceSwitchKey;
 
-  @override
-  void onInit() {
-    appPreferencesController = Get.find();
-    super.onInit();
+  late GlobalKey _doneButtonKey;
+  GlobalKey get doneButtonKey => _doneButtonKey;
+
+  void onInit(BuildContext context) {
+    appPreferencesController = Provider.of<AppPreferencesController>(
+      context,
+      listen: false,
+    );
+
     _schedulePreferencesButtonKey = GlobalKey();
     _sectionBarKey = GlobalKey();
+    _doneButtonKey = GlobalKey();
     _savePreferenceSwitchKey = GlobalKey();
   }
 
@@ -68,7 +74,9 @@ class AppTourController extends GetxController {
   }
 
   Future<void> onClickHandler(
-      TargetFocus target, TapDownDetails tapDownDetails) async {
+    TargetFocus target,
+    TapDownDetails tapDownDetails,
+  ) async {
     if (target.identify == schedulePreferencesButtonKey.hashCode) {
       Logger.i('key match with schedule button');
 
@@ -77,6 +85,21 @@ class AppTourController extends GetxController {
         context: schedulePreferencesButtonKey.currentContext!,
       );
     }
+
+    // need to scroll when previous target was clicked on.
+    if (target.identify == sectionBarKey.hashCode) {
+      if (doneButtonKey.currentContext == null) {
+        Logger.w('Done Button GK context is null.');
+        return;
+      }
+      await Future.delayed(const Duration(milliseconds: 250));
+      await Scrollable.ensureVisible(
+        doneButtonKey.currentContext!,
+        alignment: 1, // 1 being bottom should be visible, I believe
+        duration: const Duration(milliseconds: 250),
+      );
+    }
+
     return;
   }
 
@@ -107,6 +130,12 @@ class AppTourController extends GetxController {
       ),
     );
 
+    targets.add(
+      AppTargetFocus.doneButton(
+        colorScheme: colorScheme,
+        buttonKey: doneButtonKey,
+      ),
+    );
     return targets;
   }
 

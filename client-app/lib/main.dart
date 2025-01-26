@@ -2,8 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:plan_sync/app_initializer.dart';
 import 'package:plan_sync/controllers/analytics_controller.dart';
 import 'package:plan_sync/controllers/app_tour_controller.dart';
 import 'package:plan_sync/controllers/app_preferences_controller.dart';
@@ -20,65 +22,132 @@ import 'package:plan_sync/views/home_screen.dart';
 import 'package:plan_sync/views/login_screen.dart';
 import 'package:plan_sync/views/settings_screen.dart';
 import 'package:plan_sync/widgets/scaffold_with_nav_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:toastification/toastification.dart';
 import 'firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  await dotenv.load(
-    fileName: 'env/.prod.env',
-  );
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  await _injectDependencies();
+  await dotenv.load(fileName: 'env/.prod.env');
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   if (kReleaseMode) {
-    // Pass all uncaught "fatal" errors from the framework to Crashlytics
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
     FirebaseCrashlytics.instance
         .setCustomKey("env", kReleaseMode ? "release" : "debug");
-    // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
     PlatformDispatcher.instance.onError = (error, stack) {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
     };
   }
-  runApp(const MainApp());
+
+  runApp(const AppProvider());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class AppProvider extends StatelessWidget {
+  const AppProvider({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp.router(
-      debugShowCheckedModeBanner: kDebugMode ? true : false,
-      theme: AppThemeController.lightTheme,
-      darkTheme: AppThemeController.darkTheme,
-      routerDelegate: _router.routerDelegate,
-      routeInformationParser: _router.routeInformationParser,
-      routeInformationProvider: _router.routeInformationProvider,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => GitService()),
+        ChangeNotifierProvider(create: (_) => FilterController()),
+        ChangeNotifierProvider(create: (_) => AnalyticsController()),
+        ChangeNotifierProvider(create: (_) => AppPreferencesController()),
+        ChangeNotifierProvider(create: (_) => AppTourController()),
+        ChangeNotifierProvider(create: (_) => Auth()),
+        ChangeNotifierProvider(create: (_) => RemoteConfigController()),
+        ChangeNotifierProvider(create: (_) => VersionController()),
+        ChangeNotifierProvider(create: (_) => AppThemeController()),
+      ],
+      child: const MainApp(),
     );
   }
 }
 
-_injectDependencies() async {
-  Get.put(Auth());
+class MainApp extends StatefulWidget {
+  const MainApp({super.key});
 
-  // make sure preferences are initialized
-  final perfInstance = Get.put(AppPreferencesController());
-  await perfInstance.onInit();
-  perfInstance.cleanupOldNoticeDismissals();
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
 
-  Get.put(GitService());
-  Get.put(FilterController());
-  Get.put(VersionController());
-  Get.put(AnalyticsController());
-  Get.put(AppTourController());
-  final remoteConfig = Get.put(RemoteConfigController());
-  await remoteConfig.onReady();
+class _MainAppState extends State<MainApp> {
+  late Future<void> _initializationFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializationFuture = _initialize();
+  }
+
+  Future<void> _initialize() async {
+    try {
+      await AppInitializer.initializeApp(context);
+    } finally {
+      // Remove splash screen once initialization is done, even if there's an error
+      FlutterNativeSplash.remove();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<void>(
+      future: _initializationFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Selector<AppThemeController, ThemeMode>(
+            selector: (context, controller) => controller.themeMode,
+            builder: (context, mode, child) => MaterialApp(
+              theme: AppThemeController.lightTheme,
+              darkTheme: AppThemeController.darkTheme,
+              themeMode: mode,
+              home: const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            ),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Selector<AppThemeController, ThemeMode>(
+            selector: (context, controller) => controller.themeMode,
+            builder: (context, mode, child) => MaterialApp(
+              theme: AppThemeController.lightTheme,
+              darkTheme: AppThemeController.darkTheme,
+              themeMode: mode,
+              home: Scaffold(
+                body: Center(
+                  child: Text('Error initializing app: ${snapshot.error}'),
+                ),
+              ),
+            ),
+          );
+        }
+
+        return ToastificationWrapper(
+          child: Selector<AppThemeController, ThemeMode>(
+            builder: (context, mode, child) => MaterialApp.router(
+              debugShowCheckedModeBanner: kDebugMode ? true : false,
+              theme: AppThemeController.lightTheme,
+              darkTheme: AppThemeController.darkTheme,
+              themeMode: mode,
+              routerDelegate: _router.routerDelegate,
+              routeInformationParser: _router.routeInformationParser,
+              routeInformationProvider: _router.routeInformationProvider,
+            ),
+            selector: (context, controller) => controller.themeMode,
+          ),
+        );
+      },
+    );
+  }
 }
 
 // GoRouter configuration
@@ -134,8 +203,9 @@ final _router = GoRouter(
 );
 
 redirectHandler(BuildContext context, GoRouterState state) {
-  Auth auth = Get.find();
-  AppPreferencesController perfs = Get.find();
+  Auth auth = Provider.of<Auth>(context, listen: false);
+  AppPreferencesController perfs =
+      Provider.of<AppPreferencesController>(context, listen: false);
 
   if (auth.activeUser != null && state.matchedLocation == '/login') {
     return '/';

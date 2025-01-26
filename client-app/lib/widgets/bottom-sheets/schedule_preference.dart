@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plan_sync/controllers/app_tour_controller.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
@@ -7,6 +6,7 @@ import 'package:plan_sync/util/snackbar.dart';
 import 'package:plan_sync/widgets/dropdowns/sections_bar.dart';
 import 'package:plan_sync/widgets/dropdowns/semester_bar.dart';
 import 'package:plan_sync/widgets/dropdowns/year_bar.dart';
+import 'package:provider/provider.dart';
 
 class SchedulePreferenceBottomSheet extends StatefulWidget {
   const SchedulePreferenceBottomSheet({this.save = false, super.key});
@@ -30,13 +30,15 @@ class SchedulePreferenceBottomSheetState
 
   void exitBottomSheet() {
     if (savePreferencesOnExit) {
-      FilterController controller = Get.find();
-      controller.storePrimarySemester();
-      controller.storePrimarySection();
-      controller.storePrimaryYear();
+      FilterController controller =
+          Provider.of<FilterController>(context, listen: false);
+      controller.storePrimarySemester(context);
+      controller.storePrimarySection(context);
+      controller.storePrimaryYear(context);
       CustomSnackbar.info(
         'Primary Preferences Stored!',
         "Your timetable will be selected by default.",
+        context,
       );
     }
 
@@ -47,7 +49,8 @@ class SchedulePreferenceBottomSheetState
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
-    AppTourController appTourController = Get.find();
+    AppTourController appTourController =
+        Provider.of<AppTourController>(context, listen: false);
 
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
@@ -60,19 +63,6 @@ class SchedulePreferenceBottomSheetState
           width: double.infinity,
           child: Column(
             children: [
-              const SizedBox(height: 16),
-
-              // top drag handle
-              Container(
-                height: 8,
-                width: size.width * 0.24,
-                decoration: ShapeDecoration(
-                  color: colorScheme.onSurface,
-                  shape: const StadiumBorder(),
-                ),
-              ),
-              const SizedBox(height: 32),
-
               // preference switch
               ListTile(
                 key: appTourController.savePreferenceSwitchKey,
@@ -89,8 +79,18 @@ class SchedulePreferenceBottomSheetState
                 ),
                 trailing: Switch.adaptive(
                   value: savePreferencesOnExit,
-                  activeTrackColor: colorScheme.secondary.withOpacity(0.72),
+                  activeTrackColor: colorScheme.secondary.withOpacity(
+                    0.88,
+                  ),
                   inactiveTrackColor: Colors.transparent,
+                  trackOutlineColor: WidgetStatePropertyAll(
+                    savePreferencesOnExit
+                        ? colorScheme.secondary.withOpacity(
+                            0.8,
+                          )
+                        : colorScheme.primary.withOpacity(0.48),
+                  ),
+                  trackOutlineWidth: const WidgetStatePropertyAll(1),
                   onChanged: (value) {
                     setState(() {
                       savePreferencesOnExit = value;
@@ -188,6 +188,7 @@ class SchedulePreferenceBottomSheetState
 
               // save and exit button
               ElevatedButton(
+                key: appTourController.doneButtonKey,
                 style: ButtonStyle(
                   backgroundColor:
                       WidgetStatePropertyAll(colorScheme.secondary),

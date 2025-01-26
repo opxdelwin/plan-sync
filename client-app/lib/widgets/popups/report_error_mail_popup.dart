@@ -1,26 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/util/enums.dart';
 import 'package:plan_sync/util/external_links.dart';
+import 'package:provider/provider.dart';
 
 class ReportErrorMailPopup extends StatelessWidget {
-  const ReportErrorMailPopup({super.key, required this.autoFill});
+  const ReportErrorMailPopup({
+    super.key,
+    required this.autoFill,
+    this.scheduleType,
+  });
 
   final bool autoFill;
+  final ScheduleType? scheduleType;
 
-  Future<void> onPressed() async {
+  Future<void> onPressed(BuildContext context) async {
     if (!autoFill) {
       ExternalLinks.reportErrorViaMail();
       return;
     }
 
-    FilterController controller = Get.find();
-    GitService git = Get.find();
+    FilterController controller =
+        Provider.of<FilterController>(context, listen: false);
+    GitService git = Provider.of<GitService>(context, listen: false);
     ExternalLinks.reportErrorViaMail(
       academicYear: git.selectedYear,
       course: controller.activeSemester,
       section: controller.activeSectionCode,
+      weekday: controller.weekday.key,
+      scheduleType: scheduleType,
+      scheme: controller.activeElectiveScheme,
     );
   }
 
@@ -71,7 +81,7 @@ class ReportErrorMailPopup extends StatelessWidget {
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: onPressed,
+                    onPressed: () => onPressed(context),
                     style: ButtonStyle(
                       shape: WidgetStatePropertyAll(
                         RoundedRectangleBorder(
