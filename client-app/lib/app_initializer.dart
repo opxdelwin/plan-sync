@@ -11,6 +11,7 @@ import 'package:plan_sync/controllers/remote_config_controller.dart';
 import 'package:plan_sync/controllers/theme_controller.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
 import 'package:provider/provider.dart';
+import 'package:plan_sync/controllers/notification_provider.dart';
 
 class AppInitializer {
   static Future<void> initializeApp(BuildContext context) async {
@@ -22,6 +23,7 @@ class AppInitializer {
       Provider.of<FilterController>(context, listen: false).onInit(context);
       Provider.of<AppPreferencesController>(context, listen: false).onInit();
       Provider.of<AppThemeController>(context, listen: false).onInit();
+      Provider.of<NotificationProvider>(context, listen: false).init();
 
       // Then handle async operations
       Future.wait([

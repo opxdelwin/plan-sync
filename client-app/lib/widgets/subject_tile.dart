@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:plan_sync/controllers/notification_provider.dart';
+import 'package:provider/provider.dart';
 
 class SubjectTile extends StatelessWidget {
   const SubjectTile({
@@ -16,59 +18,70 @@ class SubjectTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Card(
-      elevation: 2.0,
-      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(
-          strokeAlign: 2.0,
-          color: colorScheme.onSurfaceVariant,
+    return GestureDetector(
+      onLongPress: () {
+        print("Long Pressed");
+        final prov = Provider.of<NotificationProvider>(context, listen: false);
+        prov.createReminder(
+          classroom: location,
+          subject: subject,
+          time: time,
+        );
+      },
+      child: Card(
+        elevation: 2.0,
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(
+            strokeAlign: 2.0,
+            color: colorScheme.onSurfaceVariant,
+          ),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    subject,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: colorScheme.onSurfaceVariant,
-                      overflow: TextOverflow.ellipsis,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      subject,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: colorScheme.onSurfaceVariant,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.location_on_outlined,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        location,
-                        style: TextStyle(
-                          color: colorScheme.onSurfaceVariant,
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on_outlined,
+                          size: 20,
                         ),
-                      ),
-                    ],
-                  )
-                ],
+                        const SizedBox(width: 8),
+                        Text(
+                          location,
+                          style: TextStyle(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-            Text(
-              time,
-              style: TextStyle(
-                color: colorScheme.onSurface,
+              Text(
+                time,
+                style: TextStyle(
+                  color: colorScheme.onSurface,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

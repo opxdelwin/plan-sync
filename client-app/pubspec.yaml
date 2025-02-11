@@ -75,6 +75,9 @@ dependencies:
   smooth_page_indicator: ^1.2.0+3
   qr_flutter: ^4.1.0
   internet_connection_checker_plus: ^2.5.1
+  flutter_local_notifications: ^18.0.1
+  timezone: ^0.9.4
+  crypto: ^3.0.6
 
 icons_launcher:
   image_path: "assets/favicon.png"
