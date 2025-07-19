@@ -132,7 +132,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                    color: colorScheme.primary,
+                    color: colorScheme.outline,
                     width: 1.0,
                   ),
                 ),

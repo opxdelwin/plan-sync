@@ -766,92 +766,102 @@ class GitService extends ChangeNotifier {
     }
   }
 
-  /// Gets concurrent elective timetable for unique semester and section.
-  Stream<Timetable?> getElectives() async* {
-    if (!isWorking) {
-      isWorking = true;
+ /// Gets concurrent elective timetable for unique semester and section.
+Stream<Timetable?> getElectives() async* {
+  if (!isWorking) {
+    isWorking = true;
+    notifyListeners();
+  }
+
+  if (filterController.activeElectiveSchemeCode == null ||
+      filterController.activeElectiveSemester == null) {
+    yield* const Stream.empty();
+    return;
+  }
+
+  final url =
+      "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$selectedElectiveYear/${filterController.activeElectiveSemester}/electives-scheme-${filterController.activeElectiveSchemeCode}.json";
+  try {
+    final options = RequestOptions(path: url);
+    final key = CacheOptions.defaultCacheKeyBuilder(options);
+
+    final cacheData = await cacheOptions.store?.get(key);
+    if (cacheData != null) {
+      final cachedResponse = cacheData.toResponse(options);
+      Logger.i("Sending Elective from cache");
+
+      yield Timetable.fromJson(
+        json: jsonDecode(cachedResponse.data),
+        isFresh: false,
+      );
+    }
+
+    final response = await dio.get(url);
+
+    if (response.statusCode! >= 400) {
+      yield* Stream.error(response);
+      return;
+    }
+    if (response.data == "") {
+      yield* const Stream.empty();
+      return;
+    }
+
+    if (isWorking) {
+      isWorking = false;
       notifyListeners();
     }
 
-    if (filterController.activeElectiveSchemeCode == null ||
-        filterController.activeElectiveSemester == null) {
+    // Handle freshness properly like in getTimeTable
+    if (response.headers.map['etag']?.first != cacheData?.eTag) {
+      Logger.i("Received Elective Schedule with different ETag");
+      
+      yield Timetable.fromJson(
+        json: jsonDecode(response.data),
+        isFresh: true,
+      );
       yield* const Stream.empty();
-      return;
+    } else {
+      Logger.i('Elective ETag matches');
+
+      // Check network connection to determine freshness
+      final connectionAvailable = await InternetConnection().hasInternetAccess;
+
+      yield Timetable.fromJson(
+        json: jsonDecode(cacheData!.toResponse(options).data),
+        isFresh: connectionAvailable, // This fixes the freshness indicator
+      );
+    }
+  } on DioException catch (e) {
+    errorDetails = {
+      'error': 'DioException',
+      'type': e.type.toString(),
+      'code': e.response?.statusCode.toString(),
+      'message': 'We couldn\'t fetch requested timetable. Please try again later.',
+    };
+
+    if (isWorking) {
+      isWorking = false;
+      notifyListeners();
     }
 
-    final url =
-        "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$selectedElectiveYear/${filterController.activeElectiveSemester}/electives-scheme-${filterController.activeElectiveSchemeCode}.json";
-    try {
-      final options = RequestOptions(path: url);
-      final key = CacheOptions.defaultCacheKeyBuilder(options);
+    yield* Stream.error(Exception(errorDetails));
+    return;
+  } catch (e) {
+    errorDetails = {
+      "type": "CatchException",
+      "message": "Some unknown error occurred while getting electives",
+    };
 
-      final cacheData = await cacheOptions.store?.get(key);
-      if (cacheData != null) {
-        final cachedResponse = cacheData.toResponse(options);
-        Logger.i("Sending Elecive from cache");
-
-        yield Timetable.fromJson(
-          json: jsonDecode(cachedResponse.data),
-          isFresh: false,
-        );
-      }
-
-      final response = await dio.get(url);
-
-      if (response.statusCode! >= 400) {
-        yield* Stream.error(response);
-        return;
-      }
-      if (response.data == "") {
-        yield* const Stream.empty();
-        return;
-      }
-
-      if (isWorking) {
-        isWorking = false;
-        notifyListeners();
-      }
-      if (response.headers.map['etag']?.first != cacheData?.eTag) {
-        yield Timetable.fromJson(
-          json: jsonDecode(response.data),
-          isFresh: true,
-        );
-      }
-
-      yield* const Stream.empty();
-      return;
-    } on DioException catch (e) {
-      errorDetails = {
-        'error': 'DioException',
-        'type': e.type.toString(),
-        'code': e.response?.statusCode.toString(),
-        'message':
-            'We couldn\'t fetch requested timetable. Please try again later.',
-      };
-
-      if (isWorking) {
-        isWorking = false;
-        notifyListeners();
-      }
-
-      yield* Stream.error(Exception(errorDetails));
-      return;
-    } catch (e) {
-      errorDetails = {
-        "type": "CatchException",
-        "message": "Some unknown error occoured while getting electives",
-      };
-
-      if (isWorking) {
-        isWorking = false;
-        notifyListeners();
-      }
-
-      yield* Stream.error(Exception(errorDetails));
-      return;
+    if (isWorking) {
+      isWorking = false;
+      notifyListeners();
     }
+
+    yield* Stream.error(Exception(errorDetails));
+    return;
   }
-
+}
   /// Fetches the min.version file from remote.
   Future<String?> fetchMininumVersion() async {
     final url =
