@@ -9,7 +9,12 @@ import 'package:plan_sync/widgets/time_table_for_day.dart';
 import 'package:provider/provider.dart';
 
 class TimeTableWidget extends StatefulWidget {
-  const TimeTableWidget({super.key});
+  final bool isElective;
+
+  const TimeTableWidget({
+    super.key,
+    this.isElective = false,
+  });
 
   @override
   State<TimeTableWidget> createState() => _TimeTableWidgetState();
@@ -171,13 +176,18 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Consumer<FilterController>(builder: (ctx, filterController, child) {
-      GitService serviceController =
-          Provider.of<GitService>(context, listen: false);
+      GitService service = Provider.of<GitService>(context, listen: false);
+      FilterController filterController =
+          Provider.of<FilterController>(context);
 
       return StreamBuilder(
-        key: ValueKey(filterController.getShortCode()),
-        stream: serviceController.getTimeTable(filterController),
-        builder: (context, snapshot) {
+        key: ValueKey(widget.isElective
+            ? filterController.getElectiveShortCode()
+            : filterController.getShortCode()),
+        stream: widget.isElective
+            ? service.getElectives()
+            : service.getTimeTable(filterController),
+        builder: (context, AsyncSnapshot<Timetable?> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -313,6 +323,7 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
                 TimeTableForDay(
                   day: filterController.weekday.key,
                   data: snapshot.data!,
+                  searchEnabled: widget.isElective,
                 ),
               ],
             );

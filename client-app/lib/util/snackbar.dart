@@ -8,7 +8,7 @@ class CustomSnackbar {
     toastification.show(
       context: context,
       type: ToastificationType.info,
-      style: ToastificationStyle.flatColored,
+      style: ToastificationStyle.flat,
       primaryColor: colorScheme.errorContainer,
       backgroundColor: colorScheme.errorContainer,
       foregroundColor: colorScheme.onErrorContainer,
@@ -39,7 +39,7 @@ class CustomSnackbar {
     toastification.show(
       context: context,
       type: ToastificationType.info,
-      style: ToastificationStyle.flatColored,
+      style: ToastificationStyle.flat,
       primaryColor: colorScheme.secondaryContainer,
       backgroundColor: colorScheme.secondaryContainer,
       foregroundColor: colorScheme.onSecondaryContainer,

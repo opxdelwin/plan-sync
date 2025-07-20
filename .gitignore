@@ -23,6 +23,7 @@
 /client-app/.idea
 /client-app/.vscode
 .vscode/
+.idea/
 
 # generated files for platform
 /client-app/linux/flutter/ephemeral
