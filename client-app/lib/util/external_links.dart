@@ -113,6 +113,36 @@ Best regards,
         "https://github.com/opxdelwin/plan-sync/blob/main/CONTRIBUTING.md");
   }
 
+  static Future<void> requestFeatureViaMail({
+    required String suggestion,
+  }) async {
+    String body = """Hey Plan Sync Team,
+
+I hope this message finds you well. I have a feature suggestion that I believe would enhance the Plan Sync app experience for all users.
+
+**Feature Suggestion:**
+$suggestion
+
+**Why this feature would be helpful:**
+[Feel free to add more details about why this feature would be beneficial, how it could improve user experience, or any specific use cases you have in mind.]
+
+**Additional Comments:**
+[Include any additional thoughts, ideas, or implementation suggestions you might have.]
+
+Best regards,
+[Your Name]
+""";
+
+    final subject = Uri.encodeComponent("[Feature Request] - Plan Sync");
+    final email = Uri.encodeComponent("connect@plansync.in");
+    final url =
+        'mailto:$email?subject=$subject&body=${Uri.encodeComponent(body)}';
+
+    if (!await launchUrl(Uri.parse(url))) {
+      throw Exception('Could not launch mail app');
+    }
+  }
+
   ExternalLinks.shareApp() {
     var text = "Check out the Plan Sync app! "
         "🚀 It's a game-changer for managing my classes. "
@@ -122,7 +152,7 @@ Best regards,
     Share.share(text);
   }
 
-  Future<void> _launchUrl(String url) async {
+  static Future<void> _launchUrl(String url) async {
     if (!await launchUrl(Uri.parse(url))) {
       throw Exception('Could not launch $url');
     }
