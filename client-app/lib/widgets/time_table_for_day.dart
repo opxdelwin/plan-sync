@@ -128,7 +128,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search subjects...',
+                hintText: 'Search Electives...',
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(

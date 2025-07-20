@@ -28,7 +28,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
           topRight: Radius.circular(16),
         ),
         child: SalomonBottomBar(
-          itemPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+          // itemPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
           // Here, the items of BottomNavigationBar are hard coded. In a real
           // world scenario, the items would most likely be generated from the
           // branches of the shell route, which can be fetched using
@@ -66,15 +66,27 @@ class ScaffoldWithNavBar extends StatelessWidget {
               ),
             ),
             SalomonBottomBarItem(
-                icon: const Icon(FontAwesomeIcons.clipboard),
-                title: Text(
-                  'Electives',
-                  style: TextStyle(
-                    color: appTheme.isDarkMode
-                        ? colorScheme.onSurface
-                        : colorScheme.onSurfaceVariant,
-                  ),
-                )),
+              icon: const Icon(FontAwesomeIcons.clipboard),
+              title: Text(
+                'Electives',
+                style: TextStyle(
+                  color: appTheme.isDarkMode
+                      ? colorScheme.onSurface
+                      : colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            SalomonBottomBarItem(
+              icon: const Icon(Icons.navigation_outlined),
+              title: Text(
+                'Campus Nav',
+                style: TextStyle(
+                  color: appTheme.isDarkMode
+                      ? colorScheme.onSurface
+                      : colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
             SalomonBottomBarItem(
                 icon: const Icon(Icons.settings_outlined),
                 title: Text(
