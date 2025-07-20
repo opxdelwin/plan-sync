@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/logger.dart';
+import 'package:plan_sync/util/snackbar.dart';
 import 'package:provider/provider.dart';
 
 class ElectiveYearBar extends StatefulWidget {
@@ -11,6 +13,19 @@ class ElectiveYearBar extends StatefulWidget {
 }
 
 class _ElectiveYearBarState extends State<ElectiveYearBar> {
+  bool _hasShownSnackbar = false;
+
+  void _showNetworkError() {
+    if (!_hasShownSnackbar) {
+      _hasShownSnackbar = true;
+      CustomSnackbar.error(
+        'Poor Internet Connection',
+        'Please restart app with a better connection',
+        context,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -25,43 +40,75 @@ class _ElectiveYearBarState extends State<ElectiveYearBar> {
         height: 48,
         child: DropdownButtonHideUnderline(
           child: Consumer<GitService>(
-            builder: (ctx, serviceController, child) => DropdownButton<String>(
-              isExpanded: true,
-              elevation: 0,
-              enableFeedback: true,
-              style: TextStyle(color: colorScheme.onSurface),
-              icon: Icon(
-                Icons.arrow_drop_down,
-                color: colorScheme.surface,
-              ),
-              value: serviceController.selectedElectiveYear?.toString(),
-              dropdownColor: colorScheme.onSurface,
-              hint: Text(
-                "Year",
-                style: TextStyle(
+            builder: (ctx, serviceController, child) {
+              // Reset snackbar flag when data arrives
+              if (serviceController.electiveYears != null &&
+                  serviceController.electiveYears!.isNotEmpty) {
+                _hasShownSnackbar = false;
+              }
+
+              // Check if data is missing and show snackbar if tapped
+              if (serviceController.electiveYears == null ||
+                  serviceController.electiveYears!.isEmpty) {
+                return GestureDetector(
+                  onTap: _showNetworkError,
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        LoadingAnimationWidget.progressiveDots(
+                        color: Colors.black,
+                        size: 24,
+                      ),
+                        Icon(
+                          Icons.arrow_drop_down,
+                          color: colorScheme.surface,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              return DropdownButton<String>(
+                isExpanded: true,
+                elevation: 0,
+                enableFeedback: true,
+                style: TextStyle(color: colorScheme.onSurface),
+                icon: Icon(
+                  Icons.arrow_drop_down,
                   color: colorScheme.surface,
-                  fontSize: 16,
                 ),
-              ),
-              menuMaxHeight: 376,
-              items: serviceController.electiveYears
-                  ?.map((year) => buildMenuItem(
-                        year,
-                        colorScheme.surface,
-                      ))
-                  .toList(),
-              onChanged: (String? newSelection) {
-                if (newSelection == null) {
-                  return;
-                }
-                Logger.i(newSelection);
-                serviceController.selectedElectiveYear = newSelection;
-                Provider.of<GitService>(
-                  context,
-                  listen: false,
-                ).getElectiveSemesters(context);
-              },
-            ),
+                value: serviceController.selectedElectiveYear?.toString(),
+                dropdownColor: colorScheme.onSurface,
+                hint: Text(
+                  "Year",
+                  style: TextStyle(
+                    color: colorScheme.surface,
+                    fontSize: 16,
+                  ),
+                ),
+                menuMaxHeight: 376,
+                items: serviceController.electiveYears
+                    ?.map((year) => buildMenuItem(
+                          year,
+                          colorScheme.surface,
+                        ))
+                    .toList(),
+                onChanged: (String? newSelection) {
+                  if (newSelection == null) {
+                    return;
+                  }
+                  Logger.i(newSelection);
+                  serviceController.selectedElectiveYear = newSelection;
+                  Provider.of<GitService>(
+                    context,
+                    listen: false,
+                  ).getElectiveSemesters(context);
+                },
+              );
+            },
           ),
         ),
       ),

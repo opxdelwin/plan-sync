@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/logger.dart';
+import 'package:plan_sync/util/snackbar.dart';
 import 'package:provider/provider.dart';
 
 class SectionsBar extends StatefulWidget {
@@ -13,6 +15,18 @@ class SectionsBar extends StatefulWidget {
 
 class _SectionsBarState extends State<SectionsBar> {
   String? selectedValue;
+  bool _hasShownSnackbar = false;
+
+  void _showNetworkError() {
+    if (!_hasShownSnackbar) {
+      _hasShownSnackbar = true;
+      CustomSnackbar.error(
+        'Poor Internet Connection',
+        'Please restart app with a better connection',
+        context,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +46,38 @@ class _SectionsBarState extends State<SectionsBar> {
             builder: (ctx, serviceController, child) =>
                 Consumer<FilterController>(
                     builder: (ctx, filterController, child) {
+              // Reset snackbar flag when data arrives
+              if (filterController.activeSemester != null &&
+                  serviceController.sections != null &&
+                  serviceController.sections!.isNotEmpty) {
+                _hasShownSnackbar = false;
+              }
+
+              // Check if data is missing and show snackbar if tapped
+              if (filterController.activeSemester != null &&
+                  (serviceController.sections == null ||
+                      serviceController.sections!.isEmpty)) {
+                return GestureDetector(
+                  onTap: _showNetworkError,
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        LoadingAnimationWidget.progressiveDots(
+                        color: Colors.black,
+                        size: 24,
+                      ),
+                        Icon(
+                          Icons.arrow_drop_down,
+                          color: colorScheme.surface,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
               return DropdownButton<String>(
                 isExpanded: true,
                 elevation: 0,
