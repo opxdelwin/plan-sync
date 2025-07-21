@@ -11,6 +11,7 @@ import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/controllers/auth.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/controllers/notification_controller.dart';
 import 'package:plan_sync/controllers/remote_config_controller.dart';
 import 'package:plan_sync/controllers/theme_controller.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
@@ -71,6 +72,7 @@ class AppProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RemoteConfigController()),
         ChangeNotifierProvider(create: (_) => VersionController()),
         ChangeNotifierProvider(create: (_) => AppThemeController()),
+        ChangeNotifierProvider(create: (_) => NotificationController()),
       ],
       child: const MainApp(),
     );

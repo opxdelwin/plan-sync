@@ -77,6 +77,8 @@ dependencies:
   internet_connection_checker_plus: ^2.5.1
   supabase_flutter: ^2.9.1
   easy_debounce: ^2.0.3
+  firebase_messaging: ^15.2.9
+  flutter_local_notifications: ^19.3.1
 
 icons_launcher:
   image_path: "assets/favicon.png"
