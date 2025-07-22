@@ -222,10 +222,14 @@ final _router = GoRouter(
 );
 
 String? redirectHandler(BuildContext context, GoRouterState state) {
-  Auth auth = Provider.of<Auth>(context, listen: false);
-  AppPreferencesController perfs =
-      Provider.of<AppPreferencesController>(context, listen: false);
+  // Handle notification route from terminated state
+  final notifRoute = NotificationController.initialNotificationRoute;
+  if (notifRoute != null && notifRoute != state.matchedLocation) {
+    NotificationController.initialNotificationRoute = null; // Clear after use
+    return notifRoute;
+  }
 
+  Auth auth = Provider.of<Auth>(context, listen: false);
   if (auth.activeUser != null && state.matchedLocation == '/login') {
     return '/';
   }
@@ -233,6 +237,8 @@ String? redirectHandler(BuildContext context, GoRouterState state) {
     return "/login";
   }
 
+  AppPreferencesController perfs =
+      Provider.of<AppPreferencesController>(context, listen: false);
   if (perfs.isAppBelowMinVersion() &&
       state.matchedLocation != '/forced_update') {
     return '/forced_update';

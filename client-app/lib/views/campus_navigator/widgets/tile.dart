@@ -15,13 +15,14 @@ class CampusLocationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return ListTile(
       tileColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: Colors.green,
-          width: 1.5,
+          color: colorScheme.onSurfaceVariant.withAlpha(128),
+          width: 1.2,
         ),
       ),
       leading: item.imagePath != null
