@@ -152,7 +152,7 @@ Best regards,
     Share.share(text);
   }
 
-  static Future<void> _launchUrl(String url) async {
+  Future<void> _launchUrl(String url) async {
     if (!await launchUrl(Uri.parse(url))) {
       throw Exception('Could not launch $url');
     }
