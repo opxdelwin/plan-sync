@@ -80,7 +80,7 @@ class GitService extends ChangeNotifier {
   Map? errorDetails;
 
   /// Helper method to show network error snackbar
-  void _showNetworkErrorSnackbar(BuildContext context, String source) {
+  void _showNetworkErrorSnackbar(BuildContext context) {
     if (context.mounted) {
       CustomSnackbar.error(
         'Poor Internet Connection',
@@ -107,7 +107,7 @@ class GitService extends ChangeNotifier {
       await getElectiveYears(ctx);
       notifyListeners();
     } on DioException catch (e) {
-      _showNetworkErrorSnackbar(ctx, 'onReady');
+      _showNetworkErrorSnackbar(ctx);
       Logger.i('DioException in onReady: ${e.toString()}');
     } catch (e) {
       Logger.i('General exception in onReady: ${e.toString()}');
@@ -223,7 +223,7 @@ class GitService extends ChangeNotifier {
       };
 
       Logger.i(errorDetails);
-      _showNetworkErrorSnackbar(context, 'getYears');
+      _showNetworkErrorSnackbar(context);
 
       if (isWorking) {
         isWorking = false;
@@ -320,7 +320,7 @@ class GitService extends ChangeNotifier {
         "code": e.response?.statusCode,
       };
 
-      _showNetworkErrorSnackbar(context, 'getSemesters');
+      _showNetworkErrorSnackbar(context);
 
       if (isWorking) {
         isWorking = false;
@@ -585,7 +585,7 @@ class GitService extends ChangeNotifier {
       };
 
       Logger.i(errorDetails);
-      _showNetworkErrorSnackbar(context, 'getElectiveYears');
+      _showNetworkErrorSnackbar(context);
 
       if (isWorking) {
         isWorking = false;
@@ -672,7 +672,7 @@ class GitService extends ChangeNotifier {
         "code": e.response?.statusCode,
       };
 
-      _showNetworkErrorSnackbar(context, 'getElectiveSemesters');
+      _showNetworkErrorSnackbar(context);
 
       if (isWorking) {
         isWorking = false;
