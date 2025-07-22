@@ -186,6 +186,29 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   enableFeedback: true,
                   leading: Icon(
+                    Icons.school_outlined,
+                    color: colorScheme.onSurface,
+                  ),
+                  title: Text(
+                    "Request Features/Changes",
+                    style: TextStyle(
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.keyboard_arrow_right_rounded,
+                    color: colorScheme.onSurface,
+                  ),
+                  onTap: () => PopupsWrapper.requestFeature(
+                    context: context,
+                  ),
+                ),
+                ListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  enableFeedback: true,
+                  leading: Icon(
                     Icons.report,
                     color: colorScheme.onSurface,
                   ),
