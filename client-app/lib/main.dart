@@ -12,6 +12,7 @@ import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/controllers/auth.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
+import 'package:plan_sync/controllers/notification_controller.dart';
 import 'package:plan_sync/controllers/remote_config_controller.dart';
 import 'package:plan_sync/controllers/theme_controller.dart';
 import 'package:plan_sync/controllers/version_controller.dart';
@@ -72,6 +73,7 @@ class AppProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RemoteConfigController()),
         ChangeNotifierProvider(create: (_) => VersionController()),
         ChangeNotifierProvider(create: (_) => AppThemeController()),
+        ChangeNotifierProvider(create: (_) => NotificationController()),
         ChangeNotifierProvider(
           create: (context) {
             final controller = AppReviewController();
@@ -229,10 +231,14 @@ final _router = GoRouter(
 );
 
 String? redirectHandler(BuildContext context, GoRouterState state) {
-  Auth auth = Provider.of<Auth>(context, listen: false);
-  AppPreferencesController perfs =
-      Provider.of<AppPreferencesController>(context, listen: false);
+  // Handle notification route from terminated state
+  final notifRoute = NotificationController.initialNotificationRoute;
+  if (notifRoute != null && notifRoute != state.matchedLocation) {
+    NotificationController.initialNotificationRoute = null; // Clear after use
+    return notifRoute;
+  }
 
+  Auth auth = Provider.of<Auth>(context, listen: false);
   if (auth.activeUser != null && state.matchedLocation == '/login') {
     return '/';
   }
@@ -240,6 +246,8 @@ String? redirectHandler(BuildContext context, GoRouterState state) {
     return "/login";
   }
 
+  AppPreferencesController perfs =
+      Provider.of<AppPreferencesController>(context, listen: false);
   if (perfs.isAppBelowMinVersion() &&
       state.matchedLocation != '/forced_update') {
     return '/forced_update';

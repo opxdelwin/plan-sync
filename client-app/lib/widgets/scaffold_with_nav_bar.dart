@@ -18,7 +18,6 @@ class ScaffoldWithNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final appTheme = Provider.of<AppThemeController>(context, listen: false);
-
     return Scaffold(
       extendBody: true,
       body: navigationShell,

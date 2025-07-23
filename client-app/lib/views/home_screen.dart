@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/controllers/app_tour_controller.dart';
 import 'package:plan_sync/controllers/filter_controller.dart';
+import 'package:plan_sync/controllers/notification_controller.dart';
 import 'package:plan_sync/widgets/buttons/schedule_preferences_button.dart';
 import 'package:plan_sync/widgets/date_widget.dart';
 import 'package:plan_sync/widgets/hud/top_notice_hud.dart';
@@ -29,6 +31,21 @@ class _HomeScreenState extends State<HomeScreen> {
         // ignore: use_build_context_synchronously
         appTourController.startAppTour(context);
       });
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if ((Provider.of<AppPreferencesController>(context, listen: false)
+                  .getTutorialStatus() ??
+              false) ==
+          false) {
+        return;
+      }
+
+      final notificationController = Provider.of<NotificationController>(
+        context,
+        listen: false,
+      );
+      notificationController.initialize(context);
     });
   }
 
