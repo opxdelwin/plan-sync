@@ -11,6 +11,7 @@ import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/controllers/remote_config_controller.dart';
 import 'package:plan_sync/util/app_version.dart';
 import 'package:plan_sync/util/external_links.dart';
+import 'package:plan_sync/util/snackbar.dart';
 import 'package:plan_sync/util/logger.dart';
 import 'package:plan_sync/widgets/popups/popups_wrapper.dart';
 import 'package:provider/provider.dart';
@@ -68,7 +69,19 @@ class VersionController extends ChangeNotifier {
     appBuild = packageInfo.buildNumber;
   }
 
-  void openStore() => ExternalLinks.store();
+  void openStore(BuildContext context) async {
+    try {
+      await ExternalLinks.store();
+    } catch (e) {
+      if (!context.mounted) return;
+
+      CustomSnackbar.error(
+        'Failed to open store',
+        'Could not open the app store. Please try again.',
+        context,
+      );
+    }
+  }
 
   /// returns true if an ios update is available,
   /// uses remote config.

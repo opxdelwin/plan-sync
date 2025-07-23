@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plan_sync/controllers/theme_controller.dart';
 import 'package:plan_sync/util/external_links.dart';
+import 'package:plan_sync/util/snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -66,8 +67,18 @@ class ShareAppSheet extends StatelessWidget {
             leading: const Icon(FontAwesomeIcons.share),
             title: const Text("Share via other apps"),
             trailing: const Icon(Icons.keyboard_arrow_right_rounded),
-            onTap: () {
-              ExternalLinks.shareApp();
+            onTap: () async {
+              try {
+                await ExternalLinks.shareApp();
+              } catch (e) {
+                if (!context.mounted) return;
+
+                CustomSnackbar.error(
+                  'Failed to share app',
+                  'Could not open sharing options. Please try again.',
+                  context,
+                );
+              }
             },
           ),
           const SizedBox(height: 32),

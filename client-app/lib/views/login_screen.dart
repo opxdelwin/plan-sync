@@ -4,6 +4,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:plan_sync/controllers/theme_controller.dart';
 import 'package:plan_sync/util/enums.dart';
 import 'package:plan_sync/util/external_links.dart';
+import 'package:plan_sync/util/snackbar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import '../controllers/auth.dart';
@@ -213,7 +214,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 16),
                       InkWell(
                         enableFeedback: true,
-                        onTap: () => ExternalLinks.cardlink(),
+                        onTap: () async {
+                          try {
+                            await ExternalLinks.cardlink();
+                          } catch (e) {
+                            if (!context.mounted) return;
+
+                            CustomSnackbar.error(
+                              'Failed to open link',
+                              'Could not open the link. Please try again.',
+                              context,
+                            );
+                          }
+                        },
                         child: SizedBox(
                           height: 48,
                           child: Image.asset(

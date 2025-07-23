@@ -277,7 +277,19 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   trailing: Icon(Icons.keyboard_arrow_right_rounded,
                       color: colorScheme.onSurface),
-                  onTap: () => ExternalLinks.termsAndConditions(),
+                  onTap: () async {
+                    try {
+                      await ExternalLinks.termsAndConditions();
+                    } catch (e) {
+                      if (!context.mounted) return;
+
+                      CustomSnackbar.error(
+                        'Failed to open link',
+                        'Could not open Terms of Service. Please try again.',
+                        context,
+                      );
+                    }
+                  },
                 ),
                 ListTile(
                   shape: RoundedRectangleBorder(
@@ -298,7 +310,19 @@ class _SettingsPageState extends State<SettingsPage> {
                     Icons.keyboard_arrow_right_rounded,
                     color: colorScheme.onSurface,
                   ),
-                  onTap: () => ExternalLinks.privacyPolicy(),
+                  onTap: () async {
+                    try {
+                      await ExternalLinks.privacyPolicy();
+                    } catch (e) {
+                      if (!context.mounted) return;
+
+                      CustomSnackbar.error(
+                        'Failed to open link',
+                        'Could not open Privacy Policy. Please try again.',
+                        context,
+                      );
+                    }
+                  },
                 ),
                 ListTile(
                   shape: RoundedRectangleBorder(

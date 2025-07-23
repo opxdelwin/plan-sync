@@ -6,12 +6,18 @@ import 'package:plan_sync/util/snackbar.dart';
 class ReportErrorBottomSheet extends StatelessWidget {
   const ReportErrorBottomSheet({super.key});
 
-  void launchMail() {
-    ExternalLinks.reportErrorViaMail();
-  }
+  void launchMail(BuildContext context) async {
+    try {
+      await ExternalLinks.reportErrorViaMail();
+    } catch (e) {
+      if (!context.mounted) return;
 
-  void launchGithub() {
-    ExternalLinks.reportErrorViaGithub();
+      CustomSnackbar.error(
+        'Failed to launch mail app',
+        'Could not open your mail application. Please try again.',
+        context,
+      );
+    }
   }
 
   @override
@@ -43,7 +49,7 @@ class ReportErrorBottomSheet extends StatelessWidget {
                     backgroundColor:
                         WidgetStatePropertyAll(colorScheme.onSurface),
                   ),
-                  onPressed: () => launchMail(),
+                  onPressed: () => launchMail(context),
                   child: Row(
                     children: [
                       Text(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:plan_sync/util/external_links.dart';
+import 'package:plan_sync/util/snackbar.dart';
 
 class ForcedUpdateScreen extends StatelessWidget {
   const ForcedUpdateScreen({super.key});
@@ -49,7 +50,18 @@ class ForcedUpdateScreen extends StatelessWidget {
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.all(16),
           child: FilledButton(
-            onPressed: () => ExternalLinks.store(),
+            onPressed: () async {
+              try {
+                await ExternalLinks.store();
+              } catch (e) {
+                if (!context.mounted) return;
+                CustomSnackbar.error(
+                  'Failed to open store',
+                  'Could not open the app store. Please try again.',
+                  context,
+                );
+              }
+            },
             child: Text(
               'Update Now',
               style: TextStyle(
