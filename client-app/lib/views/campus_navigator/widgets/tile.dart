@@ -20,7 +20,7 @@ class CampusLocationCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: Colors.green,
+          color: colorScheme.outline,
           width: 1.5,
         ),
       ),
