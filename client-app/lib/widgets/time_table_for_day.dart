@@ -98,29 +98,6 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: Row(
-            children: [
-              Text(
-                widget.day.capitalizeFirst(),
-                style: TextStyle(
-                  color: colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  letterSpacing: 0.24,
-                ),
-              ),
-              const Spacer(),
-              ScheduleFreshnessIndicator(
-                isFresh: widget.data.isFresh,
-              ),
-              const SizedBox(width: 8),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
-
         // Search bar (only show if search is enabled)
         if (widget.searchEnabled) ...[
           Padding(
@@ -132,14 +109,14 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                    color: colorScheme.outline,
+                    color: Colors.blueAccent,
                     width: 1.0,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                    color: colorScheme.outline,
+                    color: Colors.blueAccent,
                     width: 1.0,
                   ),
                 ),
@@ -173,6 +150,29 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
           ),
           const SizedBox(height: 12),
         ],
+
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Row(
+            children: [
+              Text(
+                widget.day.capitalizeFirst(),
+                style: TextStyle(
+                  color: colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  letterSpacing: 0.24,
+                ),
+              ),
+              const Spacer(),
+              ScheduleFreshnessIndicator(
+                isFresh: widget.data.isFresh,
+              ),
+              const SizedBox(width: 8),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
 
         // Show filtered results or no results message
         if (filteredSchedule.isEmpty &&

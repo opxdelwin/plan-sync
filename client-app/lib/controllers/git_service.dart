@@ -79,6 +79,17 @@ class GitService extends ChangeNotifier {
 
   Map? errorDetails;
 
+  /// Helper method to show network error snackbar
+  void _showNetworkErrorSnackbar(BuildContext context) {
+    if (context.mounted) {
+      CustomSnackbar.error(
+        'Poor Internet Connection',
+        'Please restart app with a better connection',
+        context,
+      );
+    }
+  }
+
   Future<void> onInit() async {
     // onInit
     setRepositoryBranch();
@@ -87,13 +98,20 @@ class GitService extends ChangeNotifier {
   }
 
   Future<void> onReady(BuildContext ctx) async {
-    // onReady
-    filterController = Provider.of<FilterController>(ctx, listen: false);
-    await getYears(ctx);
-    await getSemesters(ctx);
-    await getElectiveSemesters(ctx);
-    await getElectiveYears(ctx);
-    notifyListeners();
+    try {
+      // onReady
+      filterController = Provider.of<FilterController>(ctx, listen: false);
+      await getYears(ctx);
+      await getSemesters(ctx);
+      await getElectiveSemesters(ctx);
+      await getElectiveYears(ctx);
+      notifyListeners();
+    } on DioException catch (e) {
+      _showNetworkErrorSnackbar(ctx);
+      Logger.i('DioException in onReady: ${e.toString()}');
+    } catch (e) {
+      Logger.i('General exception in onReady: ${e.toString()}');
+    }
   }
 
   /// Adds an interceptor to global dio instance, which is used to
@@ -102,31 +120,40 @@ class GitService extends ChangeNotifier {
   /// Implemented to enable offline functionality, to fetch schedules
   /// once it's cached in temp storage.
   Future<void> startCachingService() async {
-    final dir = await getApplicationCacheDirectory();
+    try {
+      final dir = await getApplicationCacheDirectory();
 
-    cacheOptions = CacheOptions(
-      store: HiveCacheStore(
-        dir.path,
-        hiveBoxName: 'plan_sync',
-      ),
-      policy: CachePolicy.refreshForceCache,
-      hitCacheOnErrorExcept: [401, 403],
-      maxStale: const Duration(days: 7),
-      priority: CachePriority.high,
-      keyBuilder: CacheOptions.defaultCacheKeyBuilder,
-      allowPostMethod: false,
-    );
+      cacheOptions = CacheOptions(
+        store: HiveCacheStore(
+          dir.path,
+          hiveBoxName: 'plan_sync',
+        ),
+        policy: CachePolicy.refreshForceCache,
+        hitCacheOnErrorExcept: [401, 403],
+        maxStale: const Duration(days: 7),
+        priority: CachePriority.high,
+        keyBuilder: CacheOptions.defaultCacheKeyBuilder,
+        allowPostMethod: false,
+      );
 
-    dio = Dio(
-      BaseOptions(
-        connectTimeout: const Duration(seconds: 15),
-        headers: {'Cache-Control': 'no-cache'},
-        contentType: "application/json",
-      ),
-    );
-    dio.interceptors.add(DioCacheInterceptor(options: cacheOptions));
+      dio = Dio(
+        BaseOptions(
+          connectTimeout: const Duration(seconds: 15),
+          headers: {'Cache-Control': 'no-cache'},
+          contentType: "application/json",
+        ),
+      );
+      dio.interceptors.add(DioCacheInterceptor(options: cacheOptions));
 
-    return;
+      return;
+    } on DioException catch (e) {
+      Logger.i('DioException in startCachingService: ${e.toString()}');
+      // Note: We can't show snackbar here as we don't have context
+      rethrow; // Re-throw to be handled by caller
+    } catch (e) {
+      Logger.i('General exception in startCachingService: ${e.toString()}');
+      rethrow;
+    }
   }
 
   /// From v1.0.0, app will use main branch for release client app,
@@ -196,6 +223,7 @@ class GitService extends ChangeNotifier {
       };
 
       Logger.i(errorDetails);
+      _showNetworkErrorSnackbar(context);
 
       if (isWorking) {
         isWorking = false;
@@ -291,6 +319,8 @@ class GitService extends ChangeNotifier {
         "data": e.message,
         "code": e.response?.statusCode,
       };
+
+      _showNetworkErrorSnackbar(context);
 
       if (isWorking) {
         isWorking = false;
@@ -555,7 +585,8 @@ class GitService extends ChangeNotifier {
       };
 
       Logger.i(errorDetails);
-      notifyListeners();
+      _showNetworkErrorSnackbar(context);
+
       if (isWorking) {
         isWorking = false;
         notifyListeners();
@@ -640,6 +671,8 @@ class GitService extends ChangeNotifier {
         "data": e.message,
         "code": e.response?.statusCode,
       };
+
+      _showNetworkErrorSnackbar(context);
 
       if (isWorking) {
         isWorking = false;
@@ -766,102 +799,105 @@ class GitService extends ChangeNotifier {
     }
   }
 
- /// Gets concurrent elective timetable for unique semester and section.
-Stream<Timetable?> getElectives() async* {
-  if (!isWorking) {
-    isWorking = true;
-    notifyListeners();
-  }
-
-  if (filterController.activeElectiveSchemeCode == null ||
-      filterController.activeElectiveSemester == null) {
-    yield* const Stream.empty();
-    return;
-  }
-
-  final url =
-      "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$selectedElectiveYear/${filterController.activeElectiveSemester}/electives-scheme-${filterController.activeElectiveSchemeCode}.json";
-  try {
-    final options = RequestOptions(path: url);
-    final key = CacheOptions.defaultCacheKeyBuilder(options);
-
-    final cacheData = await cacheOptions.store?.get(key);
-    if (cacheData != null) {
-      final cachedResponse = cacheData.toResponse(options);
-      Logger.i("Sending Elective from cache");
-
-      yield Timetable.fromJson(
-        json: jsonDecode(cachedResponse.data),
-        isFresh: false,
-      );
+  /// Gets concurrent elective timetable for unique semester and section.
+  Stream<Timetable?> getElectives() async* {
+    if (!isWorking) {
+      isWorking = true;
+      notifyListeners();
     }
 
-    final response = await dio.get(url);
-
-    if (response.statusCode! >= 400) {
-      yield* Stream.error(response);
-      return;
-    }
-    if (response.data == "") {
+    if (filterController.activeElectiveSchemeCode == null ||
+        filterController.activeElectiveSemester == null) {
       yield* const Stream.empty();
       return;
     }
 
-    if (isWorking) {
-      isWorking = false;
-      notifyListeners();
+    final url =
+        "https://gitlab.com/delwinn/plan-sync/-/raw/$branch/res/$selectedElectiveYear/${filterController.activeElectiveSemester}/electives-scheme-${filterController.activeElectiveSchemeCode}.json";
+    try {
+      final options = RequestOptions(path: url);
+      final key = CacheOptions.defaultCacheKeyBuilder(options);
+
+      final cacheData = await cacheOptions.store?.get(key);
+      if (cacheData != null) {
+        final cachedResponse = cacheData.toResponse(options);
+        Logger.i("Sending Elective from cache");
+
+        yield Timetable.fromJson(
+          json: jsonDecode(cachedResponse.data),
+          isFresh: false,
+        );
+      }
+
+      final response = await dio.get(url);
+
+      if (response.statusCode! >= 400) {
+        yield* Stream.error(response);
+        return;
+      }
+      if (response.data == "") {
+        yield* const Stream.empty();
+        return;
+      }
+
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
+
+      // Handle freshness properly like in getTimeTable
+      if (response.headers.map['etag']?.first != cacheData?.eTag) {
+        Logger.i("Received Elective Schedule with different ETag");
+
+        yield Timetable.fromJson(
+          json: jsonDecode(response.data),
+          isFresh: true,
+        );
+        yield* const Stream.empty();
+      } else {
+        Logger.i('Elective ETag matches');
+
+        // Check network connection to determine freshness
+        final connectionAvailable =
+            await InternetConnection().hasInternetAccess;
+
+        yield Timetable.fromJson(
+          json: jsonDecode(cacheData!.toResponse(options).data),
+          isFresh: connectionAvailable, // This fixes the freshness indicator
+        );
+      }
+    } on DioException catch (e) {
+      errorDetails = {
+        'error': 'DioException',
+        'type': e.type.toString(),
+        'code': e.response?.statusCode.toString(),
+        'message':
+            'We couldn\'t fetch requested timetable. Please try again later.',
+      };
+
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
+
+      yield* Stream.error(Exception(errorDetails));
+      return;
+    } catch (e) {
+      errorDetails = {
+        "type": "CatchException",
+        "message": "Some unknown error occurred while getting electives",
+      };
+
+      if (isWorking) {
+        isWorking = false;
+        notifyListeners();
+      }
+
+      yield* Stream.error(Exception(errorDetails));
+      return;
     }
-
-    // Handle freshness properly like in getTimeTable
-    if (response.headers.map['etag']?.first != cacheData?.eTag) {
-      Logger.i("Received Elective Schedule with different ETag");
-      
-      yield Timetable.fromJson(
-        json: jsonDecode(response.data),
-        isFresh: true,
-      );
-      yield* const Stream.empty();
-    } else {
-      Logger.i('Elective ETag matches');
-
-      // Check network connection to determine freshness
-      final connectionAvailable = await InternetConnection().hasInternetAccess;
-
-      yield Timetable.fromJson(
-        json: jsonDecode(cacheData!.toResponse(options).data),
-        isFresh: connectionAvailable, // This fixes the freshness indicator
-      );
-    }
-  } on DioException catch (e) {
-    errorDetails = {
-      'error': 'DioException',
-      'type': e.type.toString(),
-      'code': e.response?.statusCode.toString(),
-      'message': 'We couldn\'t fetch requested timetable. Please try again later.',
-    };
-
-    if (isWorking) {
-      isWorking = false;
-      notifyListeners();
-    }
-
-    yield* Stream.error(Exception(errorDetails));
-    return;
-  } catch (e) {
-    errorDetails = {
-      "type": "CatchException",
-      "message": "Some unknown error occurred while getting electives",
-    };
-
-    if (isWorking) {
-      isWorking = false;
-      notifyListeners();
-    }
-
-    yield* Stream.error(Exception(errorDetails));
-    return;
   }
-}
+
   /// Fetches the min.version file from remote.
   Future<String?> fetchMininumVersion() async {
     final url =

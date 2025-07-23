@@ -79,6 +79,7 @@ dependencies:
   easy_debounce: ^2.0.3
   firebase_messaging: ^15.2.9
   flutter_local_notifications: ^19.3.1
+  in_app_review: ^2.0.10
 
 icons_launcher:
   image_path: "assets/favicon.png"
