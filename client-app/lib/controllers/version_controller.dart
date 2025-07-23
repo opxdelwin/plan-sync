@@ -3,7 +3,6 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:plan_sync/controllers/app_preferences_controller.dart';
@@ -17,6 +16,9 @@ import 'package:provider/provider.dart';
 
 class VersionController extends ChangeNotifier {
   late PackageInfo packageInfo;
+
+  // Static variable to store forced redirect path
+  static String? forcedRedirectPath;
 
   String? _clientVersion;
   String? get clientVersion => _clientVersion;
@@ -185,9 +187,9 @@ class VersionController extends ChangeNotifier {
         int.parse(minVersion.split('.')[0])) {
       Logger.e('Current App Version is unsupported with database!');
       perfs.saveIsAppBelowMinVersion(true);
-      if (context.mounted) {
-        context.go('/forced_update');
-      }
+      // Set redirect path and notify listeners for GoRouter refresh
+      VersionController.forcedRedirectPath = '/forced_update';
+      notifyListeners();
       return;
     }
 

@@ -20,11 +20,12 @@ class AppInitializer {
       await Provider.of<GitService>(context, listen: false).onInit();
       Provider.of<AppTourController>(context, listen: false).onInit(context);
       Provider.of<FilterController>(context, listen: false).onInit(context);
-      Provider.of<AppPreferencesController>(context, listen: false).onInit();
+      await Provider.of<AppPreferencesController>(context, listen: false)
+          .onInit();
       Provider.of<AppThemeController>(context, listen: false).onInit();
 
       // Then handle async operations
-      Future.wait([
+      await Future.wait([
         Provider.of<VersionController>(context, listen: false).onReady(context),
         Provider.of<GitService>(context, listen: false).onReady(context),
         Provider.of<RemoteConfigController>(context, listen: false).onReady(),
