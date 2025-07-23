@@ -238,6 +238,12 @@ String? redirectHandler(BuildContext context, GoRouterState state) {
     return notifRoute;
   }
 
+  final versionControllerForcedPath = VersionController.forcedRedirectPath;
+  if (versionControllerForcedPath != null) {
+    VersionController.forcedRedirectPath = null; // Clear after redirect
+    return versionControllerForcedPath;
+  }
+
   Auth auth = Provider.of<Auth>(context, listen: false);
   if (auth.activeUser != null && state.matchedLocation == '/login') {
     return '/';

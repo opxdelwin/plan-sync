@@ -162,7 +162,6 @@ class GitService extends ChangeNotifier {
     if (kReleaseMode) {
       branch = 'main';
     } else {
-      // branch = 'main';
       branch = 'dev';
     }
     return;
