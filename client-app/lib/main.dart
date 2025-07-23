@@ -6,6 +6,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plan_sync/app_initializer.dart';
 import 'package:plan_sync/controllers/analytics_controller.dart';
+import 'package:plan_sync/controllers/app_review_controller.dart';
 import 'package:plan_sync/controllers/app_tour_controller.dart';
 import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/controllers/auth.dart';
@@ -71,6 +72,14 @@ class AppProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RemoteConfigController()),
         ChangeNotifierProvider(create: (_) => VersionController()),
         ChangeNotifierProvider(create: (_) => AppThemeController()),
+        ChangeNotifierProvider(
+          create: (context) {
+            final controller = AppReviewController();
+            controller.initalize(context);
+            return controller;
+          },
+          lazy: false,
+        ),
       ],
       child: const MainApp(),
     );

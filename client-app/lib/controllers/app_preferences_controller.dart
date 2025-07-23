@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:plan_sync/backend/models/in_app_review_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppPreferencesController extends ChangeNotifier {
@@ -84,5 +85,19 @@ class AppPreferencesController extends ChangeNotifier {
     });
 
     await perfs.setString(_noticesDismissalPerfKey, json.encode(dismissed));
+  }
+
+  // For in-app review
+  static const String _reviewRequestKey = 'review-requested';
+  InAppReviewCacheModel? getAppReviewRequest() {
+    String? data = perfs.getString(_reviewRequestKey);
+    if (data == null) return null;
+    return InAppReviewCacheModel.fromJson(json.decode(data));
+  }
+
+  Future<void> saveAppReviewRequest(InAppReviewCacheModel model) async {
+    String jsonData = json.encode(model.toJson());
+    await perfs.setString(_reviewRequestKey, jsonData);
+    notifyListeners();
   }
 }
