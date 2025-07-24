@@ -40,6 +40,7 @@ class CampusLocationCard extends StatelessWidget {
         item.title ?? 'No Title',
         style: TextStyle(color: colorScheme.onSurface),
       ),
+      onTap: () => onLaunch.call(),
       trailing: IconButton(
         icon: Icon(Icons.launch, color: colorScheme.secondary),
         onPressed: onLaunch,
