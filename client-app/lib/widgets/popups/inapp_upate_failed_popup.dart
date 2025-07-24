@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plan_sync/util/external_links.dart';
+import 'package:plan_sync/util/snackbar.dart';
 
 class InAppUpateFailedPopup extends StatelessWidget {
   const InAppUpateFailedPopup({
@@ -66,7 +67,19 @@ class InAppUpateFailedPopup extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () => ExternalLinks.store(),
+                onPressed: () async {
+                  try {
+                    await ExternalLinks.store();
+                  } catch (e) {
+                    if (!context.mounted) return;
+
+                    CustomSnackbar.error(
+                      'Failed to open store',
+                      'Could not open the app store. Please try again.',
+                      context,
+                    );
+                  }
+                },
                 style: ButtonStyle(
                   shape: WidgetStatePropertyAll(
                     RoundedRectangleBorder(

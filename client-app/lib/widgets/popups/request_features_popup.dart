@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plan_sync/util/external_links.dart';
+import 'package:plan_sync/util/snackbar.dart';
 
 class RequestFeaturesPopup extends StatefulWidget {
   const RequestFeaturesPopup({super.key});
@@ -9,17 +10,12 @@ class RequestFeaturesPopup extends StatefulWidget {
 }
 
 class _RequestFeaturesPopupState extends State<RequestFeaturesPopup> {
+  final GlobalKey<FormState> featureReqFormKey = GlobalKey<FormState>();
   final TextEditingController _suggestionController = TextEditingController();
   bool _isLoading = false;
 
   Future<void> _sendFeatureRequest() async {
-    if (_suggestionController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter your suggestion before sending'),
-          duration: Duration(seconds: 2),
-        ),
-      );
+    if (!(featureReqFormKey.currentState?.validate() ?? false)) {
       return;
     }
 
@@ -36,11 +32,10 @@ class _RequestFeaturesPopupState extends State<RequestFeaturesPopup> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to open mail app. Please try again.'),
-            duration: Duration(seconds: 2),
-          ),
+        CustomSnackbar.error(
+          'Failed to send suggestion',
+          'Could not send your suggestion. Please try again later.',
+          context,
         );
       }
     } finally {
@@ -101,33 +96,42 @@ class _RequestFeaturesPopupState extends State<RequestFeaturesPopup> {
               ),
             ),
             const SizedBox(height: 16),
-            TextField(
-              controller: _suggestionController,
-              maxLines: 4,
-              maxLength: 500,
-              decoration: InputDecoration(
-                hintText: 'Type your feature suggestion here...',
-                hintStyle: TextStyle(
-                  color: colorScheme.onSurface.withOpacity(0.6),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: colorScheme.outline,
+            Form(
+              key: featureReqFormKey,
+              child: TextFormField(
+                controller: _suggestionController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your suggestion';
+                  }
+                  return null;
+                },
+                maxLines: 4,
+                maxLength: 500,
+                decoration: InputDecoration(
+                  hintText: 'Type your feature suggestion here...',
+                  hintStyle: TextStyle(
+                    color: colorScheme.onSurface.withOpacity(0.6),
                   ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: colorScheme.primary,
-                    width: 2,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: colorScheme.outline,
+                    ),
                   ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: colorScheme.primary,
+                      width: 2,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: colorScheme.surface,
                 ),
-                filled: true,
-                fillColor: colorScheme.surface,
-              ),
-              style: TextStyle(
-                color: colorScheme.onSurface,
+                style: TextStyle(
+                  color: colorScheme.onSurface,
+                ),
               ),
             ),
             const SizedBox(height: 16),

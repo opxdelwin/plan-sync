@@ -6,46 +6,46 @@ import 'enums.dart';
 class ExternalLinks {
   static const appLink = "https://plansync.in";
 
-  ExternalLinks.cardlink() {
-    _launchUrl("https://cardlink.co.in");
+  static Future<void> cardlink() async {
+    await _launchUrl("https://cardlink.co.in");
   }
 
-  ExternalLinks.store() {
+  static Future<void> store() async {
     if (Platform.isAndroid) {
-      _launchUrl(
+      await _launchUrl(
         "https://play.google.com/store/apps/details?id=in.co.cardlink.plansync",
       );
       return;
     } else if (Platform.isIOS) {
-      _launchUrl(
+      await _launchUrl(
         "https://apps.apple.com/app/id6642680946",
       );
       return;
     }
   }
 
-  ExternalLinks.termsAndConditions() {
-    _launchUrl("https://plansync.in/terms-of-service");
+  static Future<void> termsAndConditions() async {
+    await _launchUrl("https://plansync.in/terms-of-service");
   }
 
-  ExternalLinks.privacyPolicy() {
-    _launchUrl("https://plansync.in/privacy-policy");
+  static Future<void> privacyPolicy() async {
+    await _launchUrl("https://plansync.in/privacy-policy");
   }
 
   /// TODO: Disabled, as repo is private
-  ExternalLinks.reportErrorViaGithub() {
-    _launchUrl(
+  static Future<void> reportErrorViaGithub() async {
+    await _launchUrl(
         "https://github.com/opxdelwin/plan-sync/blob/main/ERROR_REPORTING.md");
   }
 
-  ExternalLinks.reportErrorViaMail({
+  static Future<void> reportErrorViaMail({
     String? academicYear,
     String? course,
     String? section,
     String? weekday,
     String? scheme,
     ScheduleType? scheduleType,
-  }) {
+  }) async {
     String body = """Hey Plan Sync Team,
 
 I hope this message finds you well. I've come across an issue in the schedule and wanted to report it to help improve the app. Here are the details:
@@ -74,12 +74,12 @@ Best regards,
 
     final subject = Uri.encodeComponent("[Schedule Error Report] - Plan Sync");
     final email = Uri.encodeComponent("connect@plansync.in");
-    _launchUrl(
+    await _launchUrl(
       'mailto:$email?subject=$subject&body=${Uri.encodeComponent(body)}',
     );
   }
 
-  ExternalLinks.contributeTimeTableViaMail() {
+  static Future<void> contributeTimeTableViaMail() async {
     const body = """Hey Plan Sync Team,
 
 I hope this email finds you well. I'm interested in contributing a new timetable for a specific section. Here are my details:
@@ -103,13 +103,13 @@ Best regards,
 
     final subject = Uri.encodeComponent("[Contribution Interest] - Plan Sync");
     final email = Uri.encodeComponent("connect@plansync.in");
-    _launchUrl(
+    await _launchUrl(
       'mailto:$email?subject=$subject&body=${Uri.encodeComponent(body)}',
     );
   }
 
-  ExternalLinks.contributeTimeTableViaGithub() {
-    _launchUrl(
+  static Future<void> contributeTimeTableViaGithub() async {
+    await _launchUrl(
         "https://github.com/opxdelwin/plan-sync/blob/main/CONTRIBUTING.md");
   }
 
@@ -138,12 +138,10 @@ Best regards,
     final url =
         'mailto:$email?subject=$subject&body=${Uri.encodeComponent(body)}';
 
-    if (!await launchUrl(Uri.parse(url))) {
-      throw Exception('Could not launch mail app');
-    }
+    await _launchUrl(url);
   }
 
-  ExternalLinks.shareApp() {
+  static Future<void> shareApp() async {
     var text = "Check out the Plan Sync app! "
         "🚀 It's a game-changer for managing my classes. "
         "Makes life so much easier.";
@@ -152,7 +150,7 @@ Best regards,
     Share.share(text);
   }
 
-  Future<void> _launchUrl(String url) async {
+  static Future<void> _launchUrl(String url) async {
     if (!await launchUrl(Uri.parse(url))) {
       throw Exception('Could not launch $url');
     }

@@ -78,7 +78,7 @@ class _VersionCheckWidgetState extends State<VersionCheckWidget> {
                 foregroundColor:
                     WidgetStatePropertyAll(colorScheme.onSecondary),
                 shape: const WidgetStatePropertyAll(StadiumBorder())),
-            onPressed: () => versionController.openStore(),
+            onPressed: () => versionController.openStore(context),
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [

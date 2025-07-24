@@ -1,16 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:plan_sync/util/external_links.dart';
+import 'package:plan_sync/util/snackbar.dart';
 
 class ContributeScheduleBottomSheet extends StatelessWidget {
   const ContributeScheduleBottomSheet({super.key});
 
-  void launchMail() {
-    ExternalLinks.contributeTimeTableViaMail();
+  void launchMail(BuildContext context) async {
+    try {
+      await ExternalLinks.contributeTimeTableViaMail();
+    } catch (e) {
+      if (!context.mounted) return;
+
+      CustomSnackbar.error(
+        'Failed to launch mail app',
+        'Could not open your mail application. Please try again.',
+        context,
+      );
+    }
   }
 
-  void launchGithub() {
-    ExternalLinks.contributeTimeTableViaGithub();
+  void launchGithub(BuildContext context) async {
+    try {
+      await ExternalLinks.contributeTimeTableViaGithub();
+    } catch (e) {
+      if (!context.mounted) return;
+
+      CustomSnackbar.error(
+        'Failed to launch GitHub',
+        'Could not open GitHub. Please try again.',
+        context,
+      );
+    }
   }
 
   @override
@@ -42,7 +63,7 @@ class ContributeScheduleBottomSheet extends StatelessWidget {
                     backgroundColor:
                         WidgetStatePropertyAll(colorScheme.onSurface),
                   ),
-                  onPressed: () => launchMail(),
+                  onPressed: () => launchMail(context),
                   child: Row(
                     children: [
                       Text(
@@ -77,7 +98,7 @@ class ContributeScheduleBottomSheet extends StatelessWidget {
                     backgroundColor:
                         WidgetStatePropertyAll(colorScheme.onSurface),
                   ),
-                  onPressed: () => launchGithub(),
+                  onPressed: () => launchGithub(context),
                   child: Row(
                     children: [
                       Text(

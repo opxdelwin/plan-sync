@@ -3,6 +3,7 @@ import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/enums.dart';
 import 'package:plan_sync/util/external_links.dart';
+import 'package:plan_sync/util/snackbar.dart';
 import 'package:provider/provider.dart';
 
 class ReportErrorMailPopup extends StatelessWidget {
@@ -16,22 +17,32 @@ class ReportErrorMailPopup extends StatelessWidget {
   final ScheduleType? scheduleType;
 
   Future<void> onPressed(BuildContext context) async {
-    if (!autoFill) {
-      ExternalLinks.reportErrorViaMail();
-      return;
-    }
+    try {
+      if (!autoFill) {
+        await ExternalLinks.reportErrorViaMail();
+        return;
+      }
 
-    FilterController controller =
-        Provider.of<FilterController>(context, listen: false);
-    GitService git = Provider.of<GitService>(context, listen: false);
-    ExternalLinks.reportErrorViaMail(
-      academicYear: git.selectedYear,
-      course: controller.activeSemester,
-      section: controller.activeSectionCode,
-      weekday: controller.weekday.key,
-      scheduleType: scheduleType,
-      scheme: controller.activeElectiveScheme,
-    );
+      FilterController controller =
+          Provider.of<FilterController>(context, listen: false);
+      GitService git = Provider.of<GitService>(context, listen: false);
+      await ExternalLinks.reportErrorViaMail(
+        academicYear: git.selectedYear,
+        course: controller.activeSemester,
+        section: controller.activeSectionCode,
+        weekday: controller.weekday.key,
+        scheduleType: scheduleType,
+        scheme: controller.activeElectiveScheme,
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+
+      CustomSnackbar.error(
+        'Failed to launch mail app',
+        'Could not open your mail application. Please try again.',
+        context,
+      );
+    }
   }
 
   @override
