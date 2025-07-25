@@ -151,6 +151,9 @@ class _MainAppState extends State<MainApp> {
         }
 
         return ToastificationWrapper(
+          config: ToastificationConfig(
+            maxToastLimit: 2,
+          ),
           child: Selector<AppThemeController, ThemeMode>(
             builder: (context, mode, child) => MaterialApp.router(
               debugShowCheckedModeBanner: kDebugMode ? true : false,

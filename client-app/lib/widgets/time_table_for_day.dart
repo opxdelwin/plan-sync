@@ -7,6 +7,7 @@ import 'package:plan_sync/controllers/filter_controller.dart';
 import 'package:plan_sync/controllers/app_preferences_controller.dart';
 import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/extensions.dart';
+import 'package:plan_sync/util/snackbar.dart';
 import 'package:plan_sync/widgets/no_schedule_widget.dart';
 import 'package:plan_sync/widgets/indicators/schedule_freshness_indicator.dart';
 import 'package:plan_sync/widgets/subject_tile.dart';
@@ -273,9 +274,20 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
                 onStarToggle: (newValue) {
                   if (newValue) {
                     appPreferencesController.starElective(electiveId);
+                    CustomSnackbar.info(
+                      "Elective Pinned",
+                      "${filteredSchedule[index].subject} has been pinned to top.",
+                      context,
+                    );
                   } else {
                     appPreferencesController.unstarElective(electiveId);
+                    CustomSnackbar.info(
+                      "Elective Unpinned",
+                      "${filteredSchedule[index].subject} has been removed from pins.",
+                      context,
+                    );
                   }
+                  _sortElectives();
                   setState(() {});
                 },
               );
