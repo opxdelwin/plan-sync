@@ -55,21 +55,38 @@ class SubjectTile extends StatelessWidget {
                   Row(
                     children: [
                       if (showStar) ...[
-                        GestureDetector(
-                          onTap: onStarToggle == null
-                              ? null
-                              : () {
-                                  onStarToggle?.call(!starred);
-                                },
-                          child: Icon(
-                            key: ValueKey('star-icon$id'),
-                            starred
-                                ? Icons.star_rounded
-                                : Icons.star_outline_rounded,
-                            color: starred
-                                ? colorScheme.primary
-                                : colorScheme.onSurfaceVariant.withOpacity(0.4),
-                            size: 22,
+                        Tooltip(
+                          message: 'Toggle Quick Access',
+                          enableFeedback: true,
+                          textStyle: TextStyle(
+                            color: colorScheme.onPrimary,
+                          ),
+                          decoration: ShapeDecoration(
+                            color: colorScheme.primary,
+                            shape: StadiumBorder(
+                              side: BorderSide(
+                                color: colorScheme.primary,
+                                width: 1.2,
+                              ),
+                            ),
+                          ),
+                          child: GestureDetector(
+                            onTap: onStarToggle == null
+                                ? null
+                                : () {
+                                    onStarToggle?.call(!starred);
+                                  },
+                            child: Icon(
+                              key: ValueKey('star-icon$id'),
+                              starred
+                                  ? Icons.star_rounded
+                                  : Icons.star_outline_rounded,
+                              color: starred
+                                  ? colorScheme.primary
+                                  : colorScheme.onSurfaceVariant
+                                      .withOpacity(0.4),
+                              size: 22,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 8),
