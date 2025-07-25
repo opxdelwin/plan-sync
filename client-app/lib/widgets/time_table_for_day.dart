@@ -1,9 +1,16 @@
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:plan_sync/backend/models/timetable.dart';
+import 'package:plan_sync/backend/models/timetable_schedule_entry.dart';
+
+import 'package:plan_sync/controllers/filter_controller.dart';
+import 'package:plan_sync/controllers/app_preferences_controller.dart';
+import 'package:plan_sync/controllers/git_service.dart';
 import 'package:plan_sync/util/extensions.dart';
 import 'package:plan_sync/widgets/no_schedule_widget.dart';
 import 'package:plan_sync/widgets/indicators/schedule_freshness_indicator.dart';
 import 'package:plan_sync/widgets/subject_tile.dart';
+import 'package:provider/provider.dart';
 
 class TimeTableForDay extends StatefulWidget {
   const TimeTableForDay(
@@ -34,12 +41,81 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
+  List<ScheduleEntry> filteredSchedule = [];
+
+  late FilterController filterProvider;
+  late GitService gitService;
+  late AppPreferencesController appPreferencesController;
+
   @override
   void initState() {
     super.initState();
+    appPreferencesController = Provider.of<AppPreferencesController>(
+      context,
+      listen: false,
+    );
+    gitService = Provider.of<GitService>(
+      context,
+      listen: false,
+    );
+    filterProvider = Provider.of<FilterController>(
+      context,
+      listen: false,
+    );
     _searchController.addListener(() {
-      setState(() {
-        _searchQuery = _searchController.text.toLowerCase();
+      EasyDebounce.debounce(
+        '_searchElective',
+        const Duration(milliseconds: 350),
+        () {
+          setState(() {
+            _searchQuery = _searchController.text.toLowerCase();
+            filteredSchedule = _getFilteredSchedule();
+            _sortElectives();
+          });
+        },
+      );
+    });
+    setState(() {
+      filteredSchedule = _getFilteredSchedule();
+      _sortElectives();
+    });
+  }
+
+  Future<void> _sortElectives() async {
+    final prefs = Provider.of<AppPreferencesController>(context, listen: false);
+    final academicYear =
+        Provider.of<GitService>(context, listen: false).selectedElectiveYear ??
+            '';
+    final semester = Provider.of<FilterController>(context, listen: false)
+            .activeElectiveSemester ??
+        '';
+    final scheme = Provider.of<FilterController>(context, listen: false)
+            .activeElectiveScheme ??
+        '';
+
+    final starredIds = await prefs.getStarredElectives();
+    setState(() {
+      filteredSchedule.sort((a, b) {
+        final aId = AppPreferencesController.electiveId(
+          academicYear: academicYear,
+          semester: semester,
+          scheme: scheme,
+          subjectName: a.subject ?? '',
+        );
+        final bId = AppPreferencesController.electiveId(
+          academicYear: academicYear,
+          semester: semester,
+          scheme: scheme,
+          subjectName: b.subject ?? '',
+        );
+        final aStarred = starredIds.contains(aId);
+        final bStarred = starredIds.contains(bId);
+
+        if (aStarred == bStarred) {
+          // If both are starred or both are unstarred, sort alphabetically by subject
+          return (a.subject ?? '').compareTo(b.subject ?? '');
+        }
+        return aStarred ? -1 : 1;
       });
     });
   }
@@ -50,7 +126,7 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
     super.dispose();
   }
 
-  List<dynamic> _getFilteredSchedule() {
+  List<ScheduleEntry> _getFilteredSchedule() {
     final scheduleData = widget.data.data[widget.day];
     if (scheduleData == null || !widget.searchEnabled || _searchQuery.isEmpty) {
       return scheduleData ?? [];
@@ -85,11 +161,6 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return _buildForTimetable(colorScheme);
-  }
-
-  Widget _buildForTimetable(ColorScheme colorScheme) {
-    final filteredSchedule = _getFilteredSchedule();
 
     if (widget.data.data[widget.day] == null) {
       return const NoScheduleWidget();
@@ -184,11 +255,31 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
             key: const ValueKey('TimeTableForDay._buildForTimetable'),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) => SubjectTile(
-              location: filteredSchedule[index].room ?? 'Unavailable',
-              time: filteredSchedule[index].time ?? 'Unavailable',
-              subject: filteredSchedule[index].subject ?? 'Unavailable',
-            ),
+            itemBuilder: (context, index) {
+              final electiveId = AppPreferencesController.electiveId(
+                academicYear: gitService.selectedElectiveYear ?? '',
+                semester: filterProvider.activeElectiveSemester ?? '',
+                scheme: filterProvider.activeElectiveScheme ?? '',
+                subjectName: filteredSchedule[index].subject ?? '',
+              );
+
+              return SubjectTile(
+                starred: appPreferencesController.isElectiveStarred(electiveId),
+                showStar: widget.data.meta.type == 'electives',
+                entry: filteredSchedule[index],
+                academicYear: gitService.selectedElectiveYear ?? '',
+                semester: filterProvider.activeElectiveSemester ?? '',
+                scheme: filterProvider.activeElectiveScheme ?? '',
+                onStarToggle: (newValue) {
+                  if (newValue) {
+                    appPreferencesController.starElective(electiveId);
+                  } else {
+                    appPreferencesController.unstarElective(electiveId);
+                  }
+                  setState(() {});
+                },
+              );
+            },
             separatorBuilder: (context, index) => const SizedBox(height: 8),
             itemCount: filteredSchedule.length,
           ),

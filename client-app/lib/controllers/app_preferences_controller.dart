@@ -100,4 +100,49 @@ class AppPreferencesController extends ChangeNotifier {
     await perfs.setString(_reviewRequestKey, jsonData);
     notifyListeners();
   }
+
+  static const String _starredElectivesKey = 'starred_electives';
+
+  /// Returns a unique identifier for an elective
+  static String electiveId({
+    required String academicYear,
+    required String semester,
+    required String scheme,
+    required String subjectName,
+  }) {
+    return [academicYear, semester, scheme, subjectName]
+        .map((e) => e.trim().replaceAll(RegExp(r'\s+'), '-'))
+        .join('-');
+  }
+
+  /// Get starred electives
+  Future<List<String>> getStarredElectives() async {
+    return perfs.getStringList(_starredElectivesKey) ?? [];
+  }
+
+  /// Star an elective
+  Future<void> starElective(String electiveId) async {
+    final current = perfs.getStringList(_starredElectivesKey) ?? [];
+    if (!current.contains(electiveId)) {
+      current.add(electiveId);
+      await perfs.setStringList(_starredElectivesKey, current);
+    }
+  }
+
+  /// Unstar an elective
+  Future<void> unstarElective(String electiveId) async {
+    final current = perfs.getStringList(_starredElectivesKey) ?? [];
+    if (current.contains(electiveId)) {
+      current.remove(electiveId);
+      await perfs.setStringList(_starredElectivesKey, current);
+    }
+  }
+
+  /// Check if elective is starred
+  bool isElectiveStarred(String electiveId) {
+    final current = perfs.getStringList(_starredElectivesKey) ?? [];
+    if (current.isEmpty) return false;
+
+    return current.contains(electiveId);
+  }
 }
