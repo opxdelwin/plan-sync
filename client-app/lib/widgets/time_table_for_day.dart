@@ -14,11 +14,12 @@ import 'package:plan_sync/widgets/subject_tile.dart';
 import 'package:provider/provider.dart';
 
 class TimeTableForDay extends StatefulWidget {
-  const TimeTableForDay(
-      {super.key,
-      required this.data,
-      required this.day,
-      this.searchEnabled = false});
+  const TimeTableForDay({
+    super.key,
+    required this.data,
+    required this.day,
+    this.searchEnabled = false,
+  });
 
   final Timetable data;
   final String day;
@@ -83,6 +84,10 @@ class _TimeTableForDayState extends State<TimeTableForDay> {
   }
 
   Future<void> _sortElectives() async {
+    if (widget.data.meta.type != 'electives') {
+      return;
+    }
+
     final prefs = Provider.of<AppPreferencesController>(context, listen: false);
     final academicYear =
         Provider.of<GitService>(context, listen: false).selectedElectiveYear ??
