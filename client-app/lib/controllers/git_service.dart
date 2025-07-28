@@ -417,7 +417,9 @@ class GitService extends ChangeNotifier {
   }
 
   /// Gets concurrent timetable for unique semester and section.
-  Stream<Timetable?> getTimeTable(FilterController filterController) async* {
+  Stream<Timetable?> getTimeTable({
+    required FilterController filterController,
+  }) async* {
     final section = filterController.activeSectionCode;
     final semester = filterController.activeSemester;
 
@@ -483,6 +485,8 @@ class GitService extends ChangeNotifier {
           json: jsonDecode(cache!.toResponse(options).data),
           isFresh: connectionAvailable,
         );
+
+        yield* const Stream.empty();
       }
     } on DioException catch (e) {
       errorDetails = {

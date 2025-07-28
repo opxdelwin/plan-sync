@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="widget_background_light">#EAF9E9</color>
+    <color name="widget_header_text_light">#2D5A2D</color>
+    <color name="widget_time_text_light">#5A7A5A</color>
+    <color name="loading_text_light">#5A7A5A</color>
+    <color name="empty_heading_light">#2D5A2D</color>
+    <color name="empty_info_light">#5A7A5A</color>
+    <color name="current_card_background_light">#E8F5E9</color>
+    <color name="current_label_light">#2D5A2D</color>
+    <color name="current_subject_text_light">#1A4D1A</color>
+    <color name="next_card_background_light">#F0F8F0</color>
+    <color name="next_label_light">#4A6A4A</color>
+    <color name="next_subject_text_light">#3A5A3A</color>
+    <color name="progress_bar_tint_light">#4CAF50</color>
+</resources>

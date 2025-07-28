@@ -14,71 +14,77 @@ class ScheduleWidget : HomeWidgetProvider() {
         appWidgetIds.forEach { widgetId ->
             val views = RemoteViews(context.packageName, R.layout.home_screen_widget)
 
-            // Get data from Flutter using SharedPreferences.getString()
-            // The key "scheduleData" should match what's saved from Flutter via HomeWidget.saveWidgetData
+
+
             val jsonData = widgetData.getString("scheduleData", null)
 
-            // Default to loading state if no data is present or explicitly set
-            var widgetState = "loading"
-            if (jsonData != null) {
+            // Determine the widget state based on configuration first, then data availability
+            var widgetState: String // This variable will hold the determined state
+             if (jsonData != null) {
+                println("[x] Received widget data: $jsonData")
                 try {
                     val jsonObject = JSONObject(jsonData)
-                    widgetState = jsonObject.optString("widgetState", "loading") // Read the state from Flutter
-                    val currentSubjectJson = jsonObject.optJSONObject("currentSubject")
-                    val nextSubjectJson = jsonObject.optJSONObject("nextSubject")
-
-                    // Set visibility based on state
-                    when (widgetState) {
-                        "loading" -> {
-                            views.setViewVisibility(R.id.loading_state_layout, View.VISIBLE)
-                            views.setViewVisibility(R.id.empty_state_layout, View.GONE)
-                            views.setViewVisibility(R.id.data_display_layout, View.GONE)
-                        }
-                        "empty" -> {
-                            views.setViewVisibility(R.id.loading_state_layout, View.GONE)
-                            views.setViewVisibility(R.id.empty_state_layout, View.VISIBLE)
-                            views.setViewVisibility(R.id.data_display_layout, View.GONE)
-                        }
-                        "data" -> {
-                            views.setViewVisibility(R.id.loading_state_layout, View.GONE)
-                            views.setViewVisibility(R.id.empty_state_layout, View.GONE)
-                            views.setViewVisibility(R.id.data_display_layout, View.VISIBLE)
-
-                            // Populate current subject
-                            if (currentSubjectJson != null) {
-                                val currentName = currentSubjectJson.optString("name", "N/A")
-                                val currentRoom = currentSubjectJson.optString("room", "N/A")
-                                val currentTimeRange = currentSubjectJson.optString("time", "N/A") // Directly get the consolidated time string
-
-                                views.setTextViewText(R.id.current_subject_details, "$currentName ($currentRoom) - $currentTimeRange")
-                            } else {
-                                views.setTextViewText(R.id.current_subject_details, "No current class")
-                            }
-
-                            // Populate next subject
-                            if (nextSubjectJson != null) {
-                                val nextName = nextSubjectJson.optString("name", "N/A")
-                                val nextRoom = nextSubjectJson.optString("room", "N/A")
-                                val nextTimeRange = nextSubjectJson.optString("time", "N/A") // Directly get the consolidated time string
-
-                                views.setTextViewText(R.id.next_subject_details, "$nextName ($nextRoom) - $nextTimeRange")
-                            } else {
-                                views.setTextViewText(R.id.next_subject_details, "No upcoming class")
-                            }
-                        }
-                    }
+                    widgetState = jsonObject.optString("widgetState", "loading")
                 } catch (e: Exception) {
-                    // Log error and show empty state or default
                     println("Error parsing widget data: $e")
+                    widgetState = "empty" // Fallback if JSON is corrupt
+                }
+            } else {
+                widgetState = "unconfigured"
+            }
+
+            // --- END NEW ---
+
+            // Set visibility based on the determined state
+            when (widgetState) {
+                "loading" -> {
+                    views.setViewVisibility(R.id.loading_state_layout, View.VISIBLE)
+                    views.setViewVisibility(R.id.empty_state_layout, View.GONE)
+                    views.setViewVisibility(R.id.data_display_layout, View.GONE)
+                    views.setViewVisibility(R.id.configuration_required_layout, View.GONE)
+                }
+                "empty" -> {
                     views.setViewVisibility(R.id.loading_state_layout, View.GONE)
                     views.setViewVisibility(R.id.empty_state_layout, View.VISIBLE)
                     views.setViewVisibility(R.id.data_display_layout, View.GONE)
+                    views.setViewVisibility(R.id.configuration_required_layout, View.GONE)
                 }
-            } else {
-                // No data received from Flutter, show loading or empty
-                views.setViewVisibility(R.id.loading_state_layout, View.VISIBLE)
-                views.setViewVisibility(R.id.empty_state_layout, View.GONE)
-                views.setViewVisibility(R.id.data_display_layout, View.GONE)
+                "unconfigured" -> {
+                    views.setViewVisibility(R.id.loading_state_layout, View.GONE)
+                    views.setViewVisibility(R.id.empty_state_layout, View.GONE)
+                    views.setViewVisibility(R.id.data_display_layout, View.GONE)
+                    views.setViewVisibility(R.id.configuration_required_layout, View.VISIBLE)
+                }
+                "data" -> {
+                    views.setViewVisibility(R.id.loading_state_layout, View.GONE)
+                    views.setViewVisibility(R.id.empty_state_layout, View.GONE)
+                    views.setViewVisibility(R.id.data_display_layout, View.VISIBLE)
+                    views.setViewVisibility(R.id.configuration_required_layout, View.GONE)
+
+                    // Populate data only if the state is "data"
+                    val jsonObject = JSONObject(jsonData!!) // jsonData is guaranteed not null here
+
+                    val currentSubjectJson = jsonObject.optJSONObject("currentSubject")
+                    val nextSubjectJson = jsonObject.optJSONObject("nextSubject")
+
+                    if (currentSubjectJson != null) {
+                        val currentName = currentSubjectJson.optString("name", "N/A")
+                        val currentRoom = currentSubjectJson.optString("room", "N/A")
+                        val currentTimeRange = currentSubjectJson.optString("time", "N/A")
+                        views.setTextViewText(R.id.current_subject_details, "$currentName ($currentRoom) - $currentTimeRange")
+                    } else {
+                        views.setTextViewText(R.id.current_subject_details, "No current class")
+                    }
+
+                    if (nextSubjectJson != null) {
+                        val nextName = nextSubjectJson.optString("name", "N/A")
+                        val nextRoom = nextSubjectJson.optString("room", "N/A")
+                        val nextTimeRange = nextSubjectJson.optString("time", "N/A")
+                        views.setTextViewText(R.id.next_subject_details, "$nextName ($nextRoom) - $nextTimeRange")
+                    } else {
+                        views.setTextViewText(R.id.next_subject_details, "No upcoming class")
+                    }
+                }
             }
 
             appWidgetManager.updateAppWidget(widgetId, views)

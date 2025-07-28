@@ -186,7 +186,9 @@ class _TimeTableWidgetState extends State<TimeTableWidget> {
             : filterController.getShortCode()),
         stream: widget.isElective
             ? service.getElectives()
-            : service.getTimeTable(filterController),
+            : service.getTimeTable(
+                filterController: filterController,
+              ),
         builder: (context, AsyncSnapshot<Timetable?> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Column(

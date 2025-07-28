@@ -1,11 +1,13 @@
-<!-- android/app/src/main/res/values/strings.xml -->
 <resources>
-    <string name="app_name">Plan Sync</string>
-    <string name="loading_schedule">Loading schedule</string>
+    <string name="app_name">PlanSync</string>
+    <string name="schedule_heading">Schedule</string>
+    <string name="loading_schedule">Loading Schedule…</string>
     <string name="no_classes_scheduled">No classes scheduled.</string>
-    <string name="subject_details_placeholder">Subject Placeholder</string>
-    <string name="open_app_to_sync">Open app to sync.</string>
-    <string name="current_label">CURRENT:</string>
-    <string name="next_label">NEXT:</string>
+    <string name="open_app_to_sync">Open the app to sync your schedule.</string>
+    <string name="current_label">Current</string>
+    <string name="next_label">Up Next</string>
+    <string name="subject_details_placeholder">Subject (Room) - Time Range</string>
 
+    <string name="configuration_required_heading">Widget Not Configured</string>
+    <string name="configuration_required_message">Please open the app and select your section preference to display your schedule.</string>
 </resources>

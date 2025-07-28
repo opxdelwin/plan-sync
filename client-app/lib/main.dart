@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:plan_sync/backend/services/native_widgets/interactivity_callback.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -25,7 +27,7 @@ import 'package:plan_sync/views/home_screen.dart';
 import 'package:plan_sync/views/login_screen.dart';
 import 'package:plan_sync/views/settings_screen.dart';
 import 'package:plan_sync/widgets/scaffold_with_nav_bar.dart';
-import 'package:plan_sync/work_manager.dart';
+import 'package:plan_sync/backend/services/work_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:toastification/toastification.dart';
 import 'firebase_options.dart';
@@ -57,7 +59,12 @@ Future<void> main() async {
   }
 
   try {
-    await HomeWidget.setAppGroupId('group.com.plansync.widget');
+    if (Platform.isIOS) {
+      await HomeWidget.setAppGroupId('group.in.plansync.widget');
+    }
+    await HomeWidget.registerInteractivityCallback(
+      homeWidgetInteractivityCallback,
+    );
   } catch (e) {
     print('Error setting HomeWidget app group ID: $e');
   }

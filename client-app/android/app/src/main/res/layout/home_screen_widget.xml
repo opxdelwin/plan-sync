@@ -1,114 +1,245 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/widget_root_layout"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#388E3C"
-    android:padding="12dp">
+    android:orientation="vertical"
+    android:background="@drawable/widget_background"
+    android:padding="16dp">
 
-    <!-- Loading State -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+
+        <ImageView
+            android:id="@+id/app_logo"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_launcher"
+            android:contentDescription="@string/app_name" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/schedule_heading"
+            android:textSize="16sp"
+            android:textColor="?android:attr/textColorPrimary" android:fontFamily="sans-serif-medium"
+            android:layout_marginStart="8dp" />
+
+        <TextView
+            android:id="@+id/current_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorSecondary" android:fontFamily="sans-serif" />
+
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/loading_state_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical"
-        android:visibility="gone"> <!-- Default to gone, managed by code -->
+        android:gravity="center"
+        android:visibility="gone">
 
         <ProgressBar
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:indeterminateTint="#4CAF50" /> <!-- Green tint -->
+            android:indeterminateTint="?android:attr/colorAccent" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:text="@string/loading_schedule"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif" />
+
     </LinearLayout>
 
-    <!-- Empty State -->
     <LinearLayout
         android:id="@+id/empty_state_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical"
-        android:visibility="gone"> <!-- Default to gone, managed by code -->
+        android:gravity="center"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✨"
+            android:textSize="32sp"
+            android:layout_marginBottom="4dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_classes_scheduled"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            android:textStyle="italic" />
+            android:textSize="16sp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:fontFamily="sans-serif-medium" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
             android:text="@string/open_app_to_sync"
-            android:textColor="#BBBBBB"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:layout_marginTop="2dp"
+            android:fontFamily="sans-serif" />
+
     </LinearLayout>
 
-    <!-- Data Display State -->
+    <LinearLayout
+        android:id="@+id/configuration_required_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"> <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="⚙️" android:textSize="32sp"
+        android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/configuration_required_heading"
+            android:textSize="16sp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:fontFamily="sans-serif-medium" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/configuration_required_message"
+            android:textSize="12sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:gravity="center"
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif"
+            android:lineSpacingExtra="2dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"/>
+
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/data_display_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:orientation="vertical"> <!-- Default to gone, managed by code -->
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone">
 
-        <!-- Current Subject -->
-        <TextView
-            android:id="@+id/current_subject_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/current_label"
-            android:textColor="#E0E0E0"
-            android:textSize="11sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/current_subject_details"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="@string/subject_details_placeholder"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <!-- Spacer (Replaced View with TextView) -->
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="#66FFFFFF"
-            android:importantForAccessibility="no" /> <!-- Important for accessibility: tell system this is not interactive text -->
-
-        <!-- Next Subject -->
-        <TextView
-            android:id="@+id/next_subject_label"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/next_label"
-            android:textColor="#B0B0B0"
-            android:textSize="11sp"
-            android:textStyle="bold" />
+            android:orientation="vertical"
+            android:background="@drawable/card_background_current"
+            android:padding="12dp"
+            android:layout_marginBottom="8dp">
 
-        <TextView
-            android:id="@+id/next_subject_details"
-            android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🔥"
+                    android:textSize="16sp"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/current_label"
+                    android:textSize="12sp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:fontFamily="sans-serif-medium"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.05" />
+
+                <ImageView
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:src="@drawable/live_indicator"  android:layout_marginStart="4dp"
+                    android:contentDescription="@string/loading_schedule" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/current_subject_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/subject_details_placeholder"
+                android:textSize="14sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:fontFamily="sans-serif"
+                android:layout_marginTop="4dp"
+                android:lineSpacingExtra="2dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="@string/subject_details_placeholder"
-            android:textColor="#CCCCCC"
-            android:textSize="14sp" />
+            android:orientation="vertical"
+            android:background="@drawable/card_background_next"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⏰"
+                    android:textSize="16sp"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/next_label"
+                    android:textSize="12sp"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:fontFamily="sans-serif-medium"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.05" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/next_subject_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/subject_details_placeholder"
+                android:textSize="14sp"
+                android:textColor="?android:attr/textColorSecondary"
+                android:fontFamily="sans-serif"
+                android:layout_marginTop="4dp"
+                android:lineSpacingExtra="2dp" />
+
+        </LinearLayout>
+
     </LinearLayout>
-</RelativeLayout>
+
+</LinearLayout>

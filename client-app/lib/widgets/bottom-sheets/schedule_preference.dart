@@ -7,6 +7,7 @@ import 'package:plan_sync/widgets/dropdowns/sections_bar.dart';
 import 'package:plan_sync/widgets/dropdowns/semester_bar.dart';
 import 'package:plan_sync/widgets/dropdowns/year_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:workmanager/workmanager.dart';
 
 class SchedulePreferenceBottomSheet extends StatefulWidget {
   const SchedulePreferenceBottomSheet({this.save = false, super.key});
@@ -41,6 +42,12 @@ class SchedulePreferenceBottomSheetState
         context,
       );
     }
+
+    Workmanager().registerOneOffTask(
+      "getSchedule-${DateTime.now().millisecondsSinceEpoch}",
+      "getSchedule",
+      initialDelay: const Duration(seconds: 5),
+    );
 
     context.pop();
   }

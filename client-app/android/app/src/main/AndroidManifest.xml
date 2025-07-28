@@ -22,15 +22,19 @@
             </intent-filter>
         </receiver>
 
-        <!-- Custom HomeScreen widege -->
-        <receiver android:name="in.co.cardlink.plansync.ScheduleWidget"
-                  android:exported="true">
+        <!-- Custom HomeScreen widget -->
+        <receiver android:name=".ScheduleWidget"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
+            <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/schedule_widget_info" />
+        </receiver>
+        <receiver android:name="es.antonborri.home_widget.HomeWidgetBackgroundReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="es.antonborri.home_widget.action.BACKGROUND" />
+            </intent-filter>
         </receiver>
 
         
