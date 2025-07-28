@@ -31,7 +31,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace "com.example.plan_sync"
+    namespace "in.co.cardlink.plansync"
     compileSdkVersion 35
     ndkVersion "27.0.12077973"
 

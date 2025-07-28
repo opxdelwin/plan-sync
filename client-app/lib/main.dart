@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:go_router/go_router.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:plan_sync/app_initializer.dart';
 import 'package:plan_sync/controllers/analytics_controller.dart';
 import 'package:plan_sync/controllers/app_review_controller.dart';
@@ -24,6 +25,7 @@ import 'package:plan_sync/views/home_screen.dart';
 import 'package:plan_sync/views/login_screen.dart';
 import 'package:plan_sync/views/settings_screen.dart';
 import 'package:plan_sync/widgets/scaffold_with_nav_bar.dart';
+import 'package:plan_sync/work_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:toastification/toastification.dart';
 import 'firebase_options.dart';
@@ -53,6 +55,13 @@ Future<void> main() async {
       return true;
     };
   }
+
+  try {
+    await HomeWidget.setAppGroupId('group.com.plansync.widget');
+  } catch (e) {
+    print('Error setting HomeWidget app group ID: $e');
+  }
+  registerWorkManager();
 
   runApp(const AppProvider());
 }

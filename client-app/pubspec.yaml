@@ -80,6 +80,8 @@ dependencies:
   firebase_messaging: ^15.2.9
   flutter_local_notifications: ^19.3.1
   in_app_review: ^2.0.10
+  home_widget: ^0.8.0
+  workmanager: ^0.8.0
 
 icons_launcher:
   image_path: "assets/favicon.png"

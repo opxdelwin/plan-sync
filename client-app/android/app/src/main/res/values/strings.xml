@@ -1,0 +1,11 @@
+<!-- android/app/src/main/res/values/strings.xml -->
+<resources>
+    <string name="app_name">Plan Sync</string>
+    <string name="loading_schedule">Loading schedule</string>
+    <string name="no_classes_scheduled">No classes scheduled.</string>
+    <string name="subject_details_placeholder">Subject Placeholder</string>
+    <string name="open_app_to_sync">Open app to sync.</string>
+    <string name="current_label">CURRENT:</string>
+    <string name="next_label">NEXT:</string>
+
+</resources>

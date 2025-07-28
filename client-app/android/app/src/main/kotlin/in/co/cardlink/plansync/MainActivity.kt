@@ -1,4 +1,4 @@
-package `in`.co.cardlink.client_app
+package `in`.co.cardlink.plansync
 
 import io.flutter.embedding.android.FlutterActivity
 

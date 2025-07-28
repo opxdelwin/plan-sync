@@ -25,7 +25,7 @@ class AppInitializer {
       Provider.of<AppThemeController>(context, listen: false).onInit();
 
       // Then handle async operations
-      await Future.wait([
+      Future.wait([
         Provider.of<VersionController>(context, listen: false).onReady(context),
         Provider.of<GitService>(context, listen: false).onReady(context),
         Provider.of<RemoteConfigController>(context, listen: false).onReady(),
