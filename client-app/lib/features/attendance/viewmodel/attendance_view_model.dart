@@ -12,6 +12,9 @@ enum AttendanceStatus {
   /// Idle with no result yet (credentials present, not fetched).
   idle,
 
+  /// Reading the saved copy from the cache before deciding whether to scrape.
+  restoring,
+
   /// A scrape is in progress.
   loading,
 
@@ -39,6 +42,26 @@ class AttendanceViewModel extends ChangeNotifier {
 
   /// True while a background refresh is running (data already exists on screen).
   bool isRefreshing = false;
+
+  /// True when the visible [result] came out of the cache and hasn't been
+  /// re-scraped since — the UI says so rather than passing a saved copy off as
+  /// live data.
+  bool loadedFromCache = false;
+
+  /// How long a cached result stays fresh before it is refreshed.
+  Duration get freshnessWindow => _repository.freshnessWindow;
+
+  /// True when the visible [result] has aged past [freshnessWindow].
+  bool get resultIsStale =>
+      result != null && _repository.isStale(result!);
+
+  /// Failed attempts since the last success. Drives the failure screen's advice
+  /// and keeps "Report issue" out of reach until a retry has actually failed —
+  /// most first failures clear on their own.
+  int consecutiveFailures = 0;
+
+  /// Reporting is offered once the problem has survived a retry.
+  bool get canReportIssue => consecutiveFailures >= 2;
 
   /// Live progress lines from the scrape, newest last. Kept for stage
   /// derivation; not shown in the UI.
@@ -122,6 +145,7 @@ class AttendanceViewModel extends ChangeNotifier {
       );
       if (cached != null) {
         result = cached;
+        loadedFromCache = true;
         _appliedYear = cached.academicYear;
         _appliedSession = cached.session;
       }
@@ -254,8 +278,11 @@ class AttendanceViewModel extends ChangeNotifier {
     errorKind = null;
     errorMessage = null;
 
-    // If data is already on screen, refresh silently (no loading screen).
-    final hasData = result != null;
+    // Refresh silently only when the data is genuinely on screen. Retrying from
+    // the error screen must show progress instead — a silent refresh there left
+    // the failure screen up untouched for the whole scrape, so "Try again" read
+    // as a dead button.
+    final hasData = result != null && status == AttendanceStatus.success;
     if (hasData) {
       isRefreshing = true;
       notifyListeners();
@@ -272,8 +299,10 @@ class AttendanceViewModel extends ChangeNotifier {
         onLog: pushLog,
       );
       result = fetched;
+      loadedFromCache = false; // live data now
       _appliedYear = academicYear;
       _appliedSession = session;
+      consecutiveFailures = 0;
 
       isRefreshing = false;
       _set(AttendanceStatus.success);
@@ -293,6 +322,8 @@ class AttendanceViewModel extends ChangeNotifier {
         errorMessage = e.message;
       }
       isRefreshing = false;
+      // Bad credentials aren't a failure the user can retry their way out of.
+      if (e.kind != ScrapeErrorKind.invalidCredentials) consecutiveFailures++;
       _set(e.kind == ScrapeErrorKind.invalidCredentials
           ? AttendanceStatus.needsCredentials
           : AttendanceStatus.error);
@@ -301,6 +332,7 @@ class AttendanceViewModel extends ChangeNotifier {
       errorMessage = _genericError;
       _recordError(e, st, 'attendance fetch failed');
       isRefreshing = false;
+      consecutiveFailures++;
       _set(AttendanceStatus.error);
     }
   }
@@ -317,31 +349,42 @@ class AttendanceViewModel extends ChangeNotifier {
   /// Load the currently-picked year/session, checking cache first before
   /// falling back to a full scrape. Stale cache is shown immediately while a
   /// background refresh runs.
+  ///
+  /// Always loads, even when the picked period matches the last applied one:
+  /// this only runs from an explicit tap ("Load attendance" / the period
+  /// dialog's Apply), and skipping the work there is what made those buttons
+  /// look broken. Passive entry into the tab goes through [ensureLoaded].
   Future<void> applySelection() async {
-    if (!selectionDirty) return;
+    // Reading Hive is quick, but the user tapped a button — show that their
+    // saved copy is being checked instead of leaving the tap unacknowledged.
+    if (result == null) _set(AttendanceStatus.restoring);
 
     final creds = await _credentials.read();
-    if (creds != null) {
-      final cached = await _repository.cached(
-        registrationNumber: creds.$1,
-        academicYear: academicYear,
-        session: session,
-      );
-      if (cached != null) {
-        // Show whatever we have from cache immediately.
-        result = cached;
-        _appliedYear = academicYear;
-        _appliedSession = session;
-        _set(AttendanceStatus.success);
-
-        if (!_repository.isStale(cached)) {
-          return; // Fresh — no scrape needed.
-        }
-        // Stale — fall through; refresh() will use isRefreshing (data is visible).
+    if (creds != null && await _restoreFromCache(creds.$1)) {
+      if (!_repository.isStale(result!)) {
+        return; // Fresh — no scrape needed.
       }
+      // Stale — fall through; refresh() will use isRefreshing (data is visible).
     }
 
     await refresh();
+  }
+
+  /// Loads the saved copy for the picked period onto the screen, if there is
+  /// one. Returns whether anything was restored.
+  Future<bool> _restoreFromCache(String registrationNumber) async {
+    final cached = await _repository.cached(
+      registrationNumber: registrationNumber,
+      academicYear: academicYear,
+      session: session,
+    );
+    if (cached == null) return false;
+    result = cached;
+    loadedFromCache = true;
+    _appliedYear = academicYear;
+    _appliedSession = session;
+    _set(AttendanceStatus.success);
+    return true;
   }
 
   /// Save new credentials. Does NOT fetch — the user lands on the idle period
@@ -357,6 +400,10 @@ class AttendanceViewModel extends ChangeNotifier {
     // Clear any prior "incorrect password" notice from a failed attempt.
     errorKind = null;
     errorMessage = null;
+    // A saved copy from before the log-out is still on the device, so land on it
+    // exactly as a cold app start would — otherwise logging back in dumps the
+    // user on an empty picker while their attendance sits in the cache.
+    if (await _restoreFromCache(registrationNumber)) return;
     _set(AttendanceStatus.idle);
   }
 
@@ -372,8 +419,13 @@ class AttendanceViewModel extends ChangeNotifier {
   Future<void> disconnect() async {
     await _credentials.clear();
     result = null;
+    loadedFromCache = false;
     errorKind = null;
     errorMessage = null;
+    // The applied period must go with the result, or the next log-in sees a
+    // clean picker whose selection already looks "applied" and refuses to load.
+    _appliedYear = null;
+    _appliedSession = null;
     _set(AttendanceStatus.needsCredentials);
   }
 

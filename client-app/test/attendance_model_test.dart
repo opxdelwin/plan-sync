@@ -218,6 +218,9 @@ class _FakeAttendanceRepo implements AttendanceRepository {
       null;
 
   @override
+  Duration get freshnessWindow => const Duration(hours: 4);
+
+  @override
   bool isStale(AttendanceResult result) => true;
 
   @override

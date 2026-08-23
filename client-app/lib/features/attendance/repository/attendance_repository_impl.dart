@@ -23,7 +23,12 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
   /// that returns canned results instead of launching a headless WebView.
   final KiitAttendanceScraper Function() _scraperFactory;
 
-  static const _ttl = Duration(hours: 6);
+  /// Attendance is posted through the day, so a saved copy older than this is
+  /// refreshed rather than shown as current.
+  static const _ttl = Duration(hours: 4);
+
+  @override
+  Duration get freshnessWindow => _ttl;
 
   String _key(String regNo, String year, String session) =>
       'attendance/$regNo/$year/$session';

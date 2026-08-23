@@ -13,6 +13,10 @@ abstract class AttendanceRepository {
     required String session,
   });
 
+  /// How long a cached result stays fresh. Exposed so the UI can tell the user
+  /// when their saved copy will refresh itself.
+  Duration get freshnessWindow;
+
   bool isStale(AttendanceResult result);
 
   /// Scrapes, writes to the cache, and returns the result. May throw.

@@ -110,9 +110,12 @@ void main() {
   group('isStale', () {
     final repo = AttendanceRepositoryImpl(cache: FakeCacheService());
 
-    test('fresh within 6h, stale after', () {
+    test('fresh within the 4h window, stale after', () {
+      expect(repo.freshnessWindow, const Duration(hours: 4));
       expect(repo.isStale(_result(age: const Duration(hours: 1))), isFalse);
-      expect(repo.isStale(_result(age: const Duration(hours: 7))), isTrue);
+      expect(repo.isStale(_result(age: const Duration(hours: 3, minutes: 59))),
+          isFalse);
+      expect(repo.isStale(_result(age: const Duration(hours: 5))), isTrue);
     });
   });
 }

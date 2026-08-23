@@ -19,7 +19,12 @@ class _AttendancePeriodPickerState extends State<AttendancePeriodPicker> {
   late String _session = widget.viewModel.session;
   String? _error;
 
-  void _load() {
+  /// Acknowledges the tap in the same frame; the view model's state change
+  /// lands a frame later.
+  bool _busy = false;
+
+  Future<void> _load() async {
+    if (_busy) return;
     // Block future periods (e.g. 2027-2028, or Spring of the current year
     // before January) — there can be no attendance for a session that hasn't
     // begun. Past/current periods pass through.
@@ -29,8 +34,13 @@ class _AttendancePeriodPickerState extends State<AttendancePeriodPicker> {
           'Pick an earlier year or session.');
       return;
     }
+    setState(() => _busy = true);
     widget.viewModel.changeSelection(year: _year, session: _session);
-    widget.viewModel.applySelection();
+    try {
+      await widget.viewModel.applySelection();
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
   }
 
   @override
@@ -40,7 +50,7 @@ class _AttendancePeriodPickerState extends State<AttendancePeriodPicker> {
 
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+        padding: const EdgeInsets.fromLTRB(32, 24, 32, 112),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
@@ -131,9 +141,18 @@ class _AttendancePeriodPickerState extends State<AttendancePeriodPicker> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: _load,
-                icon: const Icon(Icons.download_rounded),
-                label: const Text('Load attendance'),
+                onPressed: _busy ? null : _load,
+                icon: _busy
+                    ? SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: colorScheme.onPrimary,
+                        ),
+                      )
+                    : const Icon(Icons.download_rounded),
+                label: Text(_busy ? 'Checking saved copy…' : 'Load attendance'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: colorScheme.primary,
                   foregroundColor: colorScheme.onPrimary,
@@ -143,6 +162,29 @@ class _AttendancePeriodPickerState extends State<AttendancePeriodPicker> {
                   ),
                 ),
               ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.info_outline_rounded,
+                  size: 16,
+                  color: colorScheme.onSurface.withValues(alpha: 0.45),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'A copy saved on this device loads instantly. Otherwise we '
+                    'sign in to the KIIT portal, which can take up to a minute.',
+                    style: TextStyle(
+                      color: colorScheme.onSurface.withValues(alpha: 0.45),
+                      fontSize: 12,
+                      height: 1.35,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

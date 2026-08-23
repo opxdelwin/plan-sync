@@ -17,6 +17,10 @@ enum ScrapeErrorKind {
   /// records for the chosen year + session).
   noData,
 
+  /// The attendance table's columns no longer match what the portal normally
+  /// sends — a column was removed or renamed in the user's own SAP layout.
+  columnsChanged,
+
   /// A network stall / overall timeout.
   timeout,
 
@@ -54,6 +58,8 @@ class ScrapeException implements Exception {
         return "Couldn't open attendance";
       case ScrapeErrorKind.noData:
         return 'No attendance found';
+      case ScrapeErrorKind.columnsChanged:
+        return 'Attendance table changed';
       case ScrapeErrorKind.timeout:
         return 'Request timed out';
       case ScrapeErrorKind.networkUnavailable:

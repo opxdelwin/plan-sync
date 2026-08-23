@@ -6,8 +6,11 @@ import 'package:plan_sync/features/attendance/repository/attendance_repository.d
 class FakeAttendanceRepository implements AttendanceRepository {
   final Map<String, AttendanceResult> _store = {};
 
-  /// Freshness window used by [isStale].
-  Duration ttl = const Duration(hours: 6);
+  /// Freshness window used by [isStale]; mirrors the production default.
+  Duration ttl = const Duration(hours: 4);
+
+  @override
+  Duration get freshnessWindow => ttl;
 
   /// Returned by [fetch] when set (and [fetchError] is null).
   AttendanceResult? fetchResult;

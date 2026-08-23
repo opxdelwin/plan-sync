@@ -165,8 +165,58 @@ void main() {
     await tester.tap(find.text('Load attendance'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Portal unavailable'), findsOneWidget);
-    expect(find.text('The KIIT portal is down.'), findsOneWidget);
+    // The failure screen explains the specific kind of failure, suggests what
+    // to try (ending in a restart), and offers a retry — rather than surfacing
+    // one generic line.
+    expect(find.text('Portal is down'), findsOneWidget);
+    expect(find.textContaining('isn\'t serving pages'), findsOneWidget);
+    expect(find.textContaining('Close Plan Sync completely'), findsOneWidget);
+    expect(find.text('Try again'), findsOneWidget);
+    expect(find.byIcon(Icons.cloud_off_rounded), findsOneWidget);
+
+    // Reporting is not one tap away on a first failure.
+    expect(find.text('Report issue'), findsNothing);
+    expect(find.text('Tried everything?'), findsNothing);
+
+    // A second failure reveals the disclosure — beside the retry button, not in
+    // a block below it where the nav bar covers it.
+    await tester.tap(find.text('Try again'));
+    await tester.pumpAndSettle();
+
+    final disclosure = find.text('Tried everything?');
+    expect(disclosure, findsOneWidget);
+    expect(find.text('Report issue'), findsNothing); // still two taps away
+    expect(
+      tester.getCenter(disclosure).dy,
+      closeTo(tester.getCenter(find.text('Try again')).dy, 24),
+      reason: 'the disclosure shares the retry row',
+    );
+
+    await tester.tap(disclosure);
+    await tester.pumpAndSettle();
+    expect(find.text('Report issue'), findsOneWidget);
+  });
+
+  testWidgets('a changed column layout tells the user how to restore it',
+      (tester) async {
+    await pumpAttendance(
+      tester,
+      creds: _FakeCredentials(hasCredentials: true, registrationNumber: '2205'),
+      scraperFactory: () => _FakeScraper(
+        error: const ScrapeException(
+          ScrapeErrorKind.columnsChanged,
+          'Your attendance table on the portal is missing No.of Present.',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Load attendance'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Attendance table changed'), findsOneWidget);
+    expect(find.textContaining('missing No.of Present'), findsOneWidget);
+    expect(find.textContaining('restore the'), findsOneWidget);
     expect(find.text('Try again'), findsOneWidget);
   });
 

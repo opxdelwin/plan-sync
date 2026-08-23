@@ -132,6 +132,11 @@ class KiitAttendanceScraper {
                   'subject(s)'
                   '${result.student?.name != null ? " for ${result.student!.name}" : ""}.');
               finishOk(result);
+            } on ScrapeException catch (e) {
+              // Already classified (e.g. a changed column layout) — keep the
+              // kind so the user gets the matching guidance.
+              log('ERROR [${e.kind.name}]: ${e.message}');
+              finishErr(e);
             } catch (e) {
               log('Failed to parse attendance JSON: $e');
               finishErr(
@@ -363,6 +368,16 @@ class KiitAttendanceScraper {
     );
   }
 
+  /// Test seam: run the raw-grid mapping (`{headers, rows}` → records) exactly
+  /// as it runs on a live scrape, so the column-disambiguation logic can be
+  /// verified without a device.
+  @visibleForTesting
+  static List<AttendanceRecord> recordsFromGridForTest(
+    List<String> headers,
+    List<List<String>> rows,
+  ) =>
+      _recordsFromGrid(headers, rows);
+
   static List<AttendanceRecord> _recordsFromLegacy(List raw) {
     int toInt(dynamic v) =>
         v is num ? v.round() : (double.tryParse('$v')?.round() ?? 0);
@@ -385,171 +400,90 @@ class KiitAttendanceScraper {
     }).toList();
   }
 
-  /// Maps raw grid rows to records. The numeric columns are decoded by the KIIT
-  /// invariant (total classes = present + absent, percentage = present/total),
-  /// which is exact even when every count renders as "xx.00" and does not
-  /// depend on matching the numeric header labels. Header labels are used only
-  /// to pick the subject / faculty-name / excuses text columns.
+  /// Maps the raw grid to records using ONLY the column header names SAP sends.
+  ///
+  /// No positional or value-shape guessing: if a required column isn't in the
+  /// header row, the scrape fails with [ScrapeErrorKind.columnsChanged] so the
+  /// user can be told to restore the table layout on the portal.
   static List<AttendanceRecord> _recordsFromGrid(
     List<String> headers,
     List<List<String>> rows,
   ) {
     int col(RegExp re, {RegExp? not}) {
       for (var i = 0; i < headers.length; i++) {
-        if (re.hasMatch(headers[i]) && (not == null || !not.hasMatch(headers[i]))) {
+        if (re.hasMatch(headers[i]) &&
+            (not == null || !not.hasMatch(headers[i]))) {
           return i;
         }
       }
       return -1;
     }
 
-    final subjectI = col(RegExp(r'subject|course|paper'), not: RegExp(r'fac'));
-    final facNameI = col(RegExp(r'fac.*name|faculty.*name|teacher.*name'));
-    final excI = col(RegExp(r'excuse'));
+    final columns = <String, int>{
+      'Subject': col(RegExp(r'subject|course|paper'), not: RegExp(r'fac')),
+      'No.of Absent': col(RegExp(r'absent')),
+      'No.of Present': col(RegExp(r'present')),
+      'Total No. of Days': col(RegExp(r'total.*day|day.*total')),
+    };
+    final missing = columns.entries
+        .where((e) => e.value < 0)
+        .map((e) => e.key)
+        .toList();
+    if (missing.isNotEmpty) {
+      throw ScrapeException(
+        ScrapeErrorKind.columnsChanged,
+        'Your attendance table on the portal is missing '
+        '${missing.join(', ')}.',
+      );
+    }
+
+    // Optional columns: absent from a customised layout, but derivable or
+    // simply not needed to report attendance.
+    final percentageI = col(RegExp(r'percent'));
+    final facultyIdI = col(RegExp(r'fac.*id|faculty.*code'));
+    final facultyNameI = col(RegExp(r'fac.*name|teacher.*name'));
+    final excusesI = col(RegExp(r'excuse'));
+
+    final subjectI = columns['Subject']!;
+    final absentI = columns['No.of Absent']!;
+    final presentI = columns['No.of Present']!;
+    final totalI = columns['Total No. of Days']!;
 
     String at(List<String> cells, int i) =>
         (i >= 0 && i < cells.length) ? cells[i] : '';
 
     final out = <AttendanceRecord>[];
     for (final cells in rows) {
-      final inf = _inferCells(cells, subjectHint: at(cells, subjectI));
-      if (inf == null) continue;
-      final excStr = at(cells, excI).split('.').first;
+      final subject = at(cells, subjectI).trim();
+      if (subject.isEmpty) continue;
+
+      final present = _cellToInt(at(cells, presentI));
+      final total = _cellToInt(at(cells, totalI));
+      final absent = _cellToInt(at(cells, absentI));
+      final percentage = percentageI >= 0
+          ? _cellToDouble(at(cells, percentageI))
+          : (total > 0 ? (present / total * 10000).round() / 100 : 0.0);
+
       out.add(AttendanceRecord(
-        subject: inf.subject.trim(),
-        present: inf.present,
-        totalDays: inf.total,
-        absent: inf.absent,
-        percentage: inf.percentage,
-        facultyId: inf.facultyId.trim(),
-        facultyName: at(cells, facNameI).trim(),
-        excuses: int.tryParse(excStr) ?? 0,
+        subject: subject,
+        present: present,
+        totalDays: total,
+        absent: absent,
+        percentage: percentage,
+        facultyId: at(cells, facultyIdI).trim(),
+        facultyName: at(cells, facultyNameI).trim(),
+        excuses: _cellToInt(at(cells, excusesI)),
       ));
     }
     return out;
   }
 
-  /// Decodes one row's cells into a record using the KIIT column invariant:
-  /// total classes = present + absent, and percentage = present / total * 100.
-  /// This is exact regardless of column order and regardless of whether counts
-  /// render as "30" or "30.00" (the percentage may also be a whole "100.00").
-  /// [subjectHint] is the header-mapped subject cell, used when it is textual.
-  static _InferredRow? _inferCells(List<String> cells, {String? subjectHint}) {
-    final numRe = RegExp(r'^\d+(\.\d+)?$');
-    final facRe = RegExp(r'^\d{5,}$');
-    final alpha = RegExp(r'[A-Za-z]');
-    var facId = '';
-    final texts = <String>[];
-    final nums = <double>[];
-    for (final raw in cells) {
-      final c = raw.trim();
-      if (c.isEmpty) continue;
-      if (facRe.hasMatch(c) && !c.contains('.')) {
-        if (facId.isEmpty) facId = c;
-        continue;
-      }
-      if (numRe.hasMatch(c)) {
-        nums.add(double.parse(c));
-      } else if (alpha.hasMatch(c)) {
-        texts.add(c);
-      }
-    }
-    var subject = (subjectHint != null &&
-            subjectHint.trim().isNotEmpty &&
-            alpha.hasMatch(subjectHint))
-        ? subjectHint.trim()
-        : (texts.isNotEmpty ? texts.first : '');
-    if (subject.isEmpty || !alpha.hasMatch(subject) || nums.length < 3) {
-      return null;
-    }
+  /// Portal counts render as either "30" or "30.00".
+  static int _cellToInt(String cell) =>
+      double.tryParse(cell.trim())?.round() ?? 0;
 
-    // total = present + absent. Search every triple and keep the one with the
-    // largest target — the real total exceeds the individual counts, so this
-    // rejects spurious sums involving 0 / excuses / the percentage.
-    double? total, aPart, bPart;
-    for (var i = 0; i < nums.length; i++) {
-      for (var j = 0; j < nums.length; j++) {
-        if (j == i) continue;
-        for (var k = j + 1; k < nums.length; k++) {
-          if (k == i) continue;
-          if (nums[i] > 0 && (nums[j] + nums[k] - nums[i]).abs() < 0.001) {
-            if (total == null || nums[i] > total) {
-              total = nums[i];
-              aPart = nums[j];
-              bPart = nums[k];
-            }
-          }
-        }
-      }
-    }
-    if (total == null || aPart == null || bPart == null) {
-      // No present+absent=total triple (e.g. an unexpected column layout). If a
-      // clear fractional percentage exists, pair it with the largest count.
-      double? fp;
-      for (final v in nums) {
-        if (v <= 100 && v != v.floorToDouble()) {
-          fp = v;
-          break;
-        }
-      }
-      if (fp == null) return null;
-      var mx = 0.0;
-      for (final v in nums) {
-        if (v != fp && v > mx) mx = v;
-      }
-      if (mx <= 0) return null;
-      final pr = (fp / 100 * mx).round();
-      return _InferredRow(
-        subject: subject,
-        present: pr,
-        total: mx.round(),
-        absent: mx.round() - pr,
-        percentage: fp,
-        facultyId: facId,
-      );
-    }
-
-    // Orient present vs absent: the displayed percentage (a leftover value
-    // <= 100) matches present/total; if absent, fall back to the larger part.
-    final leftovers = [...nums]
-      ..remove(total)
-      ..remove(aPart)
-      ..remove(bPart);
-    var present = aPart, absent = bPart;
-    double? disp;
-    final pa = aPart / total * 100;
-    final pb = bPart / total * 100;
-    for (final v in leftovers) {
-      if (v > 100) continue;
-      if ((v - pa).abs() <= 1.0) {
-        disp = v;
-        present = aPart;
-        absent = bPart;
-        break;
-      }
-      if ((v - pb).abs() <= 1.0) {
-        disp = v;
-        present = bPart;
-        absent = aPart;
-        break;
-      }
-    }
-    if (disp == null && absent > present) {
-      final t = present;
-      present = absent;
-      absent = t;
-    }
-    if (present > total) present = total;
-    final pct = disp ?? ((present / total * 10000).round() / 100);
-    return _InferredRow(
-      subject: subject,
-      present: present.round(),
-      total: total.round(),
-      absent: absent.round(),
-      percentage: pct,
-      facultyId: facId,
-    );
-  }
+  static double _cellToDouble(String cell) =>
+      double.tryParse(cell.trim()) ?? 0;
 
   static ScrapeErrorKind _kindFromCode(String code) {
     switch (code) {
@@ -559,6 +493,8 @@ class KiitAttendanceScraper {
         return ScrapeErrorKind.invalidCredentials;
       case 'nav_failed':
         return ScrapeErrorKind.navigationFailed;
+      case 'columns_changed':
+        return ScrapeErrorKind.columnsChanged;
       default:
         return ScrapeErrorKind.unknown;
     }
@@ -628,25 +564,6 @@ class KiitAttendanceScraper {
         .replaceAll('__SESSION__', session.replaceAll('"', r'\"'));
   }
 }
-
-/// Result of value-shape inference for one attendance row (see [_inferCells]).
-class _InferredRow {
-  const _InferredRow({
-    required this.subject,
-    required this.present,
-    required this.total,
-    required this.absent,
-    required this.percentage,
-    required this.facultyId,
-  });
-  final String subject;
-  final int present;
-  final int total;
-  final int absent;
-  final double percentage;
-  final String facultyId;
-}
-
 const String _agentTemplate = r'''
 (function () {
   var IS_TOP = (window.top === window.self);

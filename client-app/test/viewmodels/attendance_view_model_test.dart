@@ -117,6 +117,83 @@ void main() {
       expect(vm.errorKind, isNull);
       expect(vm.errorMessage, isNull);
     });
+
+    test('log out then log back in can load the same period again', () async {
+      final repo = FakeAttendanceRepository();
+      final vm = _makeVm(
+        hasCredentials: true,
+        registrationNumber: '22001234',
+        repository: repo,
+      );
+      final year = AttendanceViewModel.currentAcademicYear();
+      final sess = AttendanceViewModel.currentSession();
+      // Nothing saved on the device, so the picker is what the user lands on.
+      repo.fetchResult =
+          _result(academicYear: year, session: sess, age: Duration.zero);
+
+      await vm.initialize();
+      await vm.disconnect();
+      await vm.connect(registrationNumber: '22001234', password: 'password');
+      expect(vm.status, AttendanceStatus.idle);
+
+      // Picking the SAME year/session as before must still load — the applied
+      // period was cleared with the result, so this isn't a no-op.
+      vm.changeSelection(year: year, session: sess);
+      await vm.applySelection();
+
+      expect(vm.status, AttendanceStatus.success);
+      expect(vm.result, isNotNull);
+    });
+
+    test('logging back in lands on the saved copy, not an empty picker',
+        () async {
+      final repo = FakeAttendanceRepository();
+      final vm = _makeVm(
+        hasCredentials: true,
+        registrationNumber: '22001234',
+        repository: repo,
+      );
+      final year = AttendanceViewModel.currentAcademicYear();
+      final sess = AttendanceViewModel.currentSession();
+      repo.seed('22001234', year, sess,
+          _result(academicYear: year, session: sess));
+
+      await vm.initialize();
+      await vm.disconnect();
+      expect(vm.result, isNull);
+
+      await vm.connect(registrationNumber: '22001234', password: 'password');
+
+      // Same behaviour as a cold start with a cache present.
+      expect(vm.status, AttendanceStatus.success);
+      expect(vm.loadedFromCache, isTrue);
+      expect(repo.fetchCount, 0);
+    });
+
+    test('re-applying the period already on screen still reloads', () async {
+      final repo = FakeAttendanceRepository();
+      final vm = _makeVm(
+        hasCredentials: true,
+        registrationNumber: '22001234',
+        repository: repo,
+      );
+      final year = AttendanceViewModel.currentAcademicYear();
+      final sess = AttendanceViewModel.currentSession();
+      repo.seed('22001234', year, sess,
+          _result(academicYear: year, session: sess));
+      await vm.initialize();
+
+      // Mirrors the error screen's "Change year & session" → pick the same
+      // period → Apply. This used to early-return and do nothing.
+      vm.chooseAnotherPeriod();
+      expect(vm.status, AttendanceStatus.idle);
+      expect(vm.selectionDirty, isFalse); // period unchanged
+
+      await vm.applySelection();
+
+      expect(vm.status, AttendanceStatus.success);
+      expect(vm.result, isNotNull);
+    });
   });
 
   group('changeSelection', () {
@@ -253,6 +330,168 @@ void main() {
       await vm.ensureLoaded();
       expect(repo.fetchCount, 1); // a refresh was attempted
       expect(vm.status, isNot(AttendanceStatus.loading));
+    });
+  });
+
+  group('retrying after a failure', () {
+    test('retry from the error screen shows the loading screen', () async {
+      final repo = FakeAttendanceRepository();
+      final vm = _makeVm(
+        hasCredentials: true,
+        registrationNumber: '22001234',
+        repository: repo,
+      );
+      final year = AttendanceViewModel.currentAcademicYear();
+      final sess = AttendanceViewModel.currentSession();
+      // Stale saved copy on screen, then a failed background refresh.
+      repo.seed(
+        '22001234',
+        year,
+        sess,
+        _result(academicYear: year, session: sess, age: const Duration(hours: 5)),
+      );
+      await vm.initialize();
+      repo.fetchError = StateError('offline');
+      await vm.ensureLoaded();
+      expect(vm.status, AttendanceStatus.error);
+      expect(vm.result, isNotNull); // the saved copy is still held
+
+      // Retrying must show progress: with a result present the old code flipped
+      // isRefreshing and left the failure screen untouched for the whole scrape.
+      final statuses = <AttendanceStatus>[];
+      vm.addListener(() => statuses.add(vm.status));
+      await vm.refresh();
+
+      expect(statuses, contains(AttendanceStatus.loading));
+      expect(vm.isRefreshing, isFalse);
+    });
+
+    test('report is offered only once a retry has also failed', () async {
+      final repo = FakeAttendanceRepository()..fetchError = StateError('down');
+      final vm = _makeVm(
+        hasCredentials: true,
+        registrationNumber: '22001234',
+        repository: repo,
+      );
+      await vm.initialize();
+
+      await vm.refresh();
+      expect(vm.status, AttendanceStatus.error);
+      expect(vm.consecutiveFailures, 1);
+      expect(vm.canReportIssue, isFalse);
+
+      await vm.refresh();
+      expect(vm.consecutiveFailures, 2);
+      expect(vm.canReportIssue, isTrue);
+    });
+
+    test('a success resets the failure count', () async {
+      final repo = FakeAttendanceRepository()..fetchError = StateError('down');
+      final vm = _makeVm(
+        hasCredentials: true,
+        registrationNumber: '22001234',
+        repository: repo,
+      );
+      await vm.initialize();
+      await vm.refresh();
+      await vm.refresh();
+      expect(vm.canReportIssue, isTrue);
+
+      repo.fetchError = null;
+      repo.fetchResult = _result(
+        academicYear: vm.academicYear,
+        session: vm.session,
+        age: Duration.zero,
+      );
+      await vm.refresh();
+
+      expect(vm.status, AttendanceStatus.success);
+      expect(vm.consecutiveFailures, 0);
+      expect(vm.canReportIssue, isFalse);
+    });
+  });
+
+  group('cache provenance', () {
+    test('a cached load is flagged as a saved copy', () async {
+      final repo = FakeAttendanceRepository();
+      final vm = _makeVm(
+        hasCredentials: true,
+        registrationNumber: '22001234',
+        repository: repo,
+      );
+      final year = AttendanceViewModel.currentAcademicYear();
+      final sess = AttendanceViewModel.currentSession();
+      repo.seed('22001234', year, sess,
+          _result(academicYear: year, session: sess)); // 1h old → fresh
+
+      await vm.initialize();
+
+      expect(vm.status, AttendanceStatus.success);
+      expect(vm.loadedFromCache, isTrue);
+      expect(vm.resultIsStale, isFalse);
+      expect(repo.fetchCount, 0);
+    });
+
+    test('a completed scrape clears the saved-copy flag', () async {
+      final repo = FakeAttendanceRepository();
+      final vm = _makeVm(
+        hasCredentials: true,
+        registrationNumber: '22001234',
+        repository: repo,
+      );
+      final year = AttendanceViewModel.currentAcademicYear();
+      final sess = AttendanceViewModel.currentSession();
+      repo.seed('22001234', year, sess,
+          _result(academicYear: year, session: sess));
+      await vm.initialize();
+      expect(vm.loadedFromCache, isTrue);
+
+      repo.fetchResult = _result(
+        academicYear: year,
+        session: sess,
+        age: Duration.zero,
+      );
+      await vm.refresh();
+
+      expect(vm.status, AttendanceStatus.success);
+      expect(vm.loadedFromCache, isFalse);
+      expect(vm.isRefreshing, isFalse);
+    });
+
+    test('stale cache is shown, flagged stale, and refreshed', () async {
+      final repo = FakeAttendanceRepository();
+      final vm = _makeVm(
+        hasCredentials: true,
+        registrationNumber: '22001234',
+        repository: repo,
+      );
+      final year = AttendanceViewModel.currentAcademicYear();
+      final sess = AttendanceViewModel.currentSession();
+      // Older than the 4h window.
+      repo.seed(
+        '22001234',
+        year,
+        sess,
+        _result(academicYear: year, session: sess, age: const Duration(hours: 5)),
+      );
+
+      await vm.initialize();
+      expect(vm.loadedFromCache, isTrue);
+      expect(vm.resultIsStale, isTrue);
+
+      repo.fetchResult =
+          _result(academicYear: year, session: sess, age: Duration.zero);
+      await vm.ensureLoaded(); // stale → background refresh
+
+      expect(repo.fetchCount, 1);
+      expect(vm.loadedFromCache, isFalse);
+      expect(vm.resultIsStale, isFalse);
+    });
+
+    test('freshnessWindow comes from the repository', () {
+      final repo = FakeAttendanceRepository()..ttl = const Duration(hours: 4);
+      final vm = _makeVm(repository: repo);
+      expect(vm.freshnessWindow, const Duration(hours: 4));
     });
   });
 

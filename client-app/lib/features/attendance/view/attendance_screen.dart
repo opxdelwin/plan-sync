@@ -3,6 +3,7 @@ import 'package:plan_sync/features/attendance/view/widgets/attendance_error_stat
 import 'package:plan_sync/features/attendance/view/widgets/attendance_loading_state.dart';
 import 'package:plan_sync/features/attendance/view/widgets/attendance_needs_credentials.dart';
 import 'package:plan_sync/features/attendance/view/widgets/attendance_period_picker.dart';
+import 'package:plan_sync/features/attendance/view/widgets/attendance_restoring_state.dart';
 import 'package:plan_sync/features/attendance/view/widgets/attendance_preference_dialog.dart';
 import 'package:plan_sync/features/attendance/view/widgets/attendance_success_state.dart';
 import 'package:plan_sync/features/attendance/viewmodel/attendance_view_model.dart';
@@ -53,9 +54,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               return Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // When data is loaded show the period selector; otherwise
-                  // fall back to the plain ID badge so there's always context.
-                  if (viewModel.result != null)
+                  // The period selector belongs to attendance that's actually
+                  // on screen; while the picker is up it would claim a period
+                  // the body is still asking for. Fall back to the ID badge.
+                  if (viewModel.status == AttendanceStatus.success &&
+                      viewModel.result != null)
                     AttendancePreferenceButton(viewModel: viewModel)
                   else
                     Container(
@@ -87,7 +90,19 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         ],
       ),
       body: Consumer<AttendanceViewModel>(
-        builder: (context, viewModel, _) => _contentFor(viewModel),
+        builder: (context, viewModel, _) => AnimatedSwitcher(
+          duration: const Duration(milliseconds: 350),
+          switchInCurve: Curves.easeOutCubic,
+          switchOutCurve: Curves.easeIn,
+          transitionBuilder: (child, animation) => FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+          child: KeyedSubtree(
+            key: ValueKey('${viewModel.status.name}:${viewModel.result == null}'),
+            child: _contentFor(viewModel),
+          ),
+        ),
       ),
     );
   }
@@ -137,6 +152,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     switch (viewModel.status) {
       case AttendanceStatus.needsCredentials:
         return AttendanceNeedsCredentials(viewModel: viewModel);
+      case AttendanceStatus.restoring:
+        return AttendanceRestoringState(viewModel: viewModel);
       case AttendanceStatus.loading:
         return AttendanceLoadingState(viewModel: viewModel);
       case AttendanceStatus.error:
