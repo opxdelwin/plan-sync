@@ -205,7 +205,7 @@ void main() {
       scraperFactory: () => _FakeScraper(
         error: const ScrapeException(
           ScrapeErrorKind.columnsChanged,
-          'Your attendance table on the portal is missing No.of Present.',
+          'Your attendance table on the portal has no subject column.',
         ),
       ),
     );
@@ -215,8 +215,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Attendance table changed'), findsOneWidget);
-    expect(find.textContaining('missing No.of Present'), findsOneWidget);
-    expect(find.textContaining('restore the'), findsOneWidget);
+    expect(find.textContaining('no subject column'), findsOneWidget);
+    expect(find.textContaining('unhide the'), findsOneWidget);
     expect(find.text('Try again'), findsOneWidget);
   });
 

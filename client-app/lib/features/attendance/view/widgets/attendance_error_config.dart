@@ -115,15 +115,16 @@ class AttendanceErrorConfig {
           icon: Icons.view_column_outlined,
           title: 'Attendance table changed',
           body: fallbackMessage ??
-              'Your attendance table on the portal is missing columns we need '
-                  'to read it.',
+              'Your attendance table on the portal is hiding columns we '
+                  'cannot work around.',
           retryLabel: 'Try again',
           accent: colors.tertiary,
           extraSteps: const [
-            'Open Student Attendance Details on the KIIT portal in a browser.',
-            'Right-click the table header, open Settings, and restore the '
-                'hidden columns (Subject, Absent, Present, Total Days).',
-            'Save that layout as the default, then retry here.',
+            'Hidden columns are normally worked out from the ones left, so this '
+                'table is missing too much to read.',
+            'On the portal, open Student Attendance Details and unhide the '
+                'subject column plus any two of Absent, Present, Total Days '
+                'and Percentage.',
           ],
         );
       case ScrapeErrorKind.invalidCredentials:
